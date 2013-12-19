@@ -56,3 +56,41 @@ The game should inform the main server about user points using the Metric Update
 	} else {
 		Debug.Log("METRIC POST FAILED!!!");
 	}
+	
+2.4 Product Game Option Retrieval
+Product Game Options that are set in the Admin panel can be retrieved with a provided Product ID (which can also be seen on the Admin Panel).  Product ID should be passed as a string.  An active session is required as well.  Upon retrieving the game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  
+
+	ProductInfoRequest product = new ProductInfoRequest(UserSessionUtils.getApiKey(), productId);
+	bool product_result = product.doGetInfo();
+	string optionValue = null;
+	if (product_result && product.game_options.TryGetValue(optionName, out optionValue))
+	{
+		Console.WriteLine("Option Name: " + optionName + " Option Value: " + optionValue);
+	}
+	
+2.5 User Game Option Retrieval
+User Game Options that are set in the Admin panel or in the SDK (see 2.6) can be retrieved with a Product ID (which can also be seen on the Admin Panel).  Product ID and User ID should be passed as strings.  An active session is required as well.  Upon retrieving the user's game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  Note that this also retrieves several other user information values.
+
+	UserInfoRequest product = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+	bool user_result = user.doGetInfo();
+	string optionValue = null;
+	if (user_result && user.user_options.TryGetValue(optionName, out optionValue))
+	{
+		Console.WriteLine("Option Name: " + optionName + " Option Value: " + optionValue);
+	}
+
+2.6 User Game Option Storage
+User Game Options can be created or updated from the SDK.  This requires the following fields sent as strings: User ID (which can be retrieved with UserInfoRequest), Product ID (which can also be seen on the Admin Panel), the Option Name, the Option Value, as well as an active session.
+
+	2.6.1 User Game Option Insert
+		Creates a new user option (name and value) based on the user ID and product ID
+	
+		PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
+		bool user_result = userInsert.postUserInfo("insert");
+
+	2.6.1 User Game Option Update
+		Updates an existing user option (value) based on the user ID, product ID, and option name.
+	
+		PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
+		bool user_result = userInsert.postUserInfo("update");
+		
