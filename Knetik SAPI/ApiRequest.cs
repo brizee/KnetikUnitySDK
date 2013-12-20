@@ -18,6 +18,9 @@ namespace Knetik
 		protected string m_Key = null;
 		protected string m_clientSecret = null;
 		protected string m_method = null;
+		protected string m_productId = null;
+		protected string m_optionName = null;
+		protected string m_optionValue = null;
 		
 		protected string m_errorMsg = "";
 		
@@ -26,23 +29,34 @@ namespace Knetik
 		}
 		
 		public bool sendApiRequest(string request_str, ref JSONNode jsonRes) {
-	        Debug.Log("Request = " + request_str);
+			Debug.Log("Request = " + request_str);
 			
 			System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
 	    	data = encoding.GetBytes(request_str);
+
+	        Debug.Log("m_url = " + m_url);
+	        Debug.Log("data = " + data);
 			
 			HTTP.Request theRequest = new HTTP.Request("post", m_url, data);
 			theRequest.AddHeader("Content-Type", "application/x-www-form-urlencoded");
 			theRequest.synchronous = true;
 			theRequest.Send();
+
+	        Debug.Log("theRequest = " + theRequest);
+			if (theRequest.response == null) {
+		        Debug.Log("RESPONSE IS NULL!!!!");
+				return false;
+			}
+	        Debug.Log("theRequest.response = " + theRequest.response);
 			
+			
+			string strResp = theRequest.response.Text;
+			Debug.Log("Response: (" + theRequest.response.status + "): " + strResp);
+
 			if (theRequest.response.status != 200) {
 				return false;
 			}
 			 
-			string strResp = theRequest.response.Text;
-			Debug.Log("Response: " + strResp);
-			
 			try {
 		    	jsonRes = JSON.Parse(strResp);
 				if (jsonRes == null) {
@@ -70,7 +84,7 @@ namespace Knetik
 		}
 		
 		private string signRequest(string query, List<string> parameters, List<string> headers, string body) {
-			string req_text = query;
+			string req_text = query.Replace("https", "http");
 			parameters.Sort();
 			headers.Sort();
 			
@@ -112,10 +126,9 @@ namespace Knetik
 			Debug.Log("Signed url request: " + url);
 
 			List<string> headers = new List<string>();
-			headers.Add("host: " + ApiUtil.API_HOST);
-			headers.Add("connection: Close");
-			headers.Add("content-type: application/json");
-			headers.Add("user-agent: Unity Knetik SDK");
+			headers.Add("Host: " + ApiUtil.API_HOST);
+			headers.Add("Content-type: application/json");
+			headers.Add("User-Agent: Unity Knetik SDK");
 			
 			
 				
@@ -123,27 +136,30 @@ namespace Knetik
 
 			if (postBody != null) {
 				System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
-				headers.Add("content-length: " + postBody.Length);
+				headers.Add("Content-Length: " + postBody.Length);
 		    	data = encoding.GetBytes(postBody);
 				theRequest = new HTTP.Request((m_method != null) ? m_method : "post", url, data);
 				theRequest.AddHeader("Signature", signRequest(m_url, parameters, headers, postBody));
+				//theRequest.AddHeader("Content-length", postBody.Length.ToString());
 			} else {
 				theRequest = new HTTP.Request((m_method != null) ? m_method : "get", url);
 				theRequest.AddHeader("Signature", signRequest(m_url, parameters, headers, null));
 			}
 
-			theRequest.AddHeader("content-type", "application/json");
-			theRequest.AddHeader("connection", "Close");
-			theRequest.AddHeader("user-agent", "Unity Knetik SDK");
+			theRequest.AddHeader("Content-type", "application/json");
+			//theRequest.AddHeader("connection", "Close");
+			theRequest.AddHeader("User-Agent", "Unity Knetik SDK");
 			theRequest.synchronous = true;
 			theRequest.Send();
+			
+			
+			string strResp = theRequest.response.Text;
+			Debug.Log("Response: (" + theRequest.response.status + "): " + strResp);
 			
 			if (theRequest.response.status != 200) {
 				return false;
 			}
 			 
-			string strResp = theRequest.response.Text;
-			Debug.Log("Response: " + strResp);
 			
 			try {
 		    	jsonRes = JSON.Parse(strResp);

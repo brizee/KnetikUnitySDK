@@ -7,6 +7,8 @@ namespace Knetik
 	public class ApiUtil
 	{
 		private static string API_Version = "1.0";
+		//public static string API_HOST = "sapi.dev.rsigaming.com";
+		
 		
 		public static string API_HOST = null;
 		public static string API_URL = null;
@@ -19,7 +21,8 @@ namespace Knetik
 		
 		public static void setApiHost(string host) {
 			API_HOST = host;
-			API_URL = "https://" + API_HOST;
+//			API_URL = "https://" + API_HOST;
+			API_URL = "http://" + API_HOST;
 		}
 		
 		public static void setClientKey(string key) {

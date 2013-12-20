@@ -128,7 +128,7 @@ namespace HTTP
 
 		public void SetHeader (string name, string value)
 		{
-			name = name.ToLower ().Trim ();
+			name = name.Trim ();
 			value = value.Trim ();
 			if (!headers.ContainsKey (name))
 				headers[name] = new List<string> ();
@@ -148,7 +148,7 @@ namespace HTTP
 	        curcall.Start();
 			try {
 
-				var retry = 0;
+		        var retry = 0;
 				while (++retry < maximumRetryCount) {
 					if (useCache) {
 						string etag = "";
@@ -156,7 +156,7 @@ namespace HTTP
 							SetHeader ("If-None-Match", etag);
 						}
 					}
-
+		        
 					SetHeader ("Host", uri.Host);
 
 					var client = new TcpClient ();
@@ -173,41 +173,43 @@ namespace HTTP
 								return;
 							}
 						}
-						WriteToStream (ostream);
+		        		WriteToStream (ostream);
 						response = new Response ();
 						response.request = this;
 						state = RequestState.Reading;
-						response.ReadFromStream(ostream);
+		        		response.ReadFromStream(ostream);
 					}
-					client.Close ();
+		        	client.Close ();
 
 					switch (response.status) {
 					case 307:
 					case 302:
 					case 301:
-						uri = new Uri (response.GetHeader ("Location"));
+		        		uri = new Uri (response.GetHeader ("Location"));
 						continue;
 					default:
-						retry = maximumRetryCount;
+		        		retry = maximumRetryCount;
 						break;
 					}
 				}
-				if (useCache) {
-					string etag = response.GetHeader ("etag");
+		        if (useCache) {
+		        	string etag = response.GetHeader ("etag");
 					if (etag.Length > 0)
 						etags[uri.AbsoluteUri] = etag;
 				}
 
 			} catch (Exception e) {
+		        Debug.Log("EXCEPTION: " + e);
 				Console.WriteLine ("Unhandled Exception, aborting request.");
-				Console.WriteLine (e);
+		        Console.WriteLine (e);
 				exception = e;
 				response = null;
 			}
 			state = RequestState.Done;
 			isDone = true;
             responseTime = curcall.ElapsedMilliseconds;
-
+			
+		        
             if ( completedCallback != null )
             {
 				if (synchronous) {
@@ -218,6 +220,7 @@ namespace HTTP
 				}
             }
 
+		        
             if ( LogAllRequests )
             {
 #if !UNITY_EDITOR
@@ -237,6 +240,7 @@ namespace HTTP
                 }
 #endif
             }			
+		        
 		}
 		
 		public void Send( Action< HTTP.Request > callback )
@@ -247,14 +251,14 @@ namespace HTTP
                 ResponseCallbackDispatcher.Init();
             }
 
-            completedCallback = callback;
+	        completedCallback = callback;
 
 			isDone = false;
 			state = RequestState.Waiting;
 			if (acceptGzip)
 				SetHeader ("Accept-Encoding", "gzip");
 
-			if ( this.cookieJar != null )
+	        if ( this.cookieJar != null )
 			{
 				List< Cookie > cookies = this.cookieJar.GetCookies( new CookieAccessInfo( uri.Host, uri.AbsolutePath ) );
 								string cookieString = this.GetHeader( "cookie" );
@@ -269,14 +273,15 @@ namespace HTTP
 		        SetHeader( "cookie", cookieString );
 		    }
 
+	        
 			if ( bytes != null && bytes.Length > 0 && GetHeader ("Content-Length") == "" ) {
                 SetHeader( "Content-Length", bytes.Length.ToString() );
             }
-
+/*
             if ( GetHeader( "User-Agent" ) == "" ) {
                 SetHeader( "User-Agent", "UnityWeb 1.0 ( Unity " + Application.unityVersion + " ) ( " + SystemInfo.operatingSystem + " )" );
             }
-
+			 */
             if ( GetHeader( "Connection" ) == "" ) {
                 SetHeader( "Connection", "close" );
             }
@@ -285,9 +290,9 @@ namespace HTTP
 			if (!String.IsNullOrEmpty(uri.UserInfo)) {	
 				SetHeader("Authorization", "Basic " + System.Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(uri.UserInfo)));
 			}
-			
+	        
 			if (synchronous) {
-				GetResponse();
+		        GetResponse();
 			} else {
 				ThreadPool.QueueUserWorkItem (new WaitCallback ( delegate(object t) {
 					GetResponse();

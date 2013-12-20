@@ -1,5 +1,8 @@
 using System;
 using SimpleJSON;
+using System.Collections;
+using UnityEngine;
+using System.Collections.Generic;
 
 namespace Knetik
 {
@@ -46,10 +49,12 @@ namespace Knetik
 			m_url = ApiUtil.API_URL + "/rest/api/latest/metric";
 
 			if (sendSignedRequest(null, getMetricData(), ref jsonDict) == false) {
+				Debug.Log("sendSignedRequest failed");
 				return false;
 			}
 			
 		    if (jsonDict["result"] == null) {
+				Debug.Log("result is null");
 				return false;
 		    }
 		 
