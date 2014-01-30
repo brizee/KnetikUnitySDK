@@ -9,7 +9,7 @@ using System.Collections.Generic;
 		{
 			public Dictionary<string, string> game_options = new Dictionary<string, string>();
 			
-			public ProductInfoRequest (string api_key, string productId)
+			public ProductInfoRequest (string api_key, int productId)
 			{
 				m_Key = api_key;
 				m_clientSecret = ApiUtil.API_CLIENT_SECRET;
@@ -19,7 +19,7 @@ using System.Collections.Generic;
 			string getProductRequest()
 			{
 				string product_request = "{";
-				product_request += "\"search\": [{\"product_id\":\"" + m_productId + "\"}]";
+				product_request += "\"search\": [{\"product_id\":\"" + m_productId.ToString() + "\"}]";
 				product_request += ",";
 				product_request += "\"game_options\": \"true\"";
 				product_request += ",";
@@ -54,7 +54,7 @@ using System.Collections.Generic;
 				* Note that game_options will be returned as a Dictionary<string, string>
 				* for the purposes of lookups and parsing option name/option value pairs
 				*/
-				if (m_productId != null)
+				if (m_productId != 0)
 				{
 					var items = jsonDict["result"]["items"];
 					var options = items[0]["game_options"];

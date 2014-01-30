@@ -7,9 +7,8 @@ namespace Knetik
 {
 	public class PostUserOptionsRequest : ApiRequest
 	{
-		string m_userId;
 		string m_deleted = "0";
-		public PostUserOptionsRequest (string api_key, string userId, string productId, string optionName, string optionValue, string deleted = "0")
+		public PostUserOptionsRequest (string api_key, string userId, int productId, string optionName, string optionValue, string deleted = "0")
 		{
 			m_Key = api_key;
 			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
@@ -28,7 +27,7 @@ namespace Knetik
 			user_request +=        ",";
 			user_request += 		"\"user_info\": ";
 			user_request += 			"{\"" + mode + "\":{";
-			user_request +=					"\"product_id\": \"" + m_productId + "\"";
+			user_request +=					"\"product_id\": \"" + m_productId.ToString() + "\"";
 			user_request +=        			",";
 			user_request +=					"\"name\": \"" + m_optionName + "\"";
 			user_request +=        			",";

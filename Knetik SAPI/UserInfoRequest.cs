@@ -31,11 +31,22 @@ namespace Knetik
 			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
 		}
 
-		public UserInfoRequest (string api_key, string productId)
+		public UserInfoRequest (string api_key, int productId)
 		{
 			m_Key = api_key;
 			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
 			m_productId = productId;
+		}
+
+		public UserInfoRequest (string api_key, string userId, string avatarUrl, string lang)
+		{
+			m_Key = api_key;
+			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
+			m_userId = userId;
+			m_avatarUrl = avatarUrl;
+			m_lang = lang;
+			m_method = "put";
+			Debug.Log ("UserInfoRequest With Avatar URL " + avatarUrl + " And Lang " + lang);
 		}
 		
 		public bool doGetInfo()
@@ -75,7 +86,7 @@ namespace Knetik
 			* Note that user_options will be returned as a Dictionary<string, string>
 			* for the purposes of lookups and parsing option name/option value pairs
 			*/
-			if(m_productId != null)
+			if(m_productId != 0)
 			{
 				var purchase_history = jsonDict["result"]["purchase_history"];
 
@@ -84,7 +95,7 @@ namespace Knetik
 				{
 					string product_id = purchase_history[j]["product_id"];
 
-					if (product_id.Equals(m_productId))
+					if (product_id.Equals(m_productId.ToString()))
 					{
 						var options = purchase_history[j]["userGameOptions"];
 						int user_game_option_count = options.Count;
@@ -105,6 +116,66 @@ namespace Knetik
 
 			return true;
 		}
-	}
-	
+
+		string setUserAvatar()
+		{
+			string user_request = "{";			
+			user_request +=        "\"user_id\": " + m_userId + "";
+			user_request +=        ",";
+			user_request += 		"\"user_info\": ";
+			user_request += 			"{";
+			user_request +=					"\"avatar_url\": \"" + m_avatarUrl + "\"";
+			user_request += 			"}";
+			user_request +=     "}";	
+			
+			Debug.Log ("User Avatar Request Put: " + user_request);
+			
+			return user_request;    
+		}
+
+		string setUserLang()
+		{
+			string user_request = "{";			
+			user_request +=        "\"user_id\": " + m_userId + "";
+			user_request +=        ",";
+			user_request += 		"\"user_info\": ";
+			user_request += 			"{";
+			user_request +=					"\"lang\": \"" + m_lang + "\"";
+			user_request += 			"}";
+			user_request +=     "}";	
+			
+			Debug.Log ("User Lang Request Put: " + user_request);
+			
+			return user_request;    
+		}
+
+		public bool putUserInfo(string mode)
+		{
+			JSONNode jsonDict = null;
+			m_url = ApiUtil.API_URL + "/rest/api/latest/user";
+
+			if (mode == "avatar" && m_avatarUrl != null)
+			{
+				Debug.Log("Setting user avatar to " + m_avatarUrl);
+				if (sendSignedRequest(null, setUserAvatar(), ref jsonDict) == false) {
+					Debug.Log("sendSignedRequest failed");
+					return false;
+				}
+			}
+			else if (mode == "lang" && m_lang != null)
+			{
+				if (sendSignedRequest(null, setUserLang(), ref jsonDict) == false) {
+					Debug.Log("sendSignedRequest failed");
+					return false;
+				}
+			}
+			
+			if (jsonDict["result"] == null) {
+				Debug.Log("result is null");
+				return false;
+			}
+			Debug.Log ("User Info Put Successful!");
+			return true;
+		}
+	}	
 }

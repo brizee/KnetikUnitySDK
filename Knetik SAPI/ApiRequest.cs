@@ -18,9 +18,14 @@ namespace Knetik
 		protected string m_Key = null;
 		protected string m_clientSecret = null;
 		protected string m_method = null;
-		protected string m_productId = null;
+		protected int m_productId = 0;
 		protected string m_optionName = null;
 		protected string m_optionValue = null;
+		protected string m_avatarUrl = null;
+		protected string m_lang = null;
+		protected string m_userId = null;
+		protected int m_levelId = 0;
+		protected int m_leaderboardId = 0;
 		
 		protected string m_errorMsg = "";
 		
