@@ -56,6 +56,15 @@ The game should inform the main server about user points using the Metric Update
 	} else {
 		Debug.Log("METRIC POST FAILED!!!");
 	}
+
+To post a metric update with a specific level ID (NOTE: Levels are created on Admin Panel for each game), the PostMetricRequest simply needs an additional parameter passed to it, another int that represents the Level ID to be included as the part of the metric post.
+
+	PostMetricRequest ur = new PostMetricRequest(UserSessionUtils.getApiKey(), 13, 1, 2);
+	if(ur.doPostMetric()) {
+		Debug.Log("Metric post successful");
+	} else {
+		Debug.Log("METRIC POST FAILED!!!");
+	}
 	
 2.4 Product Game Option Retrieval
 Product Game Options that are set in the Admin panel can be retrieved with a provided Product ID (which can also be seen on the Admin Panel).  Product ID should be passed as a string.  An active session is required as well.  Upon retrieving the game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  
@@ -93,4 +102,67 @@ User Game Options can be created or updated from the SDK.  This requires the fol
 	
 		PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
 		bool user_result = userInsert.postUserInfo("update");
-		
+
+2.7 Changing User Settings
+A number of settings for the user can be changed within the Unity SDK.  These assume that the user information is already known as shown below.
+
+	UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+
+	2.7.1 Changing The User Avatar
+	The avatar of the user can be changed using an existing URL that must contain an image type (i.e. .jpg, .png, .gif, etc.).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
+
+		string avatar_url = "http://www.mywebsite/this_new_avatar.png";
+		UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, avatar_url, null);
+		string mode = "avatar";
+		bool userPut_result = userPut.putUserInfo(mode);
+		Debug.Log ("User Put Result for Avatar: " + userPut_result);
+
+	2.7.2 Changing The User Language
+	The language of the user can be changed using an existing set of 2 letter names of languages that the system is expecting to handle (example: en for English, ar for Arabic).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
+
+		string lang = "en";
+		UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, null, lang);
+		string mode = "lang";
+		bool userPut_result = userPut.putUserInfo(mode);
+		Debug.Log ("User Put Result for Lang: " + userPut_result);
+
+2.8 Leaderboard Information Retrieval
+Leaderboards are created on the Admin Panel outside of the Unity SDK.  They each have a unique ID associated with them, are only attached to a single game and a single metric.  Optionally they can be tied to a single game level as well.  Retrieving the leaderboard information requires knowing the leaderboard ID.  This will give the option of a number of fields, as well as the Game Leaderboard, which is the users' results based on this leaderboard.  The Game Leaderboard is known as user_results and is a searchable dictionary, by user ID.
+
+	LeaderboardRequest leaderboard = new LeaderboardRequest(UserSessionUtils.getApiKey(), leaderboardId);
+	bool leaderboard_result = leaderboard.doGetInfo();
+	Debug.Log ("Leaderboard Result: " + leaderboard_result);
+	leaderboard.product_title;  // The title of the product associated with this leaderboard
+	string[] user1_results = leaderboard.user_results["1"];
+
+The following fields are currently retrievable from LeaderboardRequest objects:
+
+	public string leaderboard_id;
+	public string copyright;
+	public string date_created;
+	public string date_updated;
+	public string deleted;
+	public string description;
+	public string developer_id;
+	public string image_url;
+	public string lang;
+	public string languages;
+	public string metric_id;
+	public string name;
+	public string product_description;
+	public string product_id;
+	public string product_summary;
+	public string product_title;
+	public string product_translation_id;
+	public string publisher_id;
+	public string qualifying_value;
+	public string rating_id;
+	public string size;
+	public string sort_style;
+	public string update_date;
+	public string level_id;
+	public string active;
+	public string create_date;
+	public string level_name;
+	public string metric_name;
+	public Dictionary<string, string[]> user_results = new Dictionary<string, string[]>();
