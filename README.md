@@ -100,7 +100,7 @@ Product Game Options that are set in the Admin panel can be retrieved with a pro
 User Game Options that are set in the Admin panel or in the SDK (see 2.6) can be retrieved with a Product ID (which can also be seen on the Admin Panel).  Product ID and User ID should be passed as strings.  An active session is required as well.  Upon retrieving the user's game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  Note that this also retrieves several other user information values.
 
 ```
-	UserInfoRequest product = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+	UserInfoRequest user = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
 	bool user_result = user.doGetInfo();
 	string optionValue = null;
 	if (user_result && user.user_options.TryGetValue(optionName, out optionValue))
@@ -110,7 +110,7 @@ User Game Options that are set in the Admin panel or in the SDK (see 2.6) can be
 ```
 
 ###2.6 User Game Option Storage
-User Game Options can be created or updated from the SDK.  This requires the following fields sent as strings: User ID (which can be retrieved with UserInfoRequest), Product ID (which can also be seen on the Admin Panel), the Option Name, the Option Value, as well as an active session.
+User Game Options can be created or updated from the SDK.  This requires the following fields sent as strings: User ID (which can be retrieved with UserInfoRequest followed by a doGetInfo() on that object), Product ID (which can also be seen on the Admin Panel), the Option Name, the Option Value, as well as an active session.
 
 ####2.6.1 User Game Option Insert
 Creates a new user option (name and value) based on the user ID and product ID.
@@ -131,28 +131,35 @@ Updates an existing user option (value) based on the user ID, product ID, and op
 ###2.7 Changing User Settings
 A number of settings for the user can be changed within the Unity SDK.  These assume that the user information is already known as shown below.
 
-	UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+	bool user_info_result = userGet.doGetInfo();
 
 ####2.7.1 Changing The User Avatar
 The avatar of the user can be changed using an existing URL that must contain an image type (i.e. .jpg, .png, .gif, etc.).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
 
 ```
-	string avatar_url = "http://www.mywebsite/this_new_avatar.png";
-	UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, avatar_url, null);
-	string mode = "avatar";
-	bool userPut_result = userPut.putUserInfo(mode);
-	Debug.Log ("User Put Result for Avatar: " + userPut_result);
+if (user_info_result)
+{
+string avatar_url = "http://www.mywebsite/this_new_avatar.png";
+UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, avatar_url, null);
+string mode = "avatar";
+bool userPut_result = userPut.putUserInfo(mode);
+Debug.Log ("User Put Result for Avatar: " + userPut_result);
+}
 ```
 
 ####2.7.2 Changing The User Language
 The language of the user can be changed using an existing set of 2 letter names of languages that the system is expecting to handle (example: en for English, ar for Arabic).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
 
 ```
-	string lang = "en";
-	UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, null, lang);
-	string mode = "lang";
-	bool userPut_result = userPut.putUserInfo(mode);
-	Debug.Log ("User Put Result for Lang: " + userPut_result);
+if (user_info_result)
+{
+string lang = "en";
+UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, null, lang);
+string mode = "lang";
+bool userPut_result = userPut.putUserInfo(mode);
+Debug.Log ("User Put Result for Lang: " + userPut_result);
+}
 ```
 
 ###2.8 Leaderboard Information Retrieval
