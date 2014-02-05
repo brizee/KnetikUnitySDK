@@ -124,15 +124,17 @@ Creates a new user option (name and value) based on the user ID and product ID.
 Updates an existing user option (value) based on the user ID, product ID, and option name.
 
 ```
-	PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
-	bool user_result = userInsert.postUserInfo("update");
+PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
+bool user_result = userInsert.postUserInfo("update");
 ```
 
 ###2.7 Changing User Settings
 A number of settings for the user can be changed within the Unity SDK.  These assume that the user information is already known as shown below.
 
+```
 UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
 	bool user_info_result = userGet.doGetInfo();
+```
 
 ####2.7.1 Changing The User Avatar
 The avatar of the user can be changed using an existing URL that must contain an image type (i.e. .jpg, .png, .gif, etc.).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
