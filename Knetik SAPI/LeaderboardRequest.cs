@@ -74,31 +74,31 @@ namespace Knetik
 			
 			Debug.Log("Leaderboard Result: " + jsonDict["result"].ToString());
 			
-			leaderboard_id = jsonDict["result"]["id"];
-			active = jsonDict["result"]["active"];
-			copyright = jsonDict["result"]["copyright"];
-			date_created = jsonDict["result"]["date_created"];
-			date_updated = jsonDict["result"]["date_updated"];
-			deleted = jsonDict["result"]["deleted"];
-			developer_id = jsonDict["result"]["developer_id"];
-			lang = jsonDict["result"]["lang"];
-			languages = jsonDict["result"]["languages"];
-			level_id = jsonDict["result"]["level_id"];
-			level_name = jsonDict["result"]["level_name"];
-			metric_id = jsonDict["result"]["metric_id"];
-			metric_name = jsonDict["result"]["metric_name"];
-			product_description = jsonDict["result"]["product_description"];
-			product_id = jsonDict["result"]["product_id"];
-			product_summary = jsonDict["result"]["product_summary"];
-			product_title = jsonDict["result"]["product_title"];
-			product_translation_id = jsonDict["result"]["product_translation_id"];
-			publisher_id = jsonDict["result"]["publisher_id"];
-			qualifying_value = jsonDict["result"]["qualifying_value"];
-			rating_id = jsonDict["result"]["rating_id"];
-			size = jsonDict["result"]["size"];
-			sort_style = jsonDict["result"]["sort_style"];
-			update_date = jsonDict["result"]["update_date"];
-			create_date = jsonDict["result"]["create_date"];
+			leaderboard_id = jsonDict["result"]["leaderboard"]["id"];
+			active = jsonDict["result"]["leaderboard"]["active"];
+			copyright = jsonDict["result"]["leaderboard"]["copyright"];
+			date_created = jsonDict["result"]["leaderboard"]["date_created"];
+			date_updated = jsonDict["result"]["leaderboard"]["date_updated"];
+			deleted = jsonDict["result"]["leaderboard"]["deleted"];
+			developer_id = jsonDict["result"]["leaderboard"]["developer_id"];
+			lang = jsonDict["result"]["leaderboard"]["lang"];
+			languages = jsonDict["result"]["leaderboard"]["languages"];
+			level_id = jsonDict["result"]["leaderboard"]["level_id"];
+			level_name = jsonDict["result"]["leaderboard"]["level_name"];
+			metric_id = jsonDict["result"]["leaderboard"]["metric_id"];
+			metric_name = jsonDict["result"]["leaderboard"]["metric_name"];
+			product_description = jsonDict["result"]["leaderboard"]["product_description"];
+			product_id = jsonDict["result"]["leaderboard"]["product_id"];
+			product_summary = jsonDict["result"]["leaderboard"]["product_summary"];
+			product_title = jsonDict["result"]["leaderboard"]["product_title"];
+			product_translation_id = jsonDict["result"]["leaderboard"]["product_translation_id"];
+			publisher_id = jsonDict["result"]["leaderboard"]["publisher_id"];
+			qualifying_value = jsonDict["result"]["leaderboard"]["qualifying_value"];
+			rating_id = jsonDict["result"]["leaderboard"]["rating_id"];
+			size = jsonDict["result"]["leaderboard"]["size"];
+			sort_style = jsonDict["result"]["leaderboard"]["sort_style"];
+			update_date = jsonDict["result"]["leaderboard"]["update_date"];
+			create_date = jsonDict["result"]["leaderboard"]["create_date"];
 
 			var gameLeaderboards = jsonDict["result"]["gameleaderboards"];
 				

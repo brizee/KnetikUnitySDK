@@ -103,7 +103,10 @@ namespace Knetik
 						{
 							string option_name = options[i]["name"];
 							string option_value = options[i]["value"];
-							user_options.Add(option_name, option_value);
+							if (!user_options.ContainsKey(option_name))
+							{
+								user_options.Add(option_name, option_value);
+							}
 						}
 					}
 				}

@@ -15,7 +15,7 @@
 
   First you need to initialize API with the hostname and Key information you have received from the website:
 
-
+EXAMPLE:
 ```
 ApiUtil.setApiHost("sapi.dev.atentiv.com");
 ApiUtil.setClientKey("cBYlCDAeXL");
@@ -29,6 +29,7 @@ ApiUtil.setClientSecret("pjas2OYrH8FSWHMRoLkoMw0LRCosRm");
 ###2.1 Login
 Login requires valid username/password to proceed. The sample request username/password by a Unity form. You could do this by each way you like, but the strings should be passed to LoginRequest object. Then, by calling doLogin method, you could get the response from server. This C# sample shows how to use the API:
 
+EXAMPLE:
 ```
 	LoginRequest login = new LoginRequest(loginView.data.login, loginView.data.password);
 	if (login.doLogin()) {
@@ -44,6 +45,7 @@ Login requires valid username/password to proceed. The sample request username/p
 ###2.2 Registration
 The registration would more information. You should provide Username, Password, Email and Fullname. The API returns true or false to notify caller if it was successful or not. In case of error, getErrorMessage() method could be called for complete description.
 
+EXAMPLE:
 ```
 RegisterRequest ur = new RegisterRequest(lr.getKey(), 
 		registrationView.data.login, 
@@ -63,6 +65,7 @@ Application.LoadLevel(1);
 ###2.3 Metric update
 The game should inform the main server about user points using the Metric Update call. The call requires active session created before. Besides active session, caller should provider Metric-ID and value. Metric-ID should be grabbed from website. You should create metric_id in the Product information in the administration panel.
 
+EXAMPLE:
 ```
 	PostMetricRequest ur = new PostMetricRequest(UserSessionUtils.getApiKey(), 13, 1);
 	if(ur.doPostMetric()) {
@@ -74,6 +77,7 @@ The game should inform the main server about user points using the Metric Update
 
 To post a metric update with a specific level ID (NOTE: Levels are created on Admin Panel for each game), the PostMetricRequest simply needs an additional parameter passed to it, another int that represents the Level ID to be included as the part of the metric post.
 
+EXAMPLE:
 ```
 	PostMetricRequest ur = new PostMetricRequest(UserSessionUtils.getApiKey(), 13, 1, 2);
 	if(ur.doPostMetric()) {
@@ -86,26 +90,30 @@ To post a metric update with a specific level ID (NOTE: Levels are created on Ad
 ###2.4 Product Game Option Retrieval
 Product Game Options that are set in the Admin panel can be retrieved with a provided Product ID (which can also be seen on the Admin Panel).  Product ID should be passed as a string.  An active session is required as well.  Upon retrieving the game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  
 
+EXAMPLE:
 ```
 	ProductInfoRequest product = new ProductInfoRequest(UserSessionUtils.getApiKey(), productId);
 	bool product_result = product.doGetInfo();
 	string optionValue = null;
+	string optionName = "my_game_option_name";
 	if (product_result && product.game_options.TryGetValue(optionName, out optionValue))
 	{
-		Console.WriteLine("Option Name: " + optionName + " Option Value: " + optionValue);
+		Debug.Log("Option Name: " + optionName + " Option Value: " + optionValue);
 	}
 ```
 	
 ###2.5 User Game Option Retrieval
 User Game Options that are set in the Admin panel or in the SDK (see 2.6) can be retrieved with a Product ID (which can also be seen on the Admin Panel).  Product ID and User ID should be passed as strings.  An active session is required as well.  Upon retrieving the user's game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  Note that this also retrieves several other user information values.
 
+EXAMPLE:
 ```
 	UserInfoRequest user = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
 	bool user_result = user.doGetInfo();
 	string optionValue = null;
+	string optionName = "my_user_option_name";
 	if (user_result && user.user_options.TryGetValue(optionName, out optionValue))
 	{
-		Console.WriteLine("Option Name: " + optionName + " Option Value: " + optionValue);
+		Debug.Log("Option Name: " + optionName + " Option Value: " + optionValue);
 	}
 ```
 
@@ -115,6 +123,7 @@ User Game Options can be created or updated from the SDK.  This requires the fol
 ####2.6.1 User Game Option Insert
 Creates a new user option (name and value) based on the user ID and product ID.
 
+EXAMPLE:
 ```
 	PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
 	bool user_result = userInsert.postUserInfo("insert");
@@ -123,6 +132,7 @@ Creates a new user option (name and value) based on the user ID and product ID.
 ####2.6.1 User Game Option Update
 Updates an existing user option (value) based on the user ID, product ID, and option name.
 
+EXAMPLE:
 ```
 PostUserOptionsRequest userInsert = new PostUserOptionsRequest(UserSessionUtils.getApiKey(), userId, productId, optionName, optionValue);
 bool user_result = userInsert.postUserInfo("update");
@@ -139,7 +149,9 @@ UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), prod
 ####2.7.1 Changing The User Avatar
 The avatar of the user can be changed using an existing URL that must contain an image type (i.e. .jpg, .png, .gif, etc.).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
 
+EXAMPLE:
 ```
+<<<<<<< HEAD
 if (user_info_result)
 {
 string avatar_url = "http://www.mywebsite/this_new_avatar.png";
@@ -148,12 +160,22 @@ string mode = "avatar";
 bool userPut_result = userPut.putUserInfo(mode);
 Debug.Log ("User Put Result for Avatar: " + userPut_result);
 }
+=======
+	bool user_result = userGet.doGetInfo();
+	string avatar_url = "http://www.mywebsite/this_new_avatar.png";
+	UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, avatar_url, null);
+	string mode = "avatar";
+	bool userPut_result = userPut.putUserInfo(mode);
+	Debug.Log ("User Put Result for Avatar: " + userPut_result);
+>>>>>>> Update Readmes
 ```
 
 ####2.7.2 Changing The User Language
 The language of the user can be changed using an existing set of 2 letter names of languages that the system is expecting to handle (example: en for English, ar for Arabic).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
 
+EXAMPLE:
 ```
+<<<<<<< HEAD
 if (user_info_result)
 {
 string lang = "en";
@@ -162,17 +184,51 @@ string mode = "lang";
 bool userPut_result = userPut.putUserInfo(mode);
 Debug.Log ("User Put Result for Lang: " + userPut_result);
 }
+=======
+	bool user_result = userGet.doGetInfo();
+	string lang = "en";
+	UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, null, lang);
+	string mode = "lang";
+	bool userPut_result = userPut.putUserInfo(mode);
+	Debug.Log ("User Put Result for Lang: " + userPut_result);
+>>>>>>> Update Readmes
 ```
 
 ###2.8 Leaderboard Information Retrieval
-Leaderboards are created on the Admin Panel outside of the Unity SDK.  They each have a unique ID associated with them, are only attached to a single game and a single metric.  Optionally they can be tied to a single game level as well.  Retrieving the leaderboard information requires knowing the leaderboard ID.  This will give the option of a number of fields, as well as the Game Leaderboard, which is the users' results based on this leaderboard.  The Game Leaderboard is known as user_results and is a searchable dictionary, by user ID.
+Leaderboards are created on the Admin Panel outside of the Unity SDK.  They each have a unique ID associated with them, are only attached to a single game and a single metric.  Optionally they can be tied to a single game level as well.  Retrieving the leaderboard information requires knowing the leaderboard ID.  This will give the option of a number of fields, as well as the Game Leaderboard, which is the users' results based on this leaderboard.
 
+EXAMPLE:
 ```
+	int leaderboardId = 10;
 	LeaderboardRequest leaderboard = new LeaderboardRequest(UserSessionUtils.getApiKey(), leaderboardId);
 	bool leaderboard_result = leaderboard.doGetInfo();
 	Debug.Log ("Leaderboard Result: " + leaderboard_result);
-	leaderboard.product_title;  // The title of the product associated with this leaderboard
-	string[] user1_results = leaderboard.user_results["1"];
+	Debug.Log ("Leaderboard Product Title: " + leaderboard.product_title);  // The title of the product associated with this leaderboard\
+```
+
+The Game Leaderboard is known as user_results and is a searchable dictionary, by user ID.  The user_results field requires a key of the user_id, (which can be requested from the User Results), and will return the following values:
+
+```	
+	public string currentscore;  // Value 0 of the user_results array
+	public string username;		 // Value 1 of the user_results array
+	public string avatar_url;	 // Value 2 of the user_results array
+```
+
+```
+	EXAMPLE continued from above:
+	UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+		bool userGetResult = userGet.doGetInfo();
+		if (userGetResult)
+		{
+			string[] user1_results = leaderboard.user_results["90"];
+			Debug.Log("User Results Length: " + user1_results.Length);
+			if (user1_results != null || user1_results.Length >= 1)
+			{
+				Debug.Log("User 1 Current Score: " + user1_results[0]);
+				Debug.Log("User 1 Username: " + user1_results[1]);
+				Debug.Log("User 1 Avatar URL: " + user1_results[2]);
+			}
+		}
 ```
 
 The following fields are currently retrievable from LeaderboardRequest objects:
