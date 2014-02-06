@@ -126,7 +126,7 @@ A number of settings for the user can be changed within the Unity SDK.  These as
 	2.7.1 Changing The User Avatar
 	The avatar of the user can be changed using an existing URL that must contain an image type (i.e. .jpg, .png, .gif, etc.).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
 
-<<<<<<< HEAD
+	EXAMPLE:
 		if (user_info_result)
 		{
 			string avatar_url = "http://www.mywebsite/this_new_avatar.png";
@@ -135,20 +135,12 @@ A number of settings for the user can be changed within the Unity SDK.  These as
 			bool userPut_result = userPut.putUserInfo(mode);
 			Debug.Log ("User Put Result for Avatar: " + userPut_result);
 		}
-=======
-		EXAMPLE:
-		string avatar_url = "http://www.mywebsite/this_new_avatar.png";
-		bool user_result = userGet.doGetInfo();
-		UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, avatar_url, null);
-		string mode = "avatar";
-		bool userPut_result = userPut.putUserInfo(mode);
-		Debug.Log ("User Put Result for Avatar: " + userPut_result);
->>>>>>> Update Readmes
+
 
 	2.7.2 Changing The User Language
 	The language of the user can be changed using an existing set of 2 letter names of languages that the system is expecting to handle (example: en for English, ar for Arabic).  Note that userGet.id is the ID of the user as pulled from the above userGet request.
 
-<<<<<<< HEAD
+	EXAMPLE:
 		if (user_info_result)
 		{
 			string lang = "en";
@@ -157,15 +149,6 @@ A number of settings for the user can be changed within the Unity SDK.  These as
 			bool userPut_result = userPut.putUserInfo(mode);
 			Debug.Log ("User Put Result for Lang: " + userPut_result);
 		}
-=======
-		EXAMPLE:
-		string lang = "en";
-		bool user_result = userGet.doGetInfo();
-		UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, null, lang);
-		string mode = "lang";
-		bool userPut_result = userPut.putUserInfo(mode);
-		Debug.Log ("User Put Result for Lang: " + userPut_result);
->>>>>>> Update Readmes
 
 2.8 Leaderboard Information Retrieval
 Leaderboards are created on the Admin Panel outside of the Unity SDK.  They each have a unique ID associated with them, are only attached to a single game and a single metric.  Optionally they can be tied to a single game level as well.  Retrieving the leaderboard information requires knowing the leaderboard ID.  This will give the option of a number of fields, as well as the Game Leaderboard, which is the users' results based on this leaderboard.  
