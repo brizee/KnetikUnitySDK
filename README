@@ -168,11 +168,12 @@ The Game Leaderboard is known as user_results and is a searchable dictionary, by
 
 	EXAMPLE continued from above:
 	UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
-		bool userGetResult = userGet.doGetInfo();
-		if (userGetResult)
+	bool userGetResult = userGet.doGetInfo();
+	if (userGetResult)
+	{
+		if(leaderboard.user_results.ContainsKey(userGet.id))
 		{
-			string[] user1_results = leaderboard.user_results["90"];
-			Debug.Log("User Results Length: " + user1_results.Length);
+			string[] user1_results = leaderboard.user_results[userGet.id];
 			if (user1_results != null || user1_results.Length >= 1)
 			{
 				Debug.Log("User 1 Current Score: " + user1_results[0]);
@@ -180,6 +181,11 @@ The Game Leaderboard is known as user_results and is a searchable dictionary, by
 				Debug.Log("User 1 Avatar URL: " + user1_results[2]);
 			}
 		}
+		else
+		{
+			Debug.Log ("User " + userGet.id + " does not have results for this leaderboard");
+		}
+	}
 
 The following fields are currently retrievable from LeaderboardRequest objects:
 
