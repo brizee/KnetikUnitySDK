@@ -151,7 +151,6 @@ The avatar of the user can be changed using an existing URL that must contain an
 
 EXAMPLE:
 ```
-<<<<<<< HEAD
 if (user_info_result)
 {
 string avatar_url = "http://www.mywebsite/this_new_avatar.png";
@@ -160,14 +159,6 @@ string mode = "avatar";
 bool userPut_result = userPut.putUserInfo(mode);
 Debug.Log ("User Put Result for Avatar: " + userPut_result);
 }
-=======
-	bool user_result = userGet.doGetInfo();
-	string avatar_url = "http://www.mywebsite/this_new_avatar.png";
-	UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, avatar_url, null);
-	string mode = "avatar";
-	bool userPut_result = userPut.putUserInfo(mode);
-	Debug.Log ("User Put Result for Avatar: " + userPut_result);
->>>>>>> Update Readmes
 ```
 
 ####2.7.2 Changing The User Language
@@ -175,7 +166,6 @@ The language of the user can be changed using an existing set of 2 letter names 
 
 EXAMPLE:
 ```
-<<<<<<< HEAD
 if (user_info_result)
 {
 string lang = "en";
@@ -184,14 +174,6 @@ string mode = "lang";
 bool userPut_result = userPut.putUserInfo(mode);
 Debug.Log ("User Put Result for Lang: " + userPut_result);
 }
-=======
-	bool user_result = userGet.doGetInfo();
-	string lang = "en";
-	UserInfoRequest userPut = new UserInfoRequest(UserSessionUtils.getApiKey(), userGet.id, null, lang);
-	string mode = "lang";
-	bool userPut_result = userPut.putUserInfo(mode);
-	Debug.Log ("User Put Result for Lang: " + userPut_result);
->>>>>>> Update Readmes
 ```
 
 ###2.8 Leaderboard Information Retrieval
@@ -214,21 +196,28 @@ The Game Leaderboard is known as user_results and is a searchable dictionary, by
 	public string avatar_url;	 // Value 2 of the user_results array
 ```
 
-```
 	EXAMPLE continued from above:
-	UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
-		bool userGetResult = userGet.doGetInfo();
-		if (userGetResult)
+	
+```
+UserInfoRequest userGet = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
+bool userGetResult = userGet.doGetInfo();
+if (userGetResult)
+{
+	if(leaderboard.user_results.ContainsKey(userGet.id))
+	{
+		string[] user1_results = leaderboard.user_results[userGet.id];
+		if (user1_results != null || user1_results.Length >= 1)
 		{
-			string[] user1_results = leaderboard.user_results["90"];
-			Debug.Log("User Results Length: " + user1_results.Length);
-			if (user1_results != null || user1_results.Length >= 1)
-			{
-				Debug.Log("User 1 Current Score: " + user1_results[0]);
-				Debug.Log("User 1 Username: " + user1_results[1]);
-				Debug.Log("User 1 Avatar URL: " + user1_results[2]);
-			}
+			Debug.Log("User 1 Current Score: " + user1_results[0]);
+			Debug.Log("User 1 Username: " + user1_results[1]);
+			Debug.Log("User 1 Avatar URL: " + user1_results[2]);
 		}
+	}
+	else
+	{
+		Debug.Log ("User " + userGet.id + " does not have results for this leaderboard");
+	}
+}
 ```
 
 The following fields are currently retrievable from LeaderboardRequest objects:
