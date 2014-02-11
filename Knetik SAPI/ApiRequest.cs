@@ -26,6 +26,8 @@ namespace Knetik
 		protected string m_userId = null;
 		protected int m_levelId = 0;
 		protected int m_leaderboardId = 0;
+		protected string m_hashId = null;
+		protected string m_score = null;
 		
 		protected string m_errorMsg = "";
 		
