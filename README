@@ -8,9 +8,9 @@ Knetik SAPI integration could be learned by an easy sample provided too. The sim
 2. Integration Tutorial
 First you need to initialize API with the hostname and Key information you have received from the website:
 
-	ApiUtil.setApiHost("sapi.dev.atentiv.com");
-	ApiUtil.setClientKey("cBYlCDAeXL");
-	ApiUtil.setClientSecret("pjas2OYrH8FSWHMRoLkoMw0LRCosRm");
+	ApiUtil.setApiHost("dev.sapi.playvs.net");
+	ApiUtil.setClientKey("test_key");
+	ApiUtil.setClientSecret("test_secret");
 
 Using these three calls, SAPI would know to whom it needs to talk to and what is the key/secret for communication. This should be done before any calls made to the API. In the sample, this has been done in StartMenuController::Start function.
 
@@ -86,12 +86,8 @@ EXAMPLE:
 2.5 User Game Option Retrieval
 User Game Options that are set in the Admin panel or in the SDK (see 2.6) can be retrieved with a Product ID (which can also be seen on the Admin Panel).  Product ID and User ID should be passed as strings.  An active session is required as well.  Upon retrieving the user's game options, the option information is available as a look-up Dictionary, so option values can be looked up by name.  Note that this also retrieves several other user information values.
 
-<<<<<<< HEAD
-	UserInfoRequest user = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
-=======
 EXAMPLE:
 	UserInfoRequest product = new UserInfoRequest(UserSessionUtils.getApiKey(), productId);
->>>>>>> Update Readmes
 	bool user_result = user.doGetInfo();
 	string optionValue = null;
 	string optionName = "my_user_option_name";
@@ -218,3 +214,29 @@ The following fields are currently retrievable from LeaderboardRequest objects:
 	public string level_name;
 	public string metric_name;
 	public Dictionary<string, string[]> user_results = new Dictionary<string, string[]>();
+
+2.9 Game Event and Result
+Game Events for users can be published to SAPI using the GameEventRequest call.  This requires the hash ID of the user and the score to be submitted for that user.  In addition, a Game Result can be sent with the same parameters, but this will create a final entry for that user's hash ID.  It will then not be editable in the future.  The same function, postGameEvent is called for both Game Event and Game Result, but the difference is the mode string that is sent which determines the type of call to make.
+
+	EXAMPLE OF GAME EVENT:
+	string hashId = "9520f32239474eb7278c1cf17b9a7fa1d348e23a";
+	string score = "50";
+	string mode = "event";
+	GameEventRequest gameEvent = new GameEventRequest(UserSessionUtils.getApiKey(), hashId, score);
+	bool gameEventResponse = gameEvent.postGameEvent(mode);
+	if (gameEventResponse)
+	{
+		Debug.Log ("Successfully posted Game Event For Hash ID " + hashId + " and Score " + score);
+	}
+
+
+	EXAMPLE OF GAME RESULT:
+	string hashId = "9520f32239474eb7278c1cf17b9a7fa1d348e23a";
+	string score = "172";
+	GameEventRequest gameResult = new GameEventRequest(UserSessionUtils.getApiKey(), hashId, score);
+	string mode = "result";
+	bool gameResultResponse = gameEvent2.postGameEvent(mode);
+	if (gameEventResponse)
+	{
+		Debug.Log ("Successfully posted Game Result For Hash ID " + hashId + " and Score " + score);
+	}
