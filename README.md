@@ -17,12 +17,12 @@
 
 EXAMPLE:
 ```
-ApiUtil.setApiHost("sapi.dev.atentiv.com");
-ApiUtil.setClientKey("cBYlCDAeXL");
-ApiUtil.setClientSecret("pjas2OYrH8FSWHMRoLkoMw0LRCosRm");
+ApiUtil.setApiHost("your.sapi.server.com");
+ApiUtil.setClientKey("some_client_key");
+ApiUtil.setClientSecret("some_secret_key");
 ```
 
-  Using these three calls, SAPI would know to whom it needs to talk to and what is the key/secret for communication. This should be done before any calls made to the API. In the sample, this has been done in StartMenuController::Start function.
+  Using these three calls, SAPI would know to whom it needs to talk to and what is the key/secret for communication. This should be done before any calls made to the API. In the sample, this has been done in StartMenuController::Start function with placeholders.  The real information should be provided to you by Knetik Media and the admin panel.
 
   After initializing the API, you could call different functions in the API to login/register. Please note that, other functions would not be available before having an authenticated session to SAPI.
 
