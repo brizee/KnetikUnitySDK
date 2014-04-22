@@ -56,10 +56,11 @@ public class StartMenuController : MonoBehaviour {
 
 		/****************************************
 		// KNETIK-API
+		// The below are placeholder host and keys
 		****************************************/
-		ApiUtil.setApiHost("dev.sapi.playvs.net");
-		ApiUtil.setClientKey("test_key");
-		ApiUtil.setClientSecret("test_secret");
+		ApiUtil.setApiHost("dev.sapi.com");
+		ApiUtil.setClientKey("client_key");
+		ApiUtil.setClientSecret("secret_key");
 		/****************************************
 		// KNETIK-API
 		****************************************/

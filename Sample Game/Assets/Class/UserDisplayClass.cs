@@ -11,19 +11,6 @@ public class UserDisplayClass : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		/****************************************
-		// KNETIK-API
-		****************************************/
-
-		// PlayVS SAPI
-		ApiUtil.setApiHost("dev.sapi.playvs.net");
-		ApiUtil.setClientKey("test_key");
-		ApiUtil.setClientSecret("test_secret");
-
-		/****************************************
-		// KNETIK-API
-		****************************************/
-
 		sharksDestroyedCount = 0;
 		bombsLeft = 30;
 		bombed = null;
