@@ -58,6 +58,7 @@ namespace Knetik
 				Debug.Log("result is null");
 				return false;
 			}
+			Debug.Log ("Game Event " + m_method + " Successful!");
 			return true;
 		}
 	}
