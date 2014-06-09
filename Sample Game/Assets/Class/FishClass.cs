@@ -11,11 +11,14 @@ public class FishClass : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (transform.position.x < -30 || transform.position.x > 30) {
+		if (transform.position.x < -19 || transform.position.x > 20) {
 			//turn around
 			transform.Rotate(new Vector3(0,180,0));
-			transform.Translate( new Vector3(-10, -transform.position.y + Random.Range(-4,-1),0) );
- 
+			if(gameObject.name == "Shark") {
+				transform.Translate( new Vector3(-5, -transform.position.y + Random.Range(-4,-1),0) );
+			} else if (gameObject.name == "ClownFish") {
+				transform.Translate( new Vector3(-5, -transform.position.y + Random.Range(-1,1),0) );
+			}
 			//get new speed
 			speed = Random.Range(6f,10f);
 		}

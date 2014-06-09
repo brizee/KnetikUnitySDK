@@ -53,17 +53,10 @@ public class StartMenuController : MonoBehaviour {
 		// Adding login view to views by name map:
 	    viewByName[LoginView.NAME] = loginView;	
 		viewByName[RegistrationView.NAME] = registrationView;
-
-		/****************************************
-		// KNETIK-API
-		// The below are placeholder host and keys
-		****************************************/
-		ApiUtil.setApiHost("dev.sapi.com");
-		ApiUtil.setClientKey("client_key");
-		ApiUtil.setClientSecret("secret_key");
-		/****************************************
-		// KNETIK-API
-		****************************************/
+		
+		ApiUtil.setApiHost("dev.sapi.playvs.net");
+		ApiUtil.setClientKey("test_key");
+		ApiUtil.setClientSecret("test_secret");
 	}
 
 	void onRegisterButtonClick() {
@@ -88,7 +81,7 @@ public class StartMenuController : MonoBehaviour {
 		if (login.doLogin()) {
 			m_Key = login.getKey();
 			UserSessionUtils.setUserSession(login.getUserId(), login.getUsername(), login.getKey());
-			Application.LoadLevel(1);
+			Application.LoadLevel(2);
 		} else {
 			loginView.error = true;
     		loginView.errorMessage = login.getErrorMessage();			

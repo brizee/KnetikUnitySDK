@@ -6,7 +6,7 @@ using System;
 public class BombClass : MonoBehaviour {
 	private float ySpeed = -4f;
 	public GameObject explosionPrefab;
-
+	
 	// Use this for initialization
 	void Start () {
 	}
@@ -21,67 +21,37 @@ public class BombClass : MonoBehaviour {
 	
 	void OnTriggerEnter(Collider obj) {
 		if (obj.gameObject.name == "Shark") {
-			//reset shark
+						//reset shark
+						obj.gameObject.transform.rotation = Quaternion.identity;
+						obj.gameObject.transform.position = new Vector3 (18f, -3f, 8f);
+						Destroy (this.gameObject);
+						Instantiate (explosionPrefab, transform.position, Quaternion.identity);
+						UserDisplayClass.sharksDestroyedCount++;
+						PostMetricRequest ur = new PostMetricRequest (UserSessionUtils.getApiKey (), 24, 43);
+						PostMetricRequest ul = new PostMetricRequest (UserSessionUtils.getApiKey (), 24, 43, 1);
+						// Use a delegate call to run PostMetricRequest and doPostMetric async
+						new Action<PostMetricRequest> (PostMetric).BeginInvoke (ur, null, null);
+						new Action<PostMetricRequest> (PostMetric).BeginInvoke (ul, null, null);
+						DateTime time = DateTime.Now;              // Use current time
+						string format = "MMM ddd d HH:mm:ss.fff yyyy";    // Use this format
+						PostUserOptionsRequest userInsert = new PostUserOptionsRequest (UserSessionUtils.getApiKey (), "116", 43, "BOMBED!", time.ToString (format));
+						userInsert.postUserInfo ("insert");
+		} else if (obj.gameObject.name == "ClownFish") {
+			//reset fish
 			obj.gameObject.transform.rotation = Quaternion.identity;
-			obj.gameObject.transform.position = new Vector3(20f, -3f, 8f);
-			Destroy(this.gameObject);
-			Instantiate (explosionPrefab, transform.position, Quaternion.identity);
-			UserDisplayClass.sharksDestroyedCount++;
-
-			/****************************************
-			// KNETIK-API
-			****************************************/
-
-			// Post a Game Event, using the Hash ID from iOS and a desired score
-			// 		Game Events can be called any number of times on the same Hash ID
-
-			string sessionKey = "7193d91121e9a58f3577ccd86292cf0c";
-
-			string eventHashId = "7cfe2104935351c8943bd95ce88f3aacee57bc97";
-			string eventScore = "400";
-			GameEventRequest ge = new GameEventRequest(sessionKey, eventHashId, eventScore);
-			// Use a delegate call to run GameEventRequest and postGameEvent async
-			new Action<GameEventRequest>(PostGameEvent).BeginInvoke(ge, null, null);
-
-			// Post a Game Result, using the Hash ID from iOS and a desired score
-			// 		The Result will be the final score call and the score for this Hash ID
-			// 		cannot be updated after this call
-//			string resultHashId = "bf60dd80c920f4a7cbae9bf123e95d46dcba85d8";
-//			string resultScore = "1000";
-//			GameEventRequest gr = new GameEventRequest(sessionKey, resultHashId, resultScore);
-//			// Use a delegate call to run GameEventRequest and postGameEvent async
-//			new Action<GameEventRequest>(PostGameResult).BeginInvoke(gr, null, null);
-
-			/****************************************
-			// KNETIK-API
-			****************************************/
-
+			obj.gameObject.transform.position = new Vector3 (18f, 0.5f, 7f);
+			Destroy (this.gameObject);
+			Instantiate (explosionPrefab, transform.position, Quaternion.identity);	
 		}
-	}
 
-	/****************************************
-	// KNETIK-API
-	****************************************/
-	void PostGameEvent(GameEventRequest ge)
+	}
+	
+	void PostMetric(PostMetricRequest ur)
 	{
-		string mode = "event";
-		if(ge.postGameEvent(mode)) {
-			Debug.Log("Game Event Post Successful");
+		if(ur.doPostMetric()) {
+			Debug.Log("Metric post successful");
 		} else {
-			Debug.Log("Game Event Post FAILED!!!");
+			Debug.Log("METRIC POST FAILED!!!");
 		}		
 	}
-
-	void PostGameResult(GameEventRequest gr)
-	{
-		string mode = "result";
-		if(gr.postGameEvent(mode)) {
-			Debug.Log("Game Result Post Successful");
-		} else {
-			Debug.Log("Game Result Post FAILED!!!");
-		}		
-	}
-	/****************************************
-	// KNETIK-API
-	****************************************/
 }
