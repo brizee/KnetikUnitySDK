@@ -1,12 +1,16 @@
 using System;
-using SimpleJSON;
+using KnetikSimpleJSON;
 using UnityEngine;
 using System.Collections.Generic;
 
+// Retrieves Leaderboard information by the ID of the leaderboard, which are created in the Admin Panel
+
 namespace Knetik
 {
-	public class LeaderboardRequest : ApiRequest
+	public class KnetikLeaderboardRequest : KnetikApiRequest
 	{
+		private string leaderboard_request = null;
+
 		public string leaderboard_id;
 		public string copyright;
 		public string date_created;
@@ -37,42 +41,43 @@ namespace Knetik
 		public string metric_name;
 		public Dictionary<string, string[]> user_results = new Dictionary<string, string[]>();
 
-		public LeaderboardRequest (string api_key, int leaderboardId)
+		public KnetikLeaderboardRequest (string api_key, long leaderboardId)
 		{
-			m_Key = api_key;
-			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
+			m_key = api_key;
+			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 			m_leaderboardId = leaderboardId;
 			m_method = "get";
-			Debug.Log ("Leaderboard by ID");
 		}
 
+		// Build the Leaderboard JSON request
 		string getLeaderboardRequest()
 		{
-			string leaderboard_request = "{";
+			leaderboard_request = "{";
 			leaderboard_request += "\"leaderboard_id\":\"" + m_leaderboardId.ToString() + "\"";
 			leaderboard_request += "}";
-			
-			Debug.Log ("Leaderboard Request String: " + leaderboard_request);
 			return leaderboard_request;    
 		}
-		
+
+		// Retrieve Leaderboard values
 		public bool doGetInfo()
 		{
 			string postBody = getLeaderboardRequest();
-			
-			JSONNode jsonDict = null;
-			
-			m_url = ApiUtil.API_URL + "/rest/api/latest/gameleaderboard";
-			
-			if(sendSignedRequest(null, postBody, ref jsonDict) == false) {
+			KnetikJSONNode jsonDict = null;
+			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.LEADERBOARD_ENDPOINT;
+
+			if(sendSignedRequest(null, postBody, ref jsonDict) == false) 
+			{
+				Debug.LogError("Knetik Labs SDK - ERROR 200: Unable to send signed request for Leaderboard information!");
+				Debug.LogError("Knetik Labs SDK: JSON Request: " + leaderboard_request);
 				return false;
 			}
 			
-			if (jsonDict["result"] == null) {
+			if (jsonDict["result"] == null) 
+			{
+				Debug.LogError("Knetik Labs SDK - ERROR 201: No result found for Leaderboard ID " + leaderboard_id);
+				Debug.LogError("Knetik Labs SDK: JSON Request: " + leaderboard_request);
 				return false;
 			}
-			
-			Debug.Log("Leaderboard Result: " + jsonDict["result"].ToString());
 			
 			leaderboard_id = jsonDict["result"]["leaderboard"]["id"];
 			active = jsonDict["result"]["leaderboard"]["active"];
@@ -101,8 +106,8 @@ namespace Knetik
 			create_date = jsonDict["result"]["leaderboard"]["create_date"];
 
 			var gameLeaderboards = jsonDict["result"]["gameleaderboards"];
-				
 			int gameLeaderboardsCount = gameLeaderboards.Count;
+
 			for(int i = 0; i < gameLeaderboardsCount; i++)
 			{
 				string userid = gameLeaderboards[i]["userid"];

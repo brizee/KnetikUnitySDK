@@ -11,66 +11,69 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-namespace HTTP
+// Used to build all requests made to the server
+
+namespace KnetikHTTP
 {
-	public class HTTPException : Exception
+	public class KnetikHTTPException : Exception
 	{
-		public HTTPException (string message) : base(message)
+		public KnetikHTTPException (string message) : base(message)
 		{
 		}
 	}
 
-	public enum RequestState {
+	public enum KnetikRequestState 
+	{
 		Waiting, Reading, Done
 	}
 
-	public class Request
+	public class KnetikRequest
 	{
         public static bool LogAllRequests = false;
         public static bool VerboseLogging = false;
 
-		public CookieJar cookieJar = null; //CookieJar.Instance;
+		public KnetikCookieJar cookieJar = null; //CookieJar.Instance;
 		public string method = "GET";
 		public string protocol = "HTTP/1.1";
 		public byte[] bytes;
 		public Uri uri;
 		public static byte[] EOL = { (byte)'\r', (byte)'\n' };
-		public Response response = null;
+		public KnetikResponse response = null;
 		public bool isDone = false;
 		public int maximumRetryCount = 8;
 		public bool acceptGzip = false;
 		public bool useCache = false;
 		public Exception exception = null;
-		public RequestState state = RequestState.Waiting;
+		public KnetikRequestState state = KnetikRequestState.Waiting;
         public long responseTime = 0; // in milliseconds
 		public bool synchronous = false;
 
-		public Action< HTTP.Request > completedCallback = null;
+		public Action< KnetikHTTP.KnetikRequest > completedCallback = null;
 
 		Dictionary<string, List<string>> headers = new Dictionary<string, List<string>> ();
 		static Dictionary<string, string> etags = new Dictionary<string, string> ();
 
-		public Request (string method, string uri)
+		public KnetikRequest (string method, string uri)
 		{
 			this.method = method;
 			this.uri = new Uri (uri);
 		}
 
-		public Request (string method, string uri, bool useCache)
+		public KnetikRequest (string method, string uri, bool useCache)
 		{
 			this.method = method;
 			this.uri = new Uri (uri);
 			this.useCache = useCache;
 		}
 
-		public Request (string method, string uri, byte[] bytes)
+		public KnetikRequest (string method, string uri, byte[] bytes)
 		{
 			this.method = method;
 			this.uri = new Uri (uri);
 			this.bytes = bytes;
 		}
 
-        public Request( string method, string uri, WWWForm form )
+		public KnetikRequest( string method, string uri, WWWForm form )
         {
 			this.method = method;
 			this.uri = new Uri (uri);
@@ -169,14 +172,14 @@ namespace HTTP
 								var ssl = ostream as SslStream;
 								ssl.AuthenticateAsClient (uri.Host);
 							} catch (Exception e) {
-								Debug.LogError ("Exception: " + e.Message);
+								Debug.LogException (e);
 								return;
 							}
 						}
 		        		WriteToStream (ostream);
-						response = new Response ();
+						response = new KnetikResponse ();
 						response.request = this;
-						state = RequestState.Reading;
+						state = KnetikRequestState.Reading;
 		        		response.ReadFromStream(ostream);
 					}
 		        	client.Close ();
@@ -199,13 +202,13 @@ namespace HTTP
 				}
 
 			} catch (Exception e) {
-		        Debug.Log("EXCEPTION: " + e);
+		        Debug.LogException(e);
 				Console.WriteLine ("Unhandled Exception, aborting request.");
 		        Console.WriteLine (e);
 				exception = e;
 				response = null;
 			}
-			state = RequestState.Done;
+			state = KnetikRequestState.Done;
 			isDone = true;
             responseTime = curcall.ElapsedMilliseconds;
 			
@@ -216,7 +219,7 @@ namespace HTTP
 					completedCallback(this);
 				} else {
                     // we have to use this dispatcher to avoid executing the callback inside this worker thread
-	                ResponseCallbackDispatcher.Singleton.requests.Enqueue( this );
+					KnetikResponseCallbackDispatcher.Singleton.requests.Enqueue( this );
 				}
             }
 
@@ -243,24 +246,24 @@ namespace HTTP
 		        
 		}
 		
-		public void Send( Action< HTTP.Request > callback )
+		public void Send( Action< KnetikHTTP.KnetikRequest > callback )
 		{
 			
-            if (!synchronous && callback != null && ResponseCallbackDispatcher.Singleton == null )
+			if (!synchronous && callback != null && KnetikResponseCallbackDispatcher.Singleton == null )
             {
-                ResponseCallbackDispatcher.Init();
+				KnetikResponseCallbackDispatcher.Init();
             }
 
 	        completedCallback = callback;
 
 			isDone = false;
-			state = RequestState.Waiting;
+			state = KnetikRequestState.Waiting;
 			if (acceptGzip)
 				SetHeader ("Accept-Encoding", "gzip");
 
 	        if ( this.cookieJar != null )
 			{
-				List< Cookie > cookies = this.cookieJar.GetCookies( new CookieAccessInfo( uri.Host, uri.AbsolutePath ) );
+				List< KnetikCookie > cookies = this.cookieJar.GetCookies( new KnetikCookieAccessInfo( uri.Host, uri.AbsolutePath ) );
 								string cookieString = this.GetHeader( "cookie" );
 				for ( int cookieIndex = 0; cookieIndex < cookies.Count; ++cookieIndex )
 				{
@@ -310,7 +313,7 @@ namespace HTTP
 #if !UNITY_EDITOR
             System.Console.WriteLine( "NET: SSL Cert: " + sslPolicyErrors.ToString() );
 #else
-			Debug.LogWarning("SSL Cert Error: " + sslPolicyErrors.ToString ());
+			Debug.LogError("Knetik Labs SDK - ERROR 6: SSL Cert Error: " + sslPolicyErrors.ToString ());
 #endif
 			return true;
 		}

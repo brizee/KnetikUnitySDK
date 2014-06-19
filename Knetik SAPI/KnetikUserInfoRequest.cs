@@ -1,13 +1,15 @@
 using System;
-using SimpleJSON;
+using KnetikSimpleJSON;
 using UnityEngine;
 using System.Collections.Generic;
 
 namespace Knetik
 {
-	public class UserInfoRequest : ApiRequest
+	public class KnetikUserInfoRequest : KnetikApiRequest
 	{
-		public string id;
+		private string user_request = null;
+
+		public int id;
 		public string email;
 		public string username;
 		public string fullname;
@@ -25,47 +27,51 @@ namespace Knetik
 		public string country;
 		public Dictionary<string, string> user_options = new Dictionary<string, string>();
 
-		public UserInfoRequest (string api_key)
+		public KnetikUserInfoRequest (string api_key)
 		{
-			m_Key = api_key;
-			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
+			m_key = api_key;
+			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 		}
 
-		public UserInfoRequest (string api_key, int productId)
+		public KnetikUserInfoRequest (string api_key, int productId)
 		{
-			m_Key = api_key;
-			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
+			m_key = api_key;
+			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 			m_productId = productId;
 		}
 
-		public UserInfoRequest (string api_key, string userId, string avatarUrl, string lang)
+		public KnetikUserInfoRequest (string api_key, int userId, string avatarUrl, string lang)
 		{
-			m_Key = api_key;
-			m_clientSecret = ApiUtil.API_CLIENT_SECRET;
+			m_key = api_key;
+			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 			m_userId = userId;
 			m_avatarUrl = avatarUrl;
 			m_lang = lang;
 			m_method = "put";
-			Debug.Log ("UserInfoRequest With Avatar URL " + avatarUrl + " And Lang " + lang);
 		}
 		
 		public bool doGetInfo()
 		{
-			JSONNode jsonDict = null;
+			KnetikJSONNode jsonDict = null;
 		
-			m_url = ApiUtil.API_URL + "/rest/api/latest/user";
+			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.USER_ENDPOINT;
 
-			if (sendSignedRequest(ref jsonDict) == false) {
+			if (sendSignedRequest(ref jsonDict) == false) 
+			{
+				Debug.Log("Knetik Labs SDK - ERROR 800: Unable to send a signed request for user information");
+				Debug.LogError("Knetik Labs SDK: JSON Request: " + user_request);
 				return false;
 			}
 			
-		    if (jsonDict["result"] == null) {
+		    if (jsonDict["result"] == null) 
+			{
+				Debug.Log("Knetik Labs SDK - ERROR 801: Response from SAPI to get user information is null");
+				Debug.LogError("Knetik Labs SDK: JSON Request: " + user_request);
 				return false;
 		    }
 
-			Debug.Log("User Result: " + jsonDict["result"].ToString());
-		    
-			id = jsonDict["result"]["id"];
+			Debug.Log("Knetik Labs SDK - User information successfully retrieved.");
+			id = jsonDict["result"]["id"].AsInt;
 			email = jsonDict["result"]["email"];
 			username = jsonDict["result"]["username"];
 			fullname = jsonDict["result"]["fullname"];
@@ -111,10 +117,6 @@ namespace Knetik
 					}
 				}
 
-//				foreach (string key in user_options.Keys)
-//				{
-//					Debug.Log ("User Options Key: " + key + ", User Options Value: " + user_options[key]);
-//				}
 			}
 
 			return true;
@@ -122,7 +124,7 @@ namespace Knetik
 
 		string setUserAvatar()
 		{
-			string user_request = "{";			
+			user_request = "{";			
 			user_request +=        "\"user_id\": " + m_userId + "";
 			user_request +=        ",";
 			user_request += 		"\"user_info\": ";
@@ -130,15 +132,12 @@ namespace Knetik
 			user_request +=					"\"avatar_url\": \"" + m_avatarUrl + "\"";
 			user_request += 			"}";
 			user_request +=     "}";	
-			
-			Debug.Log ("User Avatar Request Put: " + user_request);
-			
 			return user_request;    
 		}
 
 		string setUserLang()
 		{
-			string user_request = "{";			
+			user_request = "{";			
 			user_request +=        "\"user_id\": " + m_userId + "";
 			user_request +=        ",";
 			user_request += 		"\"user_info\": ";
@@ -146,38 +145,46 @@ namespace Knetik
 			user_request +=					"\"lang\": \"" + m_lang + "\"";
 			user_request += 			"}";
 			user_request +=     "}";	
-			
-			Debug.Log ("User Lang Request Put: " + user_request);
-			
 			return user_request;    
 		}
 
 		public bool putUserInfo(string mode)
 		{
-			JSONNode jsonDict = null;
-			m_url = ApiUtil.API_URL + "/rest/api/latest/user";
+			KnetikJSONNode jsonDict = null;
+			m_url = KnetikApiUtil.API_URL + "/rest/api/latest/user";
 
 			if (mode == "avatar" && m_avatarUrl != null)
 			{
-				Debug.Log("Setting user avatar to " + m_avatarUrl);
 				if (sendSignedRequest(null, setUserAvatar(), ref jsonDict) == false) {
-					Debug.Log("sendSignedRequest failed");
+					Debug.Log("Knetik Labs SDK - ERROR 802: Unable to send a signed request for user avatar update");
+					Debug.LogError("Knetik Labs SDK: JSON Request: " + user_request);
 					return false;
 				}
 			}
+
 			else if (mode == "lang" && m_lang != null)
 			{
 				if (sendSignedRequest(null, setUserLang(), ref jsonDict) == false) {
-					Debug.Log("sendSignedRequest failed");
+					Debug.Log("Knetik Labs SDK - ERROR 803: Unable to send a signed request for user language update");
+					Debug.LogError("Knetik Labs SDK: JSON Request: " + user_request);
 					return false;
 				}
 			}
-			
-			if (jsonDict["result"] == null) {
-				Debug.Log("result is null");
+
+			else if (mode != "avatar" && mode != "lang")
+			{
+				Debug.Log("Knetik Labs SDK - ERROR 806: Invalid mode " + mode + " for user update");
 				return false;
 			}
-			Debug.Log ("User Info Put Successful!");
+			
+			if (jsonDict["result"] == null) 
+			{
+				Debug.Log("Knetik Labs SDK - ERROR 805: User update response from SAPI is null");
+				Debug.LogError("Knetik Labs SDK: JSON Request: " + user_request);
+				return false;
+			}
+
+			Debug.Log ("Knetik Labs SDK - User Info Put Successful!");
 			return true;
 		}
 	}	

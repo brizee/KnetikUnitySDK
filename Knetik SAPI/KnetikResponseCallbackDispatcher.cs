@@ -2,15 +2,15 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-namespace HTTP
+namespace KnetikHTTP
 {
-	public class ResponseCallbackDispatcher : MonoBehaviour
+	public class KnetikResponseCallbackDispatcher : MonoBehaviour
     {
-        private static ResponseCallbackDispatcher singleton = null;
+		private static KnetikResponseCallbackDispatcher singleton = null;
         private static GameObject singletonGameObject = null;
         private static object singletonLock = new object();
 
-        public static ResponseCallbackDispatcher Singleton {
+		public static KnetikResponseCallbackDispatcher Singleton {
             get {
                 return singleton;
             }
@@ -21,6 +21,7 @@ namespace HTTP
         public static void Init()
         {
             if ( singleton != null )
+
             {
                 return;
             }
@@ -33,8 +34,8 @@ namespace HTTP
                 }
 
                 singletonGameObject = new GameObject();
-                singleton = singletonGameObject.AddComponent< ResponseCallbackDispatcher >();
-                singletonGameObject.name = "HTTPResponseCallbackDispatcher";
+				singleton = singletonGameObject.AddComponent< KnetikResponseCallbackDispatcher >();
+				singletonGameObject.name = "KnetikHTTPResponseCallbackDispatcher";
             }
         }
 
@@ -42,7 +43,7 @@ namespace HTTP
         {
             while( requests.Count > 0 )
             {
-                HTTP.Request request = (Request)requests.Dequeue();
+				KnetikHTTP.KnetikRequest request = (KnetikRequest)requests.Dequeue();
                 request.completedCallback( request );
             }
         }

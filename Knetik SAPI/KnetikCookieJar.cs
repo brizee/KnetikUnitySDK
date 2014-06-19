@@ -4,37 +4,41 @@ using System.Text.RegularExpressions;
 
 // Based on node-cookiejar (https://github.com/bmeck/node-cookiejar)
 
-namespace HTTP
+namespace KnetikHTTP
 {
-	public class CookieAccessInfo
+	public class KnetikCookieAccessInfo
 	{
 		public string domain = null;
 		public string path = null;
 		public bool secure = false;
 		public bool scriptAccessible = true;
-		
-		public CookieAccessInfo( string domain, string path )
+
+		// Non-secure
+		public KnetikCookieAccessInfo( string domain, string path )
 		{
 			this.domain = domain;
 			this.path = path;
 		}
-		
-		public CookieAccessInfo( string domain, string path, bool secure )
+
+		// Secure
+		public KnetikCookieAccessInfo( string domain, string path, bool secure )
 		{
 			this.domain = domain;
 			this.path = path;
 			this.secure = secure;
 		}
-		
-		public CookieAccessInfo( string domain, string path, bool secure, bool scriptAccessible )
+
+		// Secure and Script Accessible
+		public KnetikCookieAccessInfo( string domain, string path, bool secure, bool scriptAccessible )
 		{
 			this.domain = domain;
 			this.path = path;
 			this.secure = secure;
 			this.scriptAccessible = scriptAccessible;
 		}
-		
-		public CookieAccessInfo( Cookie cookie )
+
+		// When Cookie Information Already Exists
+		public KnetikCookieAccessInfo( KnetikCookie cookie )
 		{
 			this.domain = cookie.domain;
 			this.path = cookie.path;
@@ -43,7 +47,7 @@ namespace HTTP
 		}
 	}
 	
-	public class Cookie
+	public class KnetikCookie
 	{
 		public string name = null;
 		public string value = null;
@@ -54,8 +58,9 @@ namespace HTTP
 		public bool scriptAccessible = true;
 		
 		private static string cookiePattern = "\\s*([^=]+)(?:=((?:.|\\n)*))?";
-		
-		public Cookie( string cookieString )
+
+		// Reads Cookie
+		public KnetikCookie( string cookieString )
 		{
 			string[] parts = cookieString.Split( ';' );
 			foreach ( string part in parts )
@@ -98,8 +103,9 @@ namespace HTTP
 				}
 			}
 		}
-		
-		public bool Matches( CookieAccessInfo accessInfo )
+
+		// Ensure that Cookie matches existing access information
+		public bool Matches( KnetikCookieAccessInfo accessInfo )
 		{
 			if (    this.secure != accessInfo.secure
 			     || !this.CollidesWith( accessInfo ) )
@@ -110,7 +116,7 @@ namespace HTTP
 			return true;
 		}
 	
-		public bool CollidesWith( CookieAccessInfo accessInfo )
+		public bool CollidesWith( KnetikCookieAccessInfo accessInfo )
 		{
 			if ( ( this.path != null && accessInfo.path == null ) || ( this.domain != null && accessInfo.domain == null ) )
 			{
@@ -183,29 +189,30 @@ namespace HTTP
 	
     public delegate void ContentsChangedDelegate();    
     
-	public class CookieJar
+	// Store Cookies in Dictionary until Expired
+	public class KnetikCookieJar
 	{
 		private static string version = "v2";
         private object cookieJarLock = new object();
 
-		private static CookieJar instance;
-		public Dictionary< string, List< Cookie > > cookies;
+		private static KnetikCookieJar instance;
+		public Dictionary< string, List< KnetikCookie > > cookies;
 
         public ContentsChangedDelegate ContentsChanged;
 		
-		public static CookieJar Instance
+		public static KnetikCookieJar Instance
 		{
 			get
 			{
 				if ( instance == null )
 				{
-					instance = new CookieJar();
+					instance = new KnetikCookieJar();
 				}
 				return instance;
 			}
 		}
 		
-		public CookieJar ()
+		public KnetikCookieJar ()
 		{
             this.Clear();
 		}
@@ -214,7 +221,7 @@ namespace HTTP
         {
             lock( cookieJarLock )
             {
-                cookies = new Dictionary< string, List< Cookie > >();
+				cookies = new Dictionary< string, List< KnetikCookie > >();
                 if ( ContentsChanged != null )
                 {
                     ContentsChanged();
@@ -222,7 +229,7 @@ namespace HTTP
             }
         }
 
-		public bool SetCookie( Cookie cookie )
+		public bool SetCookie( KnetikCookie cookie )
 		{
             lock( cookieJarLock )
             {
@@ -232,8 +239,8 @@ namespace HTTP
                 {
                     for( int index = 0; index < cookies[ cookie.name ].Count; ++index )
                     {
-                        Cookie collidableCookie = cookies[ cookie.name ][ index ];
-                        if ( collidableCookie.CollidesWith( new CookieAccessInfo( cookie ) ) )
+						KnetikCookie collidableCookie = cookies[ cookie.name ][ index ];
+						if ( collidableCookie.CollidesWith( new KnetikCookieAccessInfo( cookie ) ) )
                         {
                             if( expired )
                             {
@@ -279,8 +286,8 @@ namespace HTTP
                     return false;
                 }
     
-                cookies[ cookie.name ] = new List< Cookie >();
-                cookies[ cookie.name ].Add( cookie );
+				cookies[ cookie.name ] = new List< KnetikCookie >();
+				cookies[ cookie.name ].Add( cookie );
                 if ( ContentsChanged != null )
                 {
                     ContentsChanged();
@@ -295,7 +302,7 @@ namespace HTTP
         //       there's no way to add all cookies (regardless of script accessibility) to the
         //       request without exposing cookies that should not be script accessible.
         
-		public Cookie GetCookie( string name, CookieAccessInfo accessInfo )
+		public KnetikCookie GetCookie( string name, KnetikCookieAccessInfo accessInfo )
 		{
 			if ( !cookies.ContainsKey( name ) )
 			{
@@ -304,7 +311,7 @@ namespace HTTP
 			
 			for ( int index = 0; index < cookies[ name ].Count; ++index )
 			{
-				Cookie cookie = cookies[ name ][ index ];
+				KnetikCookie cookie = cookies[ name ][ index ];
 				if ( cookie.expirationDate > DateTime.Now && cookie.Matches( accessInfo ) )
 				{
                     return cookie;
@@ -314,12 +321,12 @@ namespace HTTP
             return null;
 		}
 		
-		public List< Cookie > GetCookies( CookieAccessInfo accessInfo )
+		public List< KnetikCookie > GetCookies( KnetikCookieAccessInfo accessInfo )
 		{
-			List< Cookie > result = new List< Cookie >();
+			List< KnetikCookie > result = new List< KnetikCookie >();
 			foreach ( string cookieName in cookies.Keys )
 			{
-                Cookie cookie = this.GetCookie( cookieName, accessInfo );
+				KnetikCookie cookie = this.GetCookie( cookieName, accessInfo );
 				if ( cookie != null )
 				{
                     result.Add( cookie );
@@ -329,7 +336,7 @@ namespace HTTP
 			return result;
 		}
 		
-		public void SetCookies( Cookie[] cookieObjects )
+		public void SetCookies( KnetikCookie[] cookieObjects )
 		{
 			for ( var index = 0; index < cookieObjects.Length; ++index )
 			{
@@ -351,7 +358,7 @@ namespace HTTP
 			
 			for ( int index = 0; index < match.Groups.Count; ++index )
 			{
-				this.SetCookie( new Cookie( match.Groups[ index ].Value ) );
+				this.SetCookie( new KnetikCookie( match.Groups[ index ].Value ) );
 			}
 		}
 
@@ -399,7 +406,7 @@ namespace HTTP
 				
                 if ( cookieString.Length > 0 )
                 {
-                    this.SetCookie( new Cookie( cookieString ) );
+					this.SetCookie( new KnetikCookie( cookieString ) );
                 }
             }
         }

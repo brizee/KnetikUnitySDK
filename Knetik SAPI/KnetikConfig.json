@@ -1,0 +1,13 @@
+{
+    "version": "1.0",
+    "apiHost": "dev.sapi.playvs.net",
+    "urlPrefix": "http://",
+    "clientKey": "test_key",
+    "clientSecret": "test_secret",
+    "endpointPrefix": "/rest/api/latest/",
+    "sessionEndpoint": "session",
+    "leaderboardEndpoint": "gameleaderboard",
+    "metricEndpoint": "metric",
+    "userEndpoint": "user",
+    "productEndpoint": "product"
+}

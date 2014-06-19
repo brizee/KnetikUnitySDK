@@ -43,11 +43,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-
-namespace SimpleJSON
+namespace KnetikSimpleJSON
 {
-	public enum JSONBinaryTag
+	public enum KnetikJSONBinaryTag
 	{
 		Array			= 1,
 		Class			= 2,
@@ -58,26 +58,26 @@ namespace SimpleJSON
 		FloatValue		= 7,
 	}
 
-    public class JSONNode
+	public class KnetikJSONNode
     {
         #region common interface
-        public virtual void Add(string aKey, JSONNode aItem){ }
-        public virtual JSONNode this[int aIndex]   { get { return null; } set { } }
-        public virtual JSONNode this[string aKey]  { get { return null; } set { } }
+		public virtual void Add(string aKey, KnetikJSONNode aItem){ }
+		public virtual KnetikJSONNode this[int aIndex]   { get { return null; } set { } }
+		public virtual KnetikJSONNode this[string aKey]  { get { return null; } set { } }
         public virtual string Value                { get { return "";   } set { } }
 		public virtual int Count                   { get { return 0;    } }
 
-        public virtual void Add(JSONNode aItem)
+		public virtual void Add(KnetikJSONNode aItem)
         {
             Add("", aItem);
         }
 
-        public virtual JSONNode Remove(string aKey) { return null; }
-        public virtual JSONNode Remove(int aIndex) { return null; }
-        public virtual JSONNode Remove(JSONNode aNode) { return aNode; }
+		public virtual KnetikJSONNode Remove(string aKey) { return null; }
+		public virtual KnetikJSONNode Remove(int aIndex) { return null; }
+		public virtual KnetikJSONNode Remove(KnetikJSONNode aNode) { return aNode; }
 
-        public virtual IEnumerable<JSONNode> Childs { get { yield break;} }
-        public IEnumerable<JSONNode> DeepChilds
+		public virtual IEnumerable<KnetikJSONNode> Childs { get { yield break;} }
+		public IEnumerable<KnetikJSONNode> DeepChilds
         {
             get
             {
@@ -89,16 +89,15 @@ namespace SimpleJSON
 
         public override string ToString()
         {
-            return "JSONNode";
+			return "KnetikJSONNode";
         }
         public virtual string ToString(string aPrefix)
         {
-            return "JSONNode";
+			return "KnetikJSONNode";
         }
 
         #endregion common interface
-
-        #region typecasting properties
+       #region typecasting properties
         public virtual int AsInt
         {
             get
@@ -155,18 +154,18 @@ namespace SimpleJSON
                 Value = (value)?"true":"false";
             }
         }
-        public virtual JSONArray AsArray
+		public virtual KnetikJSONArray AsArray
         {
             get
             {
-                return this as JSONArray;
+				return this as KnetikJSONArray;
             }
         }
-        public virtual JSONClass AsObject
+		public virtual KnetikJSONClass AsObject
         {
             get
             {
-                return this as JSONClass;
+				return this as KnetikJSONClass;
             }
         }
 
@@ -174,22 +173,22 @@ namespace SimpleJSON
         #endregion typecasting properties
 
         #region operators
-        public static implicit operator JSONNode(string s)
+		public static implicit operator KnetikJSONNode(string s)
         {
-            return new JSONData(s);
+			return new KnetikJSONData(s);
         }
-        public static implicit operator string(JSONNode d)
+		public static implicit operator string(KnetikJSONNode d)
         {
             return (d == null)?null:d.Value;
         }
-		public static bool operator ==(JSONNode a, object b)
+		public static bool operator ==(KnetikJSONNode a, object b)
 		{
-			if (b == null && a is JSONLazyCreator)
+			if (b == null && a is KnetikJSONLazyCreator)
 				return true;
 			return System.Object.ReferenceEquals(a,b);
 		}
 		
-		public static bool operator !=(JSONNode a, object b)
+		public static bool operator !=(KnetikJSONNode a, object b)
 		{
 		    return !(a == b);
 		}
@@ -225,10 +224,10 @@ namespace SimpleJSON
             return result;
         }
 
-        public static JSONNode Parse(string aJSON)
+		public static KnetikJSONNode Parse(string aJSON)
         {
-            Stack<JSONNode> stack = new Stack<JSONNode>();
-            JSONNode ctx = null;
+			Stack<KnetikJSONNode> stack = new Stack<KnetikJSONNode>();
+			KnetikJSONNode ctx = null;
             int i = 0;
             string Token = "";
             string TokenName = "";
@@ -243,11 +242,11 @@ namespace SimpleJSON
                             Token += aJSON[i];
                             break;
                         }
-                        stack.Push(new JSONClass());
+						stack.Push(new KnetikJSONClass());
                         if (ctx != null)
                         {
                             TokenName = TokenName.Trim();
-                            if (ctx is JSONArray)
+							if (ctx is KnetikJSONArray)
                                 ctx.Add(stack.Peek());
                             else if (TokenName != "")
                                 ctx.Add(TokenName,stack.Peek());
@@ -264,11 +263,11 @@ namespace SimpleJSON
                             break;
                         }
 
-                        stack.Push(new JSONArray());
+						stack.Push(new KnetikJSONArray());
                         if (ctx != null)
                         {
                             TokenName = TokenName.Trim();
-                            if (ctx is JSONArray)
+							if (ctx is KnetikJSONArray)
                                 ctx.Add(stack.Peek());
                             else if (TokenName != "")
                                 ctx.Add(TokenName,stack.Peek());
@@ -292,7 +291,7 @@ namespace SimpleJSON
                         if (Token != "")
                         {
                             TokenName = TokenName.Trim();
-                            if (ctx is JSONArray)
+							if (ctx is KnetikJSONArray)
                                 ctx.Add(Token);
                             else if (TokenName != "")
                                 ctx.Add(TokenName,Token);
@@ -325,7 +324,7 @@ namespace SimpleJSON
                         }
                         if (Token != "")
                         {
-                            if (ctx is JSONArray)
+							if (ctx is KnetikJSONArray)
                                 ctx.Add(Token);
                             else if (TokenName != "")
                                 ctx.Add(TokenName, Token);
@@ -377,6 +376,7 @@ namespace SimpleJSON
             if (QuoteMode)
             {
                 throw new Exception("JSON Parse: Quotation marks seems to be messed up.");
+				Debug.LogWarning("Knetik Labs SDK - Double check the formatting of the KnetikConfig.json file. (This may not be the cause)");
             }
             return ctx;
         }
@@ -450,23 +450,23 @@ namespace SimpleJSON
 				return System.Convert.ToBase64String(stream.ToArray());
 			}
 		}
-		public static JSONNode Deserialize(System.IO.BinaryReader aReader)
+		public static KnetikJSONNode Deserialize(System.IO.BinaryReader aReader)
 		{
-			JSONBinaryTag type = (JSONBinaryTag)aReader.ReadByte();
+			KnetikJSONBinaryTag type = (KnetikJSONBinaryTag)aReader.ReadByte();
 			switch(type)
 			{
-			case JSONBinaryTag.Array:
+			case KnetikJSONBinaryTag.Array:
 			{
 				int count = aReader.ReadInt32();
-				JSONArray tmp = new JSONArray();
+				KnetikJSONArray tmp = new KnetikJSONArray();
 				for(int i = 0; i < count; i++)
 					tmp.Add(Deserialize(aReader));
 				return tmp;
 			}
-			case JSONBinaryTag.Class:
+			case KnetikJSONBinaryTag.Class:
 			{
 				int count = aReader.ReadInt32();				
-				JSONClass tmp = new JSONClass();
+				KnetikJSONClass tmp = new KnetikJSONClass();
 				for(int i = 0; i < count; i++)
 				{
 					string key = aReader.ReadString();
@@ -475,25 +475,25 @@ namespace SimpleJSON
 				}
 				return tmp;
 			}
-			case JSONBinaryTag.Value:
+			case KnetikJSONBinaryTag.Value:
 			{
-				return new JSONData(aReader.ReadString());
+				return new KnetikJSONData(aReader.ReadString());
 			}
-			case JSONBinaryTag.IntValue:
+			case KnetikJSONBinaryTag.IntValue:
 			{
-				return new JSONData(aReader.ReadInt32());
+				return new KnetikJSONData(aReader.ReadInt32());
 			}
-			case JSONBinaryTag.DoubleValue:
+			case KnetikJSONBinaryTag.DoubleValue:
 			{
-				return new JSONData(aReader.ReadDouble());
+				return new KnetikJSONData(aReader.ReadDouble());
 			}
-			case JSONBinaryTag.BoolValue:
+			case KnetikJSONBinaryTag.BoolValue:
 			{
-				return new JSONData(aReader.ReadBoolean());
+				return new KnetikJSONData(aReader.ReadBoolean());
 			}
-			case JSONBinaryTag.FloatValue:
+			case KnetikJSONBinaryTag.FloatValue:
 			{
-				return new JSONData(aReader.ReadSingle());
+				return new KnetikJSONData(aReader.ReadSingle());
 			}
 				
 			default:
@@ -524,35 +524,35 @@ namespace SimpleJSON
 			return LoadFromCompressedStream(stream);
 		}
         #else
-   	    public static JSONNode LoadFromCompressedFile(string aFileName)
+		public static KnetikJSONNode LoadFromCompressedFile(string aFileName)
         {
             throw new Exception("Can't use compressed functions. You need include the SharpZipLib and uncomment the define at the top of SimpleJSON");
         }
-        public static JSONNode LoadFromCompressedStream(System.IO.Stream aData)
+		public static KnetikJSONNode LoadFromCompressedStream(System.IO.Stream aData)
         {
             throw new Exception("Can't use compressed functions. You need include the SharpZipLib and uncomment the define at the top of SimpleJSON");
         }
-        public static JSONNode LoadFromCompressedBase64(string aBase64)
+		public static KnetikJSONNode LoadFromCompressedBase64(string aBase64)
         {
             throw new Exception("Can't use compressed functions. You need include the SharpZipLib and uncomment the define at the top of SimpleJSON");
         }
 		#endif
 		
-		public static JSONNode LoadFromStream(System.IO.Stream aData)
+		public static KnetikJSONNode LoadFromStream(System.IO.Stream aData)
 		{
 			using(var R = new System.IO.BinaryReader(aData))
 			{
 				return Deserialize(R);
 			}
 		}
-		public static JSONNode LoadFromFile(string aFileName)
+		public static KnetikJSONNode LoadFromFile(string aFileName)
 		{
 			using(var F = System.IO.File.OpenRead(aFileName))
 			{
 				return LoadFromStream(F);
 			}
 		}
-		public static JSONNode LoadFromBase64(string aBase64)
+		public static KnetikJSONNode LoadFromBase64(string aBase64)
 		{
 			var tmp = System.Convert.FromBase64String(aBase64);
 			var stream = new System.IO.MemoryStream(tmp);
@@ -561,15 +561,15 @@ namespace SimpleJSON
 		}
     } // End of JSONNode
 
-    public class JSONArray : JSONNode, IEnumerable
+	public class KnetikJSONArray : KnetikJSONNode, IEnumerable
     {
-        private List<JSONNode> m_List = new List<JSONNode>();
-        public override JSONNode this[int aIndex]
+		private List<KnetikJSONNode> m_List = new List<KnetikJSONNode>();
+		public override KnetikJSONNode this[int aIndex]
         {
             get
 			{
 				if (aIndex<0 || aIndex >= m_List.Count)
-					return new JSONLazyCreator(this);
+					return new KnetikJSONLazyCreator(this);
 				return m_List[aIndex];
 			}
             set
@@ -580,49 +580,49 @@ namespace SimpleJSON
                     m_List[aIndex] = value;
             }
         }
-		public override JSONNode this[string aKey]
+		public override KnetikJSONNode this[string aKey]
 		{
-			get{ return new JSONLazyCreator(this);}
+			get{ return new KnetikJSONLazyCreator(this);}
 			set{ m_List.Add(value); }
 		}
 		public override int Count
 		{
 			get { return m_List.Count; }
 		}
-        public override void Add(string aKey, JSONNode aItem)
+		public override void Add(string aKey, KnetikJSONNode aItem)
         {
             m_List.Add(aItem);
         }
-        public override JSONNode Remove(int aIndex)
+		public override KnetikJSONNode Remove(int aIndex)
         {
             if (aIndex < 0 || aIndex >= m_List.Count)
                 return null;
-            JSONNode tmp = m_List[aIndex];
+			KnetikJSONNode tmp = m_List[aIndex];
             m_List.RemoveAt(aIndex);
             return tmp;
         }
-        public override JSONNode Remove(JSONNode aNode)
+		public override KnetikJSONNode Remove(KnetikJSONNode aNode)
         {
             m_List.Remove(aNode);
             return aNode;
         }
-        public override IEnumerable<JSONNode> Childs
+		public override IEnumerable<KnetikJSONNode> Childs
         {
             get
             {
-                foreach(JSONNode N in m_List)
+				foreach(KnetikJSONNode N in m_List)
                     yield return N;
             }
         }
         public IEnumerator GetEnumerator()
         {
-            foreach(JSONNode N in m_List)
+			foreach(KnetikJSONNode N in m_List)
                 yield return N;
         }
         public override string ToString()
         {
             string result = "[ ";
-            foreach (JSONNode N in m_List)
+			foreach (KnetikJSONNode N in m_List)
             {
                 if (result.Length > 2)
                     result += ", ";
@@ -634,7 +634,7 @@ namespace SimpleJSON
         public override string ToString(string aPrefix)
         {
             string result = "[ ";
-            foreach (JSONNode N in m_List)
+			foreach (KnetikJSONNode N in m_List)
             {
                 if (result.Length > 3)
                     result += ", ";
@@ -646,7 +646,7 @@ namespace SimpleJSON
         }
 		public override void Serialize (System.IO.BinaryWriter aWriter)
 		{
-			aWriter.Write((byte)JSONBinaryTag.Array);
+			aWriter.Write((byte)KnetikJSONBinaryTag.Array);
 			aWriter.Write(m_List.Count);
 			for(int i = 0; i < m_List.Count; i++)
 			{
@@ -655,17 +655,17 @@ namespace SimpleJSON
 		}
     } // End of JSONArray
 
-    public class JSONClass : JSONNode, IEnumerable
+	public class KnetikJSONClass : KnetikJSONNode, IEnumerable
     {
-        private Dictionary<string,JSONNode> m_Dict = new Dictionary<string,JSONNode>();
-        public override JSONNode this[string aKey]
+		private Dictionary<string,KnetikJSONNode> m_Dict = new Dictionary<string,KnetikJSONNode>();
+		public override KnetikJSONNode this[string aKey]
         {
             get
 			{
 				if (m_Dict.ContainsKey(aKey))
 					return m_Dict[aKey];
 				else
-					return new JSONLazyCreator(this, aKey);
+					return new KnetikJSONLazyCreator(this, aKey);
 			}
             set
             {
@@ -675,7 +675,7 @@ namespace SimpleJSON
                     m_Dict.Add(aKey,value);
             }
         }
-        public override JSONNode this[int aIndex]
+		public override KnetikJSONNode this[int aIndex]
         {
             get
             {
@@ -697,7 +697,7 @@ namespace SimpleJSON
 		}
 
 
-        public override void Add(string aKey, JSONNode aItem)
+		public override void Add(string aKey, KnetikJSONNode aItem)
         {
             if (!string.IsNullOrEmpty(aKey))
             {
@@ -710,15 +710,15 @@ namespace SimpleJSON
                 m_Dict.Add(Guid.NewGuid().ToString(), aItem);
         }
 
-        public override JSONNode Remove(string aKey)
+		public override KnetikJSONNode Remove(string aKey)
         {
             if (!m_Dict.ContainsKey(aKey))
                 return null;
-            JSONNode tmp = m_Dict[aKey];
+			KnetikJSONNode tmp = m_Dict[aKey];
             m_Dict.Remove(aKey);
             return tmp;        
         }
-        public override JSONNode Remove(int aIndex)
+		public override KnetikJSONNode Remove(int aIndex)
         {
             if (aIndex < 0 || aIndex >= m_Dict.Count)
                 return null;
@@ -726,7 +726,7 @@ namespace SimpleJSON
             m_Dict.Remove(item.Key);
             return item.Value;
         }
-        public override JSONNode Remove(JSONNode aNode)
+		public override KnetikJSONNode Remove(KnetikJSONNode aNode)
         {
             try
             {
@@ -740,24 +740,24 @@ namespace SimpleJSON
             }
         }
 
-        public override IEnumerable<JSONNode> Childs
+		public override IEnumerable<KnetikJSONNode> Childs
         {
             get
             {
-                foreach(KeyValuePair<string,JSONNode> N in m_Dict)
+				foreach(KeyValuePair<string,KnetikJSONNode> N in m_Dict)
                     yield return N.Value;
             }
         }
 
         public IEnumerator GetEnumerator()
         {
-            foreach(KeyValuePair<string, JSONNode> N in m_Dict)
+			foreach(KeyValuePair<string, KnetikJSONNode> N in m_Dict)
                 yield return N;
         }
         public override string ToString()
         {
             string result = "{";
-            foreach (KeyValuePair<string, JSONNode> N in m_Dict)
+			foreach (KeyValuePair<string, KnetikJSONNode> N in m_Dict)
             {
                 if (result.Length > 2)
                     result += ", ";
@@ -769,7 +769,7 @@ namespace SimpleJSON
         public override string ToString(string aPrefix)
         {
             string result = "{ ";
-            foreach (KeyValuePair<string, JSONNode> N in m_Dict)
+			foreach (KeyValuePair<string, KnetikJSONNode> N in m_Dict)
             {
                 if (result.Length > 3)
                     result += ", ";
@@ -781,7 +781,7 @@ namespace SimpleJSON
         }
 		public override void Serialize (System.IO.BinaryWriter aWriter)
 		{
-			aWriter.Write((byte)JSONBinaryTag.Class);
+			aWriter.Write((byte)KnetikJSONBinaryTag.Class);
 			aWriter.Write(m_Dict.Count);
 			foreach(string K in m_Dict.Keys)
 			{
@@ -791,7 +791,7 @@ namespace SimpleJSON
 		}
     } // End of JSONClass
 
-    public class JSONData : JSONNode
+	public class KnetikJSONData : KnetikJSONNode
     {
         private string m_Data;
         public override string Value
@@ -799,23 +799,23 @@ namespace SimpleJSON
             get { return m_Data; }
             set { m_Data = value; }
         }
-        public JSONData(string aData)
+		public KnetikJSONData(string aData)
         {
             m_Data = aData;
         }
-        public JSONData(float aData)
+		public KnetikJSONData(float aData)
         {
             AsFloat = aData;
         }
-        public JSONData(double aData)
+		public KnetikJSONData(double aData)
         {
             AsDouble = aData;
         }
-        public JSONData(bool aData)
+		public KnetikJSONData(bool aData)
         {
             AsBool = aData;
         }
-        public JSONData(int aData)
+		public KnetikJSONData(int aData)
         {
             AsInt = aData;
         }
@@ -830,26 +830,26 @@ namespace SimpleJSON
         }
 		public override void Serialize (System.IO.BinaryWriter aWriter)
 		{
-			var tmp = new JSONData("");
+			var tmp = new KnetikJSONData("");
 			
 			tmp.AsInt = AsInt;
 			if (tmp.m_Data == this.m_Data)
 			{
-				aWriter.Write((byte)JSONBinaryTag.IntValue);
+				aWriter.Write((byte)KnetikJSONBinaryTag.IntValue);
 				aWriter.Write(AsInt);
 				return;
 			}
 			tmp.AsFloat = AsFloat;
 			if (tmp.m_Data == this.m_Data)
 			{
-				aWriter.Write((byte)JSONBinaryTag.FloatValue);
+				aWriter.Write((byte)KnetikJSONBinaryTag.FloatValue);
 				aWriter.Write(AsFloat);
 				return;
 			}
 			tmp.AsDouble = AsDouble;
 			if (tmp.m_Data == this.m_Data)
 			{
-				aWriter.Write((byte)JSONBinaryTag.DoubleValue);
+				aWriter.Write((byte)KnetikJSONBinaryTag.DoubleValue);
 				aWriter.Write(AsDouble);
 				return;
 			}
@@ -857,32 +857,32 @@ namespace SimpleJSON
 			tmp.AsBool = AsBool;
 			if (tmp.m_Data == this.m_Data)
 			{
-				aWriter.Write((byte)JSONBinaryTag.BoolValue);
+				aWriter.Write((byte)KnetikJSONBinaryTag.BoolValue);
 				aWriter.Write(AsBool);
 				return;
 			}
-			aWriter.Write((byte)JSONBinaryTag.Value);
+			aWriter.Write((byte)KnetikJSONBinaryTag.Value);
 			aWriter.Write(m_Data);
 		}
     } // End of JSONData
 	
-	internal class JSONLazyCreator : JSONNode
+	internal class KnetikJSONLazyCreator : KnetikJSONNode
 	{
-		private JSONNode m_Node = null;
+		private KnetikJSONNode m_Node = null;
 		private string m_Key = null;
 		
-		public JSONLazyCreator(JSONNode aNode)
+		public KnetikJSONLazyCreator(KnetikJSONNode aNode)
 		{
 			m_Node = aNode;
 			m_Key  = null;
 		}
-		public JSONLazyCreator(JSONNode aNode, string aKey)
+		public KnetikJSONLazyCreator(KnetikJSONNode aNode, string aKey)
 		{
 			m_Node = aNode;
 			m_Key = aKey;
 		}
 		
-		private void Set(JSONNode aVal)
+		private void Set(KnetikJSONNode aVal)
 		{
 			if (m_Key == null)
 			{
@@ -895,53 +895,53 @@ namespace SimpleJSON
 			m_Node = null; // Be GC friendly.
 		}
 		
-		public override JSONNode this[int aIndex]
+		public override KnetikJSONNode this[int aIndex]
 		{
 			get
 			{
-				return new JSONLazyCreator(this);
+				return new KnetikJSONLazyCreator(this);
 			}
 			set
 			{
-				var tmp = new JSONArray();
+				var tmp = new KnetikJSONArray();
 				tmp.Add(value);
 				Set(tmp);
 			}
 		}
 			
-		public override JSONNode this[string aKey]
+		public override KnetikJSONNode this[string aKey]
 		{
 			get
 			{
-				return new JSONLazyCreator(this, aKey);
+				return new KnetikJSONLazyCreator(this, aKey);
 			}
 			set
 			{
-				var tmp = new JSONClass();
+				var tmp = new KnetikJSONClass();
 				tmp.Add(aKey, value);
 				Set(tmp);
 			}
 		}
-		public override void Add (JSONNode aItem)
+		public override void Add (KnetikJSONNode aItem)
 		{
-			var tmp = new JSONArray();
+			var tmp = new KnetikJSONArray();
 			tmp.Add(aItem);
 			Set(tmp);
 		}
-		public override void Add (string aKey, JSONNode aItem)
+		public override void Add (string aKey, KnetikJSONNode aItem)
 		{
-			var tmp = new JSONClass();
+			var tmp = new KnetikJSONClass();
 			tmp.Add(aKey, aItem);
 			Set(tmp);
 		}
-		public static bool operator ==(JSONLazyCreator a, object b)
+		public static bool operator ==(KnetikJSONLazyCreator a, object b)
 		{
 			if (b == null)
 				return true;
 			return System.Object.ReferenceEquals(a,b);
 		}
 		
-		public static bool operator !=(JSONLazyCreator a, object b)
+		public static bool operator !=(KnetikJSONLazyCreator a, object b)
 		{
 		    return !(a == b);
 		}
@@ -969,13 +969,13 @@ namespace SimpleJSON
         {
             get
             {
-				JSONData tmp = new JSONData(0);
+				KnetikJSONData tmp = new KnetikJSONData(0);
 				Set(tmp);
                 return 0;
             }
             set
             {
-				JSONData tmp = new JSONData(value);
+				KnetikJSONData tmp = new KnetikJSONData(value);
 				Set(tmp);
             }
         }
@@ -983,13 +983,13 @@ namespace SimpleJSON
         {
             get
             {
-				JSONData tmp = new JSONData(0.0f);
+				KnetikJSONData tmp = new KnetikJSONData(0.0f);
 				Set(tmp);
                 return 0.0f;
             }
             set
             {
-				JSONData tmp = new JSONData(value);
+				KnetikJSONData tmp = new KnetikJSONData(value);
 				Set(tmp);
             }
         }
@@ -997,13 +997,13 @@ namespace SimpleJSON
         {
             get
             {
-				JSONData tmp = new JSONData(0.0);
+				KnetikJSONData tmp = new KnetikJSONData(0.0);
 				Set(tmp);
                 return 0.0;
             }
             set
             {
-				JSONData tmp = new JSONData(value);
+				KnetikJSONData tmp = new KnetikJSONData(value);
 				Set(tmp);
             }
         }
@@ -1011,41 +1011,41 @@ namespace SimpleJSON
         {
             get
             {
-				JSONData tmp = new JSONData(false);
+				KnetikJSONData tmp = new KnetikJSONData(false);
 				Set(tmp);
                 return false;
             }
             set
             {
-				JSONData tmp = new JSONData(value);
+				KnetikJSONData tmp = new KnetikJSONData(value);
 				Set(tmp);
             }
         }
-        public override JSONArray AsArray
+		public override KnetikJSONArray AsArray
         {
             get
             {
-				JSONArray tmp = new JSONArray();
+				KnetikJSONArray tmp = new KnetikJSONArray();
 				Set(tmp);
                 return tmp;
             }
         }
-        public override JSONClass AsObject
+		public override KnetikJSONClass AsObject
         {
             get
             {
-				JSONClass tmp = new JSONClass();
+				KnetikJSONClass tmp = new KnetikJSONClass();
 				Set(tmp);
                 return tmp;
             }
         }
 	} // End of JSONLazyCreator
 
-    public static class JSON
+	public static class KnetikJSON
     {
-        public static JSONNode Parse(string aJSON)
+		public static KnetikJSONNode Parse(string aJSON)
         {
-            return JSONNode.Parse(aJSON);
+			return KnetikJSONNode.Parse(aJSON);
         }
     }
 }

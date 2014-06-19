@@ -6,11 +6,12 @@ using System.Text;
 using System.Globalization;
 using Ionic.Zlib;
 
-namespace HTTP
+namespace KnetikHTTP
 {
-	public class Response
+	public class KnetikResponse
 	{
-		public Request request;
+
+		public KnetikRequest request;
 		public int status = 200;
 		public string message = "OK";
 		public byte[] bytes;
@@ -106,7 +107,7 @@ namespace HTTP
 			return headers[name][headers[name].Count - 1];
 		}
 
-		public Response ()
+		public KnetikResponse ()
 		{
 			//ReadFromStream (stream);
 		}
@@ -117,9 +118,9 @@ namespace HTTP
 			while (true) {
 				int c = stream.ReadByte ();
                 if (c == -1) {
-                    throw new HTTPException("Unterminated Stream Encountered.");
+					throw new KnetikHTTPException("Unterminated Stream Encountered.");
                 }
-				if ((byte)c == Request.EOL[1])
+				if ((byte)c == KnetikRequest.EOL[1])
 					break;
 				line.Add ((byte)c);
 			}
@@ -162,7 +163,7 @@ namespace HTTP
 			var top = ReadLine (inputStream).Split (new char[] { ' ' });
 
 			if (!int.TryParse (top[1], out status))
-				throw new HTTPException ("Bad Status Code");
+				throw new KnetikHTTPException ("Bad Status Code");
 
             // MemoryStream is a disposable
             // http://stackoverflow.com/questions/234059/is-a-memory-leak-created-if-a-memorystream-in-net-is-not-closed
@@ -194,7 +195,7 @@ namespace HTTP
                             cookieString += "; path=" + request.uri.AbsolutePath;
                         }
 
-                        request.cookieJar.SetCookie( new Cookie( cookieString ) );
+						request.cookieJar.SetCookie( new KnetikCookie( cookieString ) );
                     }
                 }
 
@@ -255,7 +256,7 @@ namespace HTTP
                     }
 
                     if( contentLength > 0 && output.Length != contentLength ) {
-                        throw new HTTPException ("Response length does not match content length");
+						throw new KnetikHTTPException ("Response length does not match content length");
                     }
 
                     if (GetHeader ("content-encoding").Contains ("gzip")) {
