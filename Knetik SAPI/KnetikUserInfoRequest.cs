@@ -33,7 +33,7 @@ namespace Knetik
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 		}
 
-		public KnetikUserInfoRequest (string api_key, int productId)
+		public KnetikUserInfoRequest (string api_key, long productId)
 		{
 			m_key = api_key;
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
