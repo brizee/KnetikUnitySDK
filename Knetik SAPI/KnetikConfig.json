@@ -1,6 +1,6 @@
 {
     "version": "1.0",
-    "apiHost": "dev.sapi.playvs.net",
+    "apiHost": "sapi.net",
     "urlPrefix": "http://",
     "clientKey": "test_key",
     "clientSecret": "test_secret",
