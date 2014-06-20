@@ -375,8 +375,8 @@ namespace KnetikSimpleJSON
             }
             if (QuoteMode)
             {
-                throw new Exception("JSON Parse: Quotation marks seems to be messed up.");
 				Debug.LogWarning("Knetik Labs SDK - Double check the formatting of the KnetikConfig.json file. (This may not be the cause)");
+                throw new Exception("JSON Parse: Quotation marks seems to be messed up.");
             }
             return ctx;
         }

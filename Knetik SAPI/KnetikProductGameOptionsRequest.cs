@@ -12,7 +12,7 @@ namespace Knetik
 		private string product_request = null;
 		public Dictionary<string, string> game_options = new Dictionary<string, string>();
 		
-		public KnetikProductGameOptionsRequest (string api_key, int productId)
+		public KnetikProductGameOptionsRequest (string api_key, long productId)
 		{
 			m_key = api_key;
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
