@@ -1,13 +1,14 @@
 {
     "version": "1.0",
-    "apiHost": "sapi.net",
+    "apiHost": "sb.knetik.com:8080",
     "urlPrefix": "http://",
-    "clientKey": "test_key",
+    "clientKey": "test",
     "clientSecret": "test_secret",
-    "endpointPrefix": "/rest/api/latest/",
+    "endpointPrefix": "/rest/services/latest/",
     "sessionEndpoint": "session",
     "leaderboardEndpoint": "gameleaderboard",
     "metricEndpoint": "metric",
     "userEndpoint": "user",
-    "productEndpoint": "product"
+    "productEndpoint": "product",
+    "registerEndpoint": "registration/register"
 }

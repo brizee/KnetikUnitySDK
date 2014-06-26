@@ -869,28 +869,28 @@ namespace KnetikSimpleJSON
 	internal class KnetikJSONLazyCreator : KnetikJSONNode
 	{
 		private KnetikJSONNode m_Node = null;
-		private string m_Key = null;
+		private string m_clientId = null;
 		
 		public KnetikJSONLazyCreator(KnetikJSONNode aNode)
 		{
 			m_Node = aNode;
-			m_Key  = null;
+			m_clientId  = null;
 		}
 		public KnetikJSONLazyCreator(KnetikJSONNode aNode, string aKey)
 		{
 			m_Node = aNode;
-			m_Key = aKey;
+			m_clientId = aKey;
 		}
 		
 		private void Set(KnetikJSONNode aVal)
 		{
-			if (m_Key == null)
+			if (m_clientId == null)
 			{
 				m_Node.Add(aVal);
 			}
 			else
 			{
-				m_Node.Add(m_Key, aVal);
+				m_Node.Add(m_clientId, aVal);
 			}
 			m_Node = null; // Be GC friendly.
 		}

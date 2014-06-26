@@ -23,12 +23,13 @@ namespace Knetik
 		public static string METRIC_ENDPOINT = null;
 		public static string USER_ENDPOINT = null;
 		public static string PRODUCT_ENDPOINT = null;
+        public static string REGISTER_ENDPOINT = null;
 
 		// Sets up all configuration based on JSON file
 		public static void readConfig()
 		{
 			StringBuilder sb = new StringBuilder ();
-			using (StreamReader sr = new StreamReader("Assets/Class/SAPI/KnetikConfig.json")) 
+			using (StreamReader sr = new StreamReader("Assets/Class/jSAPI/KnetikConfig.json")) 
 			{
 				string line;
 				while ((line = sr.ReadLine()) != null) 
@@ -49,6 +50,7 @@ namespace Knetik
 			METRIC_ENDPOINT = configJsonNode ["metricEndpoint"];
 			USER_ENDPOINT = configJsonNode ["userEndpoint"];
 			PRODUCT_ENDPOINT = configJsonNode ["productEndpoint"];
+            REGISTER_ENDPOINT = configJsonNode["registerEndpoint"];
 		}
 
 		// Determines the type of device being used
@@ -80,10 +82,10 @@ namespace Knetik
 					platformType = "WEB";
 					platformName = "Mac";
 					break;
-				case RuntimePlatform.WiiPlayer: //	 In the player on Nintendo Wii.
-					platformType = "PC";
-					platformName = "Mac";
-					break;
+//				case RuntimePlatform.WiiPlayer: //	 In the player on Nintendo Wii.
+//					platformType = "PC";
+//					platformName = "Mac";
+//					break;
 				case RuntimePlatform.IPhonePlayer: //	 In the player on the iPhone.
 					platformType = "MOBILE";
 					platformName = "iOS";
@@ -141,6 +143,41 @@ namespace Knetik
             Debug.Log("  Multicast................................ : " + adapter.SupportsMulticast);
 			return adapter.GetPhysicalAddress().ToString();
 		}
+
+        public static string getMacAddress()
+        {
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            string info = null;
+            
+            foreach (NetworkInterface adapter in nics)
+            {
+                PhysicalAddress address = adapter.GetPhysicalAddress();
+                byte[] bytes = address.GetAddressBytes();
+                string mac = null;
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    mac = string.Concat(mac +(string.Format("{0}", bytes[i].ToString("X2"))));
+                }
+                                info = mac;
+            }
+                        Debug.Log("MAC: " + info);
+            return info;
+        }
+
+
+        // Pulls the type of the device being used
+        public static string getDeviceType() 
+        {
+            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+            
+            if (nics.Length == 0) {
+                    Debug.LogWarning("No Network interface found! Using default 00000");
+                    return "00000";
+            }
+            
+            NetworkInterface adapter = nics[nics.Length - 1];
+            return adapter.GetType().ToString();
+        }
 	
 		// SHA1 Encryption
 		public static string sha1(string input) 
@@ -182,7 +219,7 @@ namespace Knetik
 			byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
 			hashmac.Key = keyBytes;
 			byte[] hash = hashmac.ComputeHash(inputBytes);
-			return Convert.ToBase64String(hash);			
+			return Convert.ToBase64String(hash);
 		}
 	}
 }
