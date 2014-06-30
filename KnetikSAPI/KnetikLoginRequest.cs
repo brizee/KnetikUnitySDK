@@ -29,24 +29,21 @@ namespace Knetik
 		// Build JSON for Login Request
 		string getLoginSessionRequest(bool isGuest)
 		{
-			login_request = "{";
-			login_request += "\"guest\": " + (isGuest ? "true" : "false");
-			login_request += ",";
-			login_request += "\"signature\": \"" + KnetikApiUtil.getDeviceSignature() + "\"";
-			login_request += ",";
-			login_request += "\"serial\": \"" + KnetikApiUtil.getDeviceSerial() + "\"";
-			login_request += ",";
-			login_request += "\"client_key\": \"" + KnetikApiUtil.API_CLIENT_KEY + "\"";
-			
-			if (!isGuest) {
-				login_request += ",";
-				login_request += "\"email\": \"" + username + "\"";
-				login_request += ",";
-				login_request += "\"password\": \"" + KnetikApiUtil.sha1(password) + "\"";
-			}
-
-			login_request += "}";
-			return login_request;    
+            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+            j.AddField ("guest", isGuest);
+            j.AddField ("signature", KnetikApiUtil.getDeviceSignature());
+            j.AddField ("serial", KnetikApiUtil.getDeviceSerial ());
+            j.AddField ("client_key", KnetikApiUtil.API_CLIENT_KEY);   
+            
+            if (!isGuest) 
+            {
+                j.AddField("email", username);
+                j.AddField("password", KnetikApiUtil.sha1(password));
+            }
+            
+            login_request = j.Print ();
+            Debug.Log ("LOGIN_REQUEST: " + login_request);
+            return login_request;   
 		}
 		
 		public string getKey() {
@@ -64,9 +61,11 @@ namespace Knetik
 		// Necessary when registering a new user
 		public bool doLoginAsGuest()
 		{
+            m_key = KnetikApiUtil.API_CLIENT_KEY;
+            m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 			string request_str = getLoginSessionRequest(true);
 			KnetikJSONNode jsonDict = null;
-			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.SESSION_ENDPOINT;
+			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.AUTH_PREFIX + KnetikApiUtil.SESSION_ENDPOINT;
 
 			if (sendApiRequest(request_str, ref jsonDict) == false) 
 			{
@@ -97,10 +96,12 @@ namespace Knetik
 		// Pre-existing User login
 		public bool doLogin()
 		{
+            m_key = KnetikApiUtil.API_CLIENT_KEY;
+            m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
 			string request_str = getLoginSessionRequest(false);
 			KnetikJSONNode jsonDict = null;
 		
-			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.SESSION_ENDPOINT;
+			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.AUTH_PREFIX + KnetikApiUtil.SESSION_ENDPOINT;
 
 			if (sendApiRequest(request_str, ref jsonDict) == false) 
 			{

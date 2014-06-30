@@ -29,19 +29,17 @@ namespace Knetik
 		// Build JSON to register a new user
 		string getRegisterData()
 		{
-			reg_request = "{";
-			reg_request += "\"user_info\": ";
-			reg_request +=     "{";
-			reg_request +=        "\"email\": \"" + m_email + "\"";
-			reg_request +=        ",";
-			reg_request +=        "\"password\": \"" + KnetikApiUtil.sha1(m_password) + "\"";
-			reg_request +=        ",";
-			reg_request +=        "\"username\": \"" + m_username + "\"";
-			reg_request +=        ",";
-			reg_request +=        "\"fullname\": \"" + m_fullname + "\"";
-			reg_request +=     "}";
-			reg_request += "}";
-			return reg_request;    
+            JSONObject userInfo = new JSONObject (JSONObject.Type.OBJECT);
+            userInfo.AddField ("email", m_email);
+            userInfo.AddField ("password", KnetikApiUtil.sha1(m_password));
+            userInfo.AddField ("username", m_username);
+            userInfo.AddField ("fullname", m_fullname);
+            
+            JSONObject register = new JSONObject (JSONObject.Type.OBJECT);
+            register.AddField ("user_info", userInfo);            
+            reg_request = register.Print ();
+            Debug.Log ("REGISTER_REQUEST: " + reg_request);
+            return reg_request;     
 		}
 		
 		// Send JSON to register the new user with the server

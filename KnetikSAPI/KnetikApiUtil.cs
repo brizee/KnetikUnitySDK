@@ -18,6 +18,7 @@ namespace Knetik
 		public static string API_CLIENT_KEY = null;
 		public static string API_CLIENT_SECRET = null;
 		public static string ENDPOINT_PREFIX = null;
+        public static string AUTH_PREFIX = null;
 		public static string SESSION_ENDPOINT = null;
 		public static string LEADERBOARD_ENDPOINT = null;
 		public static string METRIC_ENDPOINT = null;
@@ -44,6 +45,7 @@ namespace Knetik
 			API_CLIENT_KEY = configJsonNode ["clientKey"];
 			API_CLIENT_SECRET = configJsonNode ["clientSecret"];
 			ENDPOINT_PREFIX = configJsonNode ["endpointPrefix"];
+            AUTH_PREFIX = configJsonNode ["authPrefix"];
 			SESSION_ENDPOINT = configJsonNode ["sessionEndpoint"];
 			LEADERBOARD_ENDPOINT = configJsonNode ["leaderboardEndpoint"];
 			METRIC_ENDPOINT = configJsonNode ["metricEndpoint"];
@@ -80,10 +82,10 @@ namespace Knetik
 					platformType = "WEB";
 					platformName = "Mac";
 					break;
-				case RuntimePlatform.WiiPlayer: //	 In the player on Nintendo Wii.
-					platformType = "PC";
-					platformName = "Mac";
-					break;
+//				case RuntimePlatform.WiiPlayer: //	 In the player on Nintendo Wii.
+//					platformType = "PC";
+//					platformName = "Mac";
+//					break;
 				case RuntimePlatform.IPhonePlayer: //	 In the player on the iPhone.
 					platformType = "MOBILE";
 					platformName = "iOS";
