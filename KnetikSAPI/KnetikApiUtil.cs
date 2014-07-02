@@ -29,7 +29,7 @@ namespace Knetik
 		public static void readConfig()
 		{
 			StringBuilder sb = new StringBuilder ();
-			using (StreamReader sr = new StreamReader("Assets/Class/SAPI/KnetikConfig.json")) 
+			using (StreamReader sr = new StreamReader("Assets/Class/KnetikUnitySDK/KnetikSAPI/KnetikConfig.json")) 
 			{
 				string line;
 				while ((line = sr.ReadLine()) != null) 
