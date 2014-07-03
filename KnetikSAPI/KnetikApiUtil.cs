@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
-using UnityEditor;
 using System.Net.NetworkInformation;
 using System.IO;
 using System.Collections;
 using KnetikSimpleJSON;
 using System.Text;
+
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 
 namespace Knetik
 {
