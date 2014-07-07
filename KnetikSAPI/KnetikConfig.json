@@ -10,5 +10,6 @@
     "leaderboardEndpoint": "gameleaderboard",
     "metricEndpoint": "metric",
     "userEndpoint": "user",
-    "productEndpoint": "product"
+    "productEndpoint": "product",
+    "sdkVersion": "1.0"
 }

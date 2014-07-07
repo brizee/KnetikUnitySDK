@@ -27,6 +27,7 @@ namespace Knetik
 		public static string METRIC_ENDPOINT = null;
 		public static string USER_ENDPOINT = null;
 		public static string PRODUCT_ENDPOINT = null;
+        public static string SDK_VERSION = null;
 
 		// Sets up all configuration based on JSON file
 		public static void readConfig()
@@ -54,6 +55,7 @@ namespace Knetik
 			METRIC_ENDPOINT = configJsonNode ["metricEndpoint"];
 			USER_ENDPOINT = configJsonNode ["userEndpoint"];
 			PRODUCT_ENDPOINT = configJsonNode ["productEndpoint"];
+            SDK_VERSION = configJsonNode ["sdkVersion"];
 		}
 
 		// Determines the type of device being used
