@@ -15,7 +15,8 @@ namespace Knetik
 	public class KnetikApiUtil
 	{
 		private static string API_Version = null;
-
+        private static TextAsset KnetikConfig;
+        
 		public static string API_HOST = null;
 		public static string API_URL = null;
 		public static string API_CLIENT_KEY = null;
@@ -32,16 +33,8 @@ namespace Knetik
 		// Sets up all configuration based on JSON file
 		public static void readConfig()
 		{
-			StringBuilder sb = new StringBuilder ();
-			using (StreamReader sr = new StreamReader("Assets/Class/KnetikUnitySDK/KnetikSAPI/KnetikConfig.json")) 
-			{
-				string line;
-				while ((line = sr.ReadLine()) != null) 
-				{
-						sb.AppendLine (line);
-				}
-			}
-			string allLines = sb.ToString ();
+            KnetikConfig = Resources.Load("KnetikConfig", typeof(TextAsset)) as TextAsset;
+            string allLines = KnetikConfig.text;
 			KnetikJSONNode configJsonNode = KnetikJSON.Parse (allLines);
 			API_Version = configJsonNode ["version"];
 			API_HOST = configJsonNode ["apiHost"];
