@@ -12,11 +12,10 @@ namespace Knetik
 		private string product_request = null;
 		public Dictionary<string, string> game_options = new Dictionary<string, string>();
 		
-		public KnetikProductGameOptionsRequest (string api_key, long productId)
+		public KnetikProductGameOptionsRequest ()
 		{
-			m_key = api_key;
+            m_key = UserSessionUtils.getApiKey();
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_productId = productId;
 		}
 
 		// Build the JSON to search for a particular product and return its game options
@@ -35,8 +34,9 @@ namespace Knetik
 		}
 
 		// Retrieves the product's game options
-		public bool doGetInfo()
+        public bool doGetInfo(long productId)
 		{
+            m_productId = productId;
 			string postBody = getProductRequest();
 
 			KnetikJSONNode jsonDict = null;
@@ -79,9 +79,10 @@ namespace Knetik
 						string option_value = options[i]["value"];
 						game_options.Add(option_name, option_value);
 					}
-
 				}
 			}
+            
+            Debug.Log ("Successfully retrieved product game options.");
 
 			return true;
 		}

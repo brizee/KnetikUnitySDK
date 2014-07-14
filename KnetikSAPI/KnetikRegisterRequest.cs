@@ -9,20 +9,12 @@ namespace Knetik
 	public class KnetikRegisterRequest : KnetikApiRequest
 	{
 		private string reg_request = null;
-		string m_username;
-		string m_password;
 		string m_email;
 		string m_fullname;
 		
-		public KnetikRegisterRequest (string api_key, string username, string password, string email, string fullname)
+		public KnetikRegisterRequest ()
 		{
-			m_key = api_key;
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_username = username;
-			m_password = password;
-			m_email = email;
-			m_fullname = fullname;
-			
 			m_method = "put";
 		}
 
@@ -43,9 +35,14 @@ namespace Knetik
 		}
 		
 		// Send JSON to register the new user with the server
-		public bool doRegister()
+        public bool doRegister(string apiKey, string username, string password, string email, string fullname)
 		{
-			KnetikJSONNode jsonDict = null;
+            m_key = apiKey;
+            m_username = username;
+            m_password = password;
+            m_email = email;
+            m_fullname = fullname;
+            KnetikJSONNode jsonDict = null;
 			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.USER_ENDPOINT;
 
 			if (sendSignedRequest(null, getRegisterData(), ref jsonDict) == false) 

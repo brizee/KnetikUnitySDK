@@ -23,7 +23,10 @@ namespace Knetik
 		protected string m_lang = null;
 		protected string m_hashId = null;
 		protected string m_errorMsg = null;
-		protected long m_userId = 0;
+        protected string m_username = null;
+        protected string m_password = null;
+        
+		protected static long m_userId = 0;
 		protected long m_score = 0;
 		protected long m_productId = 0;
 		protected long m_levelId = 0;

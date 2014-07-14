@@ -10,18 +10,13 @@ namespace Knetik
 	public class KnetikPostUserOptionsRequest : KnetikApiRequest
 	{
 		private string user_request = null;
-		string m_deleted = "0";
+		string m_deleted;
 
-		public KnetikPostUserOptionsRequest (string api_key, long userId, long productId, string optionName, string optionValue, string deleted = "0")
+		public KnetikPostUserOptionsRequest ()
 		{
-			m_key = api_key;
+            m_key = UserSessionUtils.getApiKey();
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_userId = userId;
-			m_productId = productId;
-			m_gameOptionName = optionName;
-			m_gameOptionValue = optionValue;
 			m_method = "put";
-			m_deleted = deleted;
 		}
 
 		// Builds the JSON to send user options on a product, for either creation or update
@@ -45,8 +40,13 @@ namespace Knetik
 		}
 
 		// Sends the JSON to the server to create or update a user option
-		public bool postUserInfo(string mode)
+        public bool postUserInfo(string mode, long productId, string optionName, string optionValue, string deleted = "0")
 		{
+            m_productId = productId;
+            m_gameOptionName = optionName;
+            m_gameOptionValue = optionValue;
+            m_deleted = deleted;
+            
 			KnetikJSONNode jsonDict = null;
 			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.USER_ENDPOINT;
 			string modeChoice = null;

@@ -41,11 +41,10 @@ namespace Knetik
 		public string metric_name;
 		public Dictionary<string, string[]> user_results = new Dictionary<string, string[]>();
 
-		public KnetikLeaderboardRequest (string api_key, long leaderboardId)
+		public KnetikLeaderboardRequest ()
 		{
-			m_key = api_key;
+            m_key = UserSessionUtils.getApiKey();
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_leaderboardId = leaderboardId;
 			m_method = "get";
 		}
 
@@ -59,8 +58,9 @@ namespace Knetik
 		}
 
 		// Retrieve Leaderboard values
-		public bool doGetInfo()
+        public bool doGetInfo(long leaderboardId)
 		{
+            m_leaderboardId = leaderboardId;
 			string postBody = getLeaderboardRequest();
 			KnetikJSONNode jsonDict = null;
 			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.LEADERBOARD_ENDPOINT;

@@ -8,19 +8,15 @@ using System.Collections.Generic;
 namespace Knetik
 {
 	public class KnetikGameEventRequest : KnetikApiRequest
-	{
+	{        
 		private string game_request = null;
 
-		public KnetikGameEventRequest (string api_key, string hashId, long score)
+		public KnetikGameEventRequest ()
 		{
-			m_key = api_key;
+			m_key = UserSessionUtils.getApiKey();
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			// Note that the hashId is the Game Session ID
-			// TODO: The Game Session ID needs to be generated within the Unity SDK (previously done in XCode)
-			m_hashId = hashId;
-			m_score = score;
 		}
-
+        
 		// Build JSON to send Game Event to server
 		string getGameEventData()
 		{
@@ -33,9 +29,13 @@ namespace Knetik
 		}
 
 		// Send the Game Event Data to the server
-		public bool postGameEvent(string mode)
+        public bool postGameEvent(string mode, string hashId, long score)
 		{
-			KnetikJSONNode jsonDict = null;
+            // Note that the hashId is the Game Session ID
+            // TODO: The Game Session ID needs to be generated within the Unity SDK (previously done in XCode)
+            m_hashId = hashId;
+            m_score = score;
+            KnetikJSONNode jsonDict = null;
 			string endPoint;
 
 			// Singular game event, e.g. not the end of the game/final result, can be used for authentication/prevent cheating

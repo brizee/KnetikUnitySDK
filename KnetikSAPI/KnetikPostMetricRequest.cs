@@ -14,24 +14,11 @@ namespace Knetik
 		int m_metricId;
 		long m_metricValue;
 
-		// Set up a metric with no level
-		public KnetikPostMetricRequest (string api_key, int metric_id, long metric_value)
+		// Set up metric request
+		public KnetikPostMetricRequest ()
 		{
-			m_key = api_key;
+            m_key = UserSessionUtils.getApiKey();
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_metricId = metric_id;
-			m_metricValue = metric_value;
-			m_method = "put";
-		}
-
-		// Metric with level
-		public KnetikPostMetricRequest (string api_key, int metric_id, long metric_value, int level_id)
-		{
-			m_key = api_key;
-			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_metricId = metric_id;
-			m_metricValue = metric_value;
-			m_levelId = level_id;
 			m_method = "put";
 		}
 
@@ -69,14 +56,17 @@ namespace Knetik
 			return metric_request;    
 		}
 		
-		// Send metric information to server
-		public bool doPostMetric()
+		// Send metric information to server, levelID is optional
+        public bool doPostMetric(int metric_id, long metric_value, int level_id = -1)
 		{
+            m_metricId = metric_id;
+            m_metricValue = metric_value;
+            m_levelId = level_id;
 			KnetikJSONNode jsonDict = null;
 		
 			m_url = KnetikApiUtil.API_URL + KnetikApiUtil.ENDPOINT_PREFIX + KnetikApiUtil.METRIC_ENDPOINT;
 
-			if (m_levelId == 0)
+			if (m_levelId == -1)
 			{
 
 				if (sendSignedRequest(null, setMetricData(), ref jsonDict) == false) 
@@ -88,7 +78,7 @@ namespace Knetik
 
 			}
 
-			else if (m_levelId != 0)
+			else if (m_levelId != -1)
 			{
 
 				if (sendSignedRequest(null, setMetricLevelData(), ref jsonDict) == false) 

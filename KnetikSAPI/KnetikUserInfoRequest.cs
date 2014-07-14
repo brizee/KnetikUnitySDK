@@ -27,30 +27,13 @@ namespace Knetik
 		public string country;
 		public Dictionary<string, string> user_options = new Dictionary<string, string>();
 
-		public KnetikUserInfoRequest (string api_key)
+		public KnetikUserInfoRequest ()
 		{
-			m_key = api_key;
+			m_key = UserSessionUtils.getApiKey();
 			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-		}
-
-		public KnetikUserInfoRequest (string api_key, long productId)
-		{
-			m_key = api_key;
-			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_productId = productId;
-		}
-
-		public KnetikUserInfoRequest (string api_key, int userId, string avatarUrl, string lang)
-		{
-			m_key = api_key;
-			m_clientSecret = KnetikApiUtil.API_CLIENT_SECRET;
-			m_userId = userId;
-			m_avatarUrl = avatarUrl;
-			m_lang = lang;
-			m_method = "put";
 		}
 		
-		public bool doGetInfo()
+        public bool doGetInfo(long productId = 0)
 		{
 			KnetikJSONNode jsonDict = null;
 		
@@ -148,9 +131,13 @@ namespace Knetik
 			return user_request;    
 		}
 
-		public bool putUserInfo(string mode)
+        public bool putUserInfo(string mode, string avatarUrl, string lang)
 		{
-			KnetikJSONNode jsonDict = null;
+            m_avatarUrl = avatarUrl;
+            m_lang = lang;
+            m_method = "put";
+            
+            KnetikJSONNode jsonDict = null;
 			m_url = KnetikApiUtil.API_URL + "/rest/api/latest/user";
 
 			if (mode == "avatar" && m_avatarUrl != null)
