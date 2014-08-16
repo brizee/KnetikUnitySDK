@@ -1,0 +1,35 @@
+﻿using UnityEngine;
+using System.Collections;
+using Knetik;
+
+public class KnetikInitializationScript : MonoBehaviour {
+	public static KnetikInitializationScript Singleton = null;
+
+	public string BaseURL = "http://jsapi.dev:8080";
+    public string ClientID = "fake_client";
+	public string ClientSecret = "fake_secret";
+
+	public Queue Requests = Queue.Synchronized( new Queue() );
+
+	// Use this for initialization
+	void Start () {
+		if (Singleton) {
+			throw new UnityException("Only 1 KnetikInitializationScript is allowed!");
+		}
+		Singleton = this;
+        KnetikClient.Instance.BaseURL = BaseURL;
+        KnetikClient.Instance.ClientID = ClientID;
+        KnetikClient.Instance.ClientSecret = ClientSecret;
+
+        DontDestroyOnLoad (gameObject);
+	}
+
+	public void Update()
+	{
+		while( Requests.Count > 0 )
+		{
+			KnetikRequest request = (KnetikRequest)Requests.Dequeue();
+			request.completedCallback( request );
+		}
+	}
+}

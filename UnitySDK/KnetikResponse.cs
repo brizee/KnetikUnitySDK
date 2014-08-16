@@ -6,7 +6,7 @@ using System.Text;
 using System.Globalization;
 using Ionic.Zlib;
 
-namespace KnetikHTTP
+namespace Knetik
 {
 	public class KnetikResponse
 	{

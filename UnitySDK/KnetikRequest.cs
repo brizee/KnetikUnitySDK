@@ -13,7 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 
 // Used to build all requests made to the server
 
-namespace KnetikHTTP
+namespace Knetik
 {
 	public class KnetikHTTPException : Exception
 	{
@@ -21,17 +21,17 @@ namespace KnetikHTTP
 		{
 		}
 	}
-
+	
 	public enum KnetikRequestState 
 	{
 		Waiting, Reading, Done
 	}
-
+	
 	public class KnetikRequest
 	{
-        public static bool LogAllRequests = false;
-        public static bool VerboseLogging = false;
-
+		public static bool LogAllRequests = false;
+		public static bool VerboseLogging = false;
+		
 		public KnetikCookieJar cookieJar = null; //CookieJar.Instance;
 		public string method = "GET";
 		public string protocol = "HTTP/1.1";
@@ -45,45 +45,45 @@ namespace KnetikHTTP
 		public bool useCache = false;
 		public Exception exception = null;
 		public KnetikRequestState state = KnetikRequestState.Waiting;
-        public long responseTime = 0; // in milliseconds
+		public long responseTime = 0; // in milliseconds
 		public bool synchronous = false;
-
-		public Action< KnetikHTTP.KnetikRequest > completedCallback = null;
-
+		
+		public Action<KnetikRequest> completedCallback = null;
+		
 		Dictionary<string, List<string>> headers = new Dictionary<string, List<string>> ();
 		static Dictionary<string, string> etags = new Dictionary<string, string> ();
-
+		
 		public KnetikRequest (string method, string uri)
 		{
 			this.method = method;
 			this.uri = new Uri (uri);
 		}
-
+		
 		public KnetikRequest (string method, string uri, bool useCache)
 		{
 			this.method = method;
 			this.uri = new Uri (uri);
 			this.useCache = useCache;
 		}
-
+		
 		public KnetikRequest (string method, string uri, byte[] bytes)
 		{
 			this.method = method;
 			this.uri = new Uri (uri);
 			this.bytes = bytes;
 		}
-
+		
 		public KnetikRequest( string method, string uri, WWWForm form )
-        {
+		{
 			this.method = method;
 			this.uri = new Uri (uri);
 			this.bytes = form.data;
-            foreach ( DictionaryEntry entry in form.headers )
-            {
-                this.AddHeader( (string)entry.Key, (string)entry.Value );
-            }
-        }
-/*
+			foreach ( DictionaryEntry entry in form.headers )
+			{
+				this.AddHeader( (string)entry.Key, (string)entry.Value );
+			}
+		}
+		/*
         public Request( string method, string uri, Hashtable data )
         {
             this.method = method;
@@ -100,7 +100,7 @@ namespace KnetikHTTP
 				headers[name] = new List<string> ();
 			headers[name].Add (value);
 		}
-
+		
 		public string GetHeader (string name)
 		{
 			name = name.ToLower ().Trim ();
@@ -108,19 +108,19 @@ namespace KnetikHTTP
 				return "";
 			return headers[name][0];
 		}
-
-        public List< string > GetHeaders()
-        {
-            List< string > result = new List< string >();
-            foreach (string name in headers.Keys) {
+		
+		public List< string > GetHeaders()
+		{
+			List< string > result = new List<string>();
+			foreach (string name in headers.Keys) {
 				foreach (string value in headers[name]) {
-                    result.Add( name + ": " + value );
+					result.Add( name + ": " + value );
 				}
 			}
-
-            return result;
-        }
-
+			
+			return result;
+		}
+		
 		public List<string> GetHeaders (string name)
 		{
 			name = name.ToLower ().Trim ();
@@ -128,7 +128,7 @@ namespace KnetikHTTP
 				headers[name] = new List<string> ();
 			return headers[name];
 		}
-
+		
 		public void SetHeader (string name, string value)
 		{
 			name = name.Trim ();
@@ -139,19 +139,19 @@ namespace KnetikHTTP
 			headers[name].TrimExcess();
 			headers[name].Add (value);
 		}
-
-        // TODO: get rid of this when Unity's default monodevelop supports default arguments
-        public void Send()
-        {
-            Send( null );
-        }
+		
+		// TODO: get rid of this when Unity's default monodevelop supports default arguments
+		public void Send()
+		{
+			Send( null );
+		}
 		
 		private void GetResponse() {
-            System.Diagnostics.Stopwatch curcall = new System.Diagnostics.Stopwatch();
-	        curcall.Start();
+			System.Diagnostics.Stopwatch curcall = new System.Diagnostics.Stopwatch();
+			curcall.Start();
 			try {
-
-		        var retry = 0;
+				
+				var retry = 0;
 				while (++retry < maximumRetryCount) {
 					if (useCache) {
 						string etag = "";
@@ -159,9 +159,9 @@ namespace KnetikHTTP
 							SetHeader ("If-None-Match", etag);
 						}
 					}
-		        
+					
 					SetHeader ("Host", uri.Host);
-
+					
 					var client = new TcpClient ();
 					client.Connect (uri.Host, uri.Port);
 					using (var stream = client.GetStream ()) {
@@ -176,95 +176,89 @@ namespace KnetikHTTP
 								return;
 							}
 						}
-		        		WriteToStream (ostream);
+						WriteToStream (ostream);
 						response = new KnetikResponse ();
 						response.request = this;
 						state = KnetikRequestState.Reading;
-		        		response.ReadFromStream(ostream);
+						response.ReadFromStream(ostream);
 					}
-		        	client.Close ();
-
+					client.Close ();
+					
 					switch (response.status) {
 					case 307:
 					case 302:
 					case 301:
-		        		uri = new Uri (response.GetHeader ("Location"));
+						uri = new Uri (response.GetHeader ("Location"));
 						continue;
 					default:
-		        		retry = maximumRetryCount;
+						retry = maximumRetryCount;
 						break;
 					}
 				}
-		        if (useCache) {
-		        	string etag = response.GetHeader ("etag");
+				if (useCache) {
+					string etag = response.GetHeader ("etag");
 					if (etag.Length > 0)
 						etags[uri.AbsoluteUri] = etag;
 				}
-
+				
 			} catch (Exception e) {
-		        Debug.LogException(e);
+				Debug.LogException(e);
 				Console.WriteLine ("Unhandled Exception, aborting request.");
-		        Console.WriteLine (e);
+				Console.WriteLine (e);
 				exception = e;
 				response = null;
 			}
 			state = KnetikRequestState.Done;
 			isDone = true;
-            responseTime = curcall.ElapsedMilliseconds;
+			responseTime = curcall.ElapsedMilliseconds;
 			
-		        
-            if ( completedCallback != null )
-            {
+			
+			if ( completedCallback != null )
+			{
 				if (synchronous) {
 					completedCallback(this);
 				} else {
-                    // we have to use this dispatcher to avoid executing the callback inside this worker thread
-					KnetikResponseCallbackDispatcher.Singleton.requests.Enqueue( this );
+					// we have to use this dispatcher to avoid executing the callback inside this worker thread
+					KnetikInitializationScript.Singleton.Requests.Enqueue( this );
 				}
-            }
-
-		        
-            if ( LogAllRequests )
-            {
-#if !UNITY_EDITOR
+			}
+			
+			
+			if ( LogAllRequests )
+			{
+				#if !UNITY_EDITOR
 				System.Console.WriteLine("NET: " + InfoString( VerboseLogging ));
-#else
-                if ( response != null && response.status >= 200 && response.status < 300 )
-                {
-                    Debug.Log( InfoString( VerboseLogging ) );
-                }
-                else if ( response != null && response.status >= 400 )
-                {
-                    Debug.LogError( InfoString( VerboseLogging ) );
-                }
-                else
-                {
-                    Debug.LogWarning( InfoString( VerboseLogging ) );
-                }
-#endif
-            }			
-		        
+				#else
+				if ( response != null && response.status >= 200 && response.status < 300 )
+				{
+					Debug.Log( InfoString( VerboseLogging ) );
+				}
+				else if ( response != null && response.status >= 400 )
+				{
+					Debug.LogError( InfoString( VerboseLogging ) );
+				}
+				else
+				{
+					Debug.LogWarning( InfoString( VerboseLogging ) );
+				}
+				#endif
+			}			
+			
 		}
 		
-		public void Send( Action< KnetikHTTP.KnetikRequest > callback )
-		{
+		public void Send( Action<KnetikRequest> callback )
+		{	
+			completedCallback = callback;
 			
-			if (!synchronous && callback != null && KnetikResponseCallbackDispatcher.Singleton == null )
-            {
-				KnetikResponseCallbackDispatcher.Init();
-            }
-
-	        completedCallback = callback;
-
 			isDone = false;
 			state = KnetikRequestState.Waiting;
 			if (acceptGzip)
 				SetHeader ("Accept-Encoding", "gzip");
-
-	        if ( this.cookieJar != null )
+			
+			if ( this.cookieJar != null )
 			{
 				List< KnetikCookie > cookies = this.cookieJar.GetCookies( new KnetikCookieAccessInfo( uri.Host, uri.AbsolutePath ) );
-								string cookieString = this.GetHeader( "cookie" );
+				string cookieString = this.GetHeader( "cookie" );
 				for ( int cookieIndex = 0; cookieIndex < cookies.Count; ++cookieIndex )
 				{
 					if ( cookieString.Length > 0 && cookieString[ cookieString.Length - 1 ] != ';' )
@@ -273,57 +267,57 @@ namespace KnetikHTTP
 					}
 					cookieString += cookies[ cookieIndex ].name + '=' + cookies[ cookieIndex ].value + ';';
 				}
-		        SetHeader( "cookie", cookieString );
-		    }
-
-	        
+				SetHeader( "cookie", cookieString );
+			}
+			
+			
 			if ( bytes != null && bytes.Length > 0 && GetHeader ("Content-Length") == "" ) {
-                SetHeader( "Content-Length", bytes.Length.ToString() );
-            }
-/*
+				SetHeader( "Content-Length", bytes.Length.ToString() );
+			}
+			/*
             if ( GetHeader( "User-Agent" ) == "" ) {
                 SetHeader( "User-Agent", "UnityWeb 1.0 ( Unity " + Application.unityVersion + " ) ( " + SystemInfo.operatingSystem + " )" );
             }
 			 */
-            if ( GetHeader( "Connection" ) == "" ) {
-                SetHeader( "Connection", "close" );
-            }
+			if ( GetHeader( "Connection" ) == "" ) {
+				SetHeader( "Connection", "close" );
+			}
 			
 			// Basic Authorization
 			if (!String.IsNullOrEmpty(uri.UserInfo)) {	
 				SetHeader("Authorization", "Basic " + System.Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(uri.UserInfo)));
 			}
-	        
+			
 			if (synchronous) {
-		        GetResponse();
+				GetResponse();
 			} else {
 				ThreadPool.QueueUserWorkItem (new WaitCallback ( delegate(object t) {
 					GetResponse();
 				})); 
 			}
 		}
-
+		
 		public string Text {
 			set { bytes = System.Text.Encoding.UTF8.GetBytes (value); }
 		}
-
-
+		
+		
 		public static bool ValidateServerCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-#if !UNITY_EDITOR
-            System.Console.WriteLine( "NET: SSL Cert: " + sslPolicyErrors.ToString() );
-#else
+			#if !UNITY_EDITOR
+			System.Console.WriteLine( "NET: SSL Cert: " + sslPolicyErrors.ToString() );
+			#else
 			Debug.LogError("Knetik Labs SDK - ERROR 6: SSL Cert Error: " + sslPolicyErrors.ToString ());
-#endif
+			#endif
 			return true;
 		}
-
+		
 		void WriteToStream (Stream outputStream)
 		{
 			var stream = new BinaryWriter (outputStream);
 			stream.Write (ASCIIEncoding.ASCII.GetBytes (method.ToUpper () + " " + uri.PathAndQuery + " " + protocol));
 			stream.Write (EOL);
-
+			
 			foreach (string name in headers.Keys) {
 				foreach (string value in headers[name]) {
 					stream.Write (ASCIIEncoding.ASCII.GetBytes (name));
@@ -332,44 +326,44 @@ namespace KnetikHTTP
 					stream.Write (EOL);
 				}
 			}
-
-            stream.Write (EOL);
-
+			
+			stream.Write (EOL);
+			
 			if (bytes != null && bytes.Length > 0) {
 				stream.Write (bytes);
 			}
 		}
-
-        private static string[] sizes = { "B", "KB", "MB", "GB" };
-        public string InfoString( bool verbose )
-        {
-            string status = isDone && response != null ? response.status.ToString() : "---";
-            string message = isDone && response != null ? response.message : "Unknown";
-            double size = isDone && response != null && response.bytes != null ? response.bytes.Length : 0.0f;
-
-            int order = 0;
-            while ( size >= 1024.0f && order + 1 < sizes.Length )
-            {
-                ++order;
-                size /= 1024.0f;
-            }
-
-            string sizeString = String.Format( "{0:0.##}{1}", size, sizes[ order ] );
-
-            string result = uri.ToString() + " [ " + method.ToUpper() + " ] [ " + status + " " + message + " ] [ " + sizeString + " ] [ " + responseTime + "ms ]";
-
-            if ( verbose && response != null )
-            {
-                result += "\n\nRequest Headers:\n\n" + String.Join( "\n", GetHeaders().ToArray() );
-                result += "\n\nResponse Headers:\n\n" + String.Join( "\n", response.GetHeaders().ToArray() );
-
-                if ( response.Text != null )
-                {
-                    result += "\n\nResponse Body:\n" + response.Text;
-                }
-            }
-
-            return result;
-        }
+		
+		private static string[] sizes = { "B", "KB", "MB", "GB" };
+		public string InfoString( bool verbose )
+		{
+			string status = isDone && response != null ? response.status.ToString() : "---";
+			string message = isDone && response != null ? response.message : "Unknown";
+			double size = isDone && response != null && response.bytes != null ? response.bytes.Length : 0.0f;
+			
+			int order = 0;
+			while ( size >= 1024.0f && order + 1 < sizes.Length )
+			{
+				++order;
+				size /= 1024.0f;
+			}
+			
+			string sizeString = String.Format( "{0:0.##}{1}", size, sizes[ order ] );
+			
+			string result = uri.ToString() + " [ " + method.ToUpper() + " ] [ " + status + " " + message + " ] [ " + sizeString + " ] [ " + responseTime + "ms ]";
+			
+			if ( verbose && response != null )
+			{
+				result += "\n\nRequest Headers:\n\n" + String.Join( "\n", GetHeaders().ToArray() );
+				result += "\n\nResponse Headers:\n\n" + String.Join( "\n", response.GetHeaders().ToArray() );
+				
+				if ( response.Text != null )
+				{
+					result += "\n\nResponse Body:\n" + response.Text;
+				}
+			}
+			
+			return result;
+		}
 	}
 }
