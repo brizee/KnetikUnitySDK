@@ -48,6 +48,11 @@ namespace Knetik
 			protected set;
 		}
 
+        public string ErrorMessage {
+            get;
+            set;
+        }
+
         public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
 		{
 			Status = StatusType.Pending;
@@ -70,13 +75,15 @@ namespace Knetik
 			Status = StatusType.Success;
 			if (req.response == null) {
 				Debug.Log("Knetik Labs SDK - ERROR 1: The response from SAPI is null.");
-				Status = StatusType.Failure;
+                Status = StatusType.Failure;
+                ErrorMessage = "Connection error - No connection";
 				return;
 			}
 			
 			if (req.response.status != 200) {
 				Debug.LogError("Knetik Labs SDK - ERROR 2: Response returned a status of " + req.response.status);
-				Status = StatusType.Failure;
+                Status = StatusType.Failure;
+                ErrorMessage = "Connection Error - Server problem";
 				return;
 			}
 			
@@ -85,18 +92,21 @@ namespace Knetik
 				
 				if (Body == null) {
 					Debug.LogError("Knetik Labs SDK - ERROR 3: Failed to Properly Parse JSON response");
-					Status = StatusType.Failure;
+                    Status = StatusType.Failure;
+                    ErrorMessage = "Connection error - Invalid format";
 					return;
 				}
 			} catch(Exception e) {
 				Debug.LogException(e);
-				Status = StatusType.Failure;
+                Status = StatusType.Failure;
+                ErrorMessage = "Connection error - Unknown exception";
 				return;
 			}
 			
 			if (Body["error"] == null) {
 				Debug.LogError("Knetik Labs SDK - ERROR 4: JSON Response does NOT contain an error node!");
 				Status = StatusType.Failure;
+                ErrorMessage = "Connection error - Malformed response";
 				return;
 			}
 			
@@ -105,6 +115,7 @@ namespace Knetik
 			if ((error["success"] == null) || (error["success"].AsBool == false)) {
 				Debug.LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
 				Status = StatusType.Error;
+                ErrorMessage = Body["message"];
 				return;
 			}
 		}

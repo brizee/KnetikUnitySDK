@@ -23,13 +23,15 @@ namespace Knetik
 			if (result == null) {
 				Debug.LogError("Knetik Labs SDK - ERROR 304: Existing User could not be successfully logged in, server has no response!");
 				Debug.LogError("Knetik Labs SDK: JSON Request: " + req);
+                ErrorMessage = "Connection error - No server response";
 				Status = StatusType.Error;
 			}
 			KnetikJSONNode session = result ["session"];
 			if (session == null) {
 				Debug.LogError("Knetik Labs SDK - ERROR 305: Existing User could not be successfully logged in, server did not return a session!");
 				Debug.LogError("Knetik Labs SDK: JSON Request: " + req);
-				Debug.LogError("Body: " + Body);
+                Debug.LogError("Body: " + Body);
+                ErrorMessage = "Connection error - Invalid session";
 				Status = StatusType.Error;
 			}
 
