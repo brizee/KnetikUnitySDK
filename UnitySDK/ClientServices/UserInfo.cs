@@ -21,6 +21,18 @@ namespace Knetik
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;
         }
+
+        public KnetikApiResponse PutUserInfo(string name, string value, Action<KnetikApiResponse> cb = null)
+        {
+            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+            j.AddField ("configName", name);
+            j.AddField ("configValue", value);
+            String body = j.Print ();
+            
+            KnetikRequest req = CreateRequest(PutUserInfoWithProductEndpoint, body);
+            KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
+            return res;
+        }
 	}
 }
 

@@ -99,7 +99,10 @@ Application.LoadLevel(1);
 
 ###6. UserInfo Service
 
-There are two methods for UserInfo: GetUserInfo and GetUserInfoWithProduct, which requires a product ID:
+There are three methods for UserInfo:
+- GetUserInfo, which requires no arguments and gets the info of the current user.
+- GetUserInfoWithProduct, which requires a product ID and gets the info of the current user and the info of the product with respect to the current user.
+- PutUserInfo, which requires a name and a value and updates a setting for the current user.
 
 EXAMPLE:
 
@@ -109,6 +112,12 @@ Debug.Log(response.Body);
 
 int productId = 1;
 var response = KnetikClient.Instance.GetUserInfoWithProduct(productId);
+Debug.Log(response.Body);
+
+string configName = "lang";
+string configValue = "es";
+
+var response = KnetikClient.Instance.PutUserInfoWithProduct(configName, configValue);
 Debug.Log(response.Body);
 ```
 

@@ -150,6 +150,7 @@ namespace Knetik
         private static string GetLeaderboardEndpoint = "metrics/getLeaderboard";
         private static string GetUserInfoEndpoint = "user/getinfo";
         private static string GetUserInfoWithProductEndpoint = "user/getinfowithproduct";
+        private static string PutUserInfoEndpoint = "user/update";
         private static string CreateGameOptionEndpoint = "user/addgameoption";
         private static string UpdateGameOptionEndpoint = "user/updategameoption";
 		private static string RegisterEndpoint = "registration/register";
