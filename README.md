@@ -8,104 +8,150 @@
 
   This GitHub project contains just the Unity SDK itself.  An example of its use can be found in another GitHub repo, knetikmedia/SampleGame.
 
-##2. Configuration
+##2. Getting Started
 
-  The Knetik Unity SDK contains a number of variables necessary to communicate with jSAPI which are easily stored in a configuration file.  This file is the KnetikConfig.json file.  As seen in the file extension, this config file is in JSON format. It contains essential global variables that get imported in the KnetikApiUtil.cs file and used throughout the SDK.
+  To use the Knetik Unity SDK, add a new empty GameObject to your scene (GameObject -> Create Empty).  Name it "KnetikInitializer" and add the "KnetikInitializationScript" component to the new object.  This script will configure your connection to the Knetik Service API.  There are a few properties on the script which you will want to set:
+
+  - **Base URL:** The URL of the Knetik Java Service API as provided by Knetik including the protocol (http:// or https://).  Example: *https://jsapi.knetik.com:8080*
+  - **Client ID:** Generated along with the secret key in the Admin Panel under Products -> Game Vendors for a particular Game Vendor.
+  - **Client Secret:** Generated along with the Client ID.
+
+  Once you configure the initialization script, you can connect to the API via the *KnetikClient.Instance* variable.
+
+##3. Services
+
+The Knetik API Client provides several services, such as Login, Registration, UserInfo, and Metrics.  The service methods can be executed either syncronously or asyncronously.
+
+###3.1 Syncronous vs. Asyncronous Execution
+
+To call a service method syncronously, call the method which returns a KnetikApiResponse instance:
+
+```
+KnetikApiResponse response = KnetikClient.Instance.Login(username, password)
+// Handle response here
+```
+
+To call a service method asyncronously, call the method with a callback function (Action<KnetikApiResponse>):
+
+```
+KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => {
+  // Handle response here.
+});
+
+Using the asyncronous execution will allow you to make nonblocking calls to the API.
+
+###4. Login Service
+
+Login requires a valid username/password pair to proceed, thus the user would already be registered.  For registration, please see section 2.2. The sample request below involves passing username/password by a Unity form:
 
 EXAMPLE:
+
 ```
+// Login a user with the given username and password entered
+var response = KnetikClient.Instance.Login (loginView.data.login, loginView.data.password);
+
+if (response.Status == KnetikApiResponse.StatusType.Success) 
 {
-    "version": "1.0",
-    "apiHost": "sb.knetik.com:8080",
-    "urlPrefix": "http://",
-    "clientKey": "test",
-    "clientSecret": "test_secret",
-    "endpointPrefix": "/rest/services/latest/",
-    "sessionEndpoint": "session",
-    "leaderboardEndpoint": "gameleaderboard",
-    "metricEndpoint": "metric",
-    "userEndpoint": "user",
-    "productEndpoint": "product",
-    "registerEndpoint": "registration/register"
+  // Save off the created user session information
+  UserSessionUtils.setUserSession(KnetikClient.Instance.UserID, KnetikClient.Instance.Username, KnetikClient.Instance.ClientID);
+  // Launch the Level Scene (main game)
+  Application.LoadLevel(2);
+}
+// If login failed, display the error message that SAPI returns
+else 
+{
+  loginView.error = true;
+  loginView.errorMessage = response.ErrorMessage;
 }
 ```
 
-  The above example KnetikConfig.json shows some of the variables in place.
-  - version: Version is used to help build the signature of the platform making calls.
-  - apiHost: URL to the Knetik jSAPI server, as supplied by Knetik
-  - urlPrefix: Either http:// or https:// depending on security requirements
-  - clientKey: Generated along with the secret key in the Admin Panel under Products -> Game Vendors for a particular Game Vendor
-  - clientSecret: See clientKey
-  - endpointPrefix: The starting URL for all jSAPI endpoints.  This should not change unless specified by Knetik.
-  - *Endpoint: These are predefined tags that append to the endpointPrefix to make particular types of calls to jSAPI.
+###5. Registration Service
 
-  For initial setup, it is necessary upon the startup of your game/application to call the KnetikApiUtil.readConfig() function to set up all these variables and allow a process connection to jSAPI.
-
-###2.1 Login
-Login requires valid username/password to proceed, thus the user would already be registered.  For registration, please see section 2.2. The sample request below involves passing username/password by a Unity form. The strings of username and password should be passed to KnetikLoginRequest object. Then, by calling doLogin method, you could get the response from server. This C# sample shows how to use the SDK for Login with an already registered user:
+Registration requires three fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
 
 EXAMPLE:
+
 ```
-	KnetikLoginRequest login = new KnetikLoginRequest(loginView.data.login, loginView.data.password);
-	if (login.doLogin()) {
-		m_key = login.getKey();
-		UserSessionUtils.setUserSession(login.getUserId(), login.getUsername(), login.getKey());
-		Application.LoadLevel(1);
-	} else {
-		loginView.error = true;
-		loginView.errorMessage = login.getErrorMessage();			
-	}		
-```
-
-###2.2 Registration
-Registering a new user requires a little more information and is actually a 3 step process.  The first part involves creating a guest session, then registering the new user, followed by authenticating the new user's previous guest session to complete the login. The user will provide these strings: Username, Password, Email and Fullname as a minimum (more choices are optional). The SDK returns true or false to notify caller if it was successful or not and a proper error message if necessary.  In the case of an error, getErrorMessage() method could be called for the complete description.
-
-EXAMPLE:
-```
-void onRegisterClick() {
-		if (registrationView.data.password != registrationView.data.passwordConfirm) {
-			registrationView.error = true;
-    		registrationView.errorMessage = "Password and Confirm password don't match!";			
-			return;
-		}
-		
-		KnetikLoginRequest lr = new KnetikLoginRequest();
-        
-        // First build a guest session
-		if (!lr.doLogin(true)) {
-			registrationView.error = true;
-    		registrationView.errorMessage = lr.getErrorMessage();
-			return;
-		}
-
-		Debug.Log("Guest session key: lr.getKey()");
-        	// Register the new user
-		KnetikRegisterRequest ur = new KnetikRegisterRequest(lr.getKey(), 
-			registrationView.data.login, 
-			registrationView.data.password, 
-			registrationView.data.email, 
-			registrationView.data.login);
-		if(!ur.doRegister()) {
-			registrationView.error = true;
-    		registrationView.errorMessage = ur.getErrorMessage();			
-			return;
-		}
-
-        KnetikLoginRequest nlr = new KnetikLoginRequest(registrationView.data.login, 
-                                                       registrationView.data.password);
-        
-        // After registration, upgrade session to authenticated
-        if (!nlr.doLogin())
-        {
-                registrationView.error = true;
-                registrationView.errorMessage = lr.getErrorMessage();
-                return;
-        }
-                        
-        m_key = nlr.getKey();
-        UserSessionUtils.setUserSession(0, registrationView.data.login, nlr.getKey());
-		Application.LoadLevel(1);
+// Check if passwords match, and if not display the appropriate error message
+if (registrationView.data.password != registrationView.data.passwordConfirm) 
+{
+  registrationView.error = true;
+  registrationView.errorMessage = "Password and Confirm password don't match!";     
+  return;
 }
+
+var response = KnetikClient.Instance.Register(registrationView.data.login, 
+                                              registrationView.data.password, 
+                                              registrationView.data.email, 
+                                              registrationView.data.login);
+
+if (response.Status != KnetikApiResponse.StatusType.Success) {
+  registrationView.error = true;
+  registrationView.errorMessage = response.ErrorMessage;
+  return;
+}
+
+// Save off the existing user session
+UserSessionUtils.setUserSession(0, registrationView.data.login, KnetikClient.Instance.ClientID);
+// Load the StartMenu again, the registered user must now login
+Application.LoadLevel(1);
 ```
 
-The above example is passing in the necessary parameters to perform a guest login while registering the new user.  It makes references to a registration screen that the user will see.
+###6. UserInfo Service
+
+There are three methods for UserInfo:
+- GetUserInfo, which requires no arguments and gets the info of the current user.
+- GetUserInfoWithProduct, which requires a product ID and gets the info of the current user and the info of the product with respect to the current user.
+- PutUserInfo, which requires a name and a value and updates a setting for the current user.
+
+EXAMPLE:
+
+```
+var response = KnetikClient.Instance.GetUserInfo();
+Debug.Log(response.Body);
+
+int productId = 1;
+var response = KnetikClient.Instance.GetUserInfoWithProduct(productId);
+Debug.Log(response.Body);
+
+string configName = "lang";
+string configValue = "es";
+
+var response = KnetikClient.Instance.PutUserInfoWithProduct(configName, configValue);
+Debug.Log(response.Body);
+```
+
+###7. Metrics Service
+
+```
+int metricId = 1;
+int score = 10;
+string level = "de_dust";
+Dictionary<string, string> obj = new Dictionary<string, string> {
+  "aKey" => "aValue"
+};
+
+var response = KnetikClient.Instance.RecordValueMetric(metricId, score, level);
+Debug.Log(response.Body);
+
+var response = KnetikClient.Instance.GetUserInfoWithProduct(metricId, obj, level);
+Debug.Log(response.Body);
+
+var response = KnetikClient.Instance.GetLeaderboard(leaderboardId, level);
+Debug.Log(response.Body);
+```
+
+###8. GameOptions Service
+
+```
+int productId = 1;
+string optionName = "invertY";
+string optionValue = "true";
+var response = KnetikClient.Instance.CreateGameOption(productId, optionName, optionValue);
+Debug.Log(response.Body);
+
+string optionValue = "false";
+
+var response = KnetikClient.Instance.UpdateGameOption(productId, optionName, optionValue);
+Debug.Log(response.Body);
+```

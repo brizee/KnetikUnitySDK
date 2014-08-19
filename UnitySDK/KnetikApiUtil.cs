@@ -1,57 +1,13 @@
-using System;
-using UnityEngine;
-using UnityEditor;
-using System.Net.NetworkInformation;
-using System.IO;
+﻿using UnityEngine;
 using System.Collections;
-using KnetikSimpleJSON;
-using System.Text;
+using System;
+using System.Net.NetworkInformation;
 
 namespace Knetik
 {
 	public class KnetikApiUtil
 	{
-		private static string API_Version = null;
-
-		public static string API_HOST = null;
-		public static string API_URL = null;
-		public static string API_CLIENT_KEY = null;
-		public static string API_CLIENT_SECRET = null;
-		public static string ENDPOINT_PREFIX = null;
-		public static string SESSION_ENDPOINT = null;
-		public static string LEADERBOARD_ENDPOINT = null;
-		public static string METRIC_ENDPOINT = null;
-		public static string USER_ENDPOINT = null;
-		public static string PRODUCT_ENDPOINT = null;
-        public static string REGISTER_ENDPOINT = null;
-
-		// Sets up all configuration based on JSON file
-		public static void readConfig()
-		{
-			StringBuilder sb = new StringBuilder ();
-			using (StreamReader sr = new StreamReader("Assets/Class/jSAPI/KnetikConfig.json")) 
-			{
-				string line;
-				while ((line = sr.ReadLine()) != null) 
-				{
-						sb.AppendLine (line);
-				}
-			}
-			string allLines = sb.ToString ();
-			KnetikJSONNode configJsonNode = KnetikJSON.Parse (allLines);
-			API_Version = configJsonNode ["version"];
-			API_HOST = configJsonNode ["apiHost"];
-			API_URL = configJsonNode ["urlPrefix"] + API_HOST;
-			API_CLIENT_KEY = configJsonNode ["clientKey"];
-			API_CLIENT_SECRET = configJsonNode ["clientSecret"];
-			ENDPOINT_PREFIX = configJsonNode ["endpointPrefix"];
-			SESSION_ENDPOINT = configJsonNode ["sessionEndpoint"];
-			LEADERBOARD_ENDPOINT = configJsonNode ["leaderboardEndpoint"];
-			METRIC_ENDPOINT = configJsonNode ["metricEndpoint"];
-			USER_ENDPOINT = configJsonNode ["userEndpoint"];
-			PRODUCT_ENDPOINT = configJsonNode ["productEndpoint"];
-            REGISTER_ENDPOINT = configJsonNode["registerEndpoint"];
-		}
+		public static string API_VERSION = "1.0";
 
 		// Determines the type of device being used
 		public static string getDeviceSignature() 
@@ -60,125 +16,136 @@ namespace Knetik
 			string platformName = "Unknown";
 			string platformVersion;
 			platformVersion = "Unknown";
-	
+			
 			switch(Application.platform) 
 			{
-				case RuntimePlatform.OSXEditor: //	 In the Unity editor on Mac OS X.
-				case RuntimePlatform.OSXPlayer: //	 In the player on Mac OS X.
-				case RuntimePlatform.OSXDashboardPlayer: //	 In the Dashboard widget on Mac OS X.
-					platformType = "PC";
-					platformName = "Mac";
-					break;
-				case RuntimePlatform.WindowsPlayer: //	 In the player on Windows.
-				case RuntimePlatform.WindowsEditor: //	 In the Unity editor on Windows.
-					platformType = "PC";
-					platformName = "Windows";
-					break;
-				case RuntimePlatform.WindowsWebPlayer: //	 In the web player on Windows.
-					platformType = "WEB";
-					platformName = "Windows";
-					break;
-				case RuntimePlatform.OSXWebPlayer: //	 In the web player on Mac OS X.
-					platformType = "WEB";
-					platformName = "Mac";
-					break;
-//				case RuntimePlatform.WiiPlayer: //	 In the player on Nintendo Wii.
-//					platformType = "PC";
-//					platformName = "Mac";
-//					break;
-				case RuntimePlatform.IPhonePlayer: //	 In the player on the iPhone.
-					platformType = "MOBILE";
-					platformName = "iOS";
-					break;
-				case RuntimePlatform.XBOX360: //	 In the player on the XBOX360.
-					platformType = "MOBILE";
-					platformName = "XBOX360";
-					break;
-				case RuntimePlatform.PS3: //	 In the player on the Play Station 3.
-					platformType = "MOBILE";
-					platformName = "PS3";
-					break;
-				case RuntimePlatform.Android: //	 In the player on Android devices.
-					platformType = "MOBILE";
-					platformName = "Android";
-					break;
-				case RuntimePlatform.NaCl: //	 Google Native Client.
-					platformType = "MOBILE";
-					platformName = "NaCl";
-					break;
-				case RuntimePlatform.FlashPlayer: //	 Flash Player.			
-					platformType = "WEB";
-					platformName = "Flash";
-					break;
+			case RuntimePlatform.OSXEditor: //	 In the Unity editor on Mac OS X.
+			case RuntimePlatform.OSXPlayer: //	 In the player on Mac OS X.
+			case RuntimePlatform.OSXDashboardPlayer: //	 In the Dashboard widget on Mac OS X.
+				platformType = "PC";
+				platformName = "Mac";
+				break;
+			case RuntimePlatform.WindowsPlayer: //	 In the player on Windows.
+			case RuntimePlatform.WindowsEditor: //	 In the Unity editor on Windows.
+				platformType = "PC";
+				platformName = "Windows";
+				break;
+			case RuntimePlatform.WindowsWebPlayer: //	 In the web player on Windows.
+				platformType = "WEB";
+				platformName = "Windows";
+				break;
+			case RuntimePlatform.OSXWebPlayer: //	 In the web player on Mac OS X.
+				platformType = "WEB";
+				platformName = "Mac";
+				break;
+				//				case RuntimePlatform.WiiPlayer: //	 In the player on Nintendo Wii.
+				//					platformType = "PC";
+				//					platformName = "Mac";
+				//					break;
+			case RuntimePlatform.IPhonePlayer: //	 In the player on the iPhone.
+				platformType = "MOBILE";
+				platformName = "iOS";
+				break;
+			case RuntimePlatform.XBOX360: //	 In the player on the XBOX360.
+				platformType = "MOBILE";
+				platformName = "XBOX360";
+				break;
+			case RuntimePlatform.PS3: //	 In the player on the Play Station 3.
+				platformType = "MOBILE";
+				platformName = "PS3";
+				break;
+			case RuntimePlatform.Android: //	 In the player on Android devices.
+				platformType = "MOBILE";
+				platformName = "Android";
+				break;
+			case RuntimePlatform.NaCl: //	 Google Native Client.
+				platformType = "MOBILE";
+				platformName = "NaCl";
+				break;
+			case RuntimePlatform.FlashPlayer: //	 Flash Player.			
+				platformType = "WEB";
+				platformName = "Flash";
+				break;
 			}
 			
 			string signature = platformType 
 				+ "-"
-				+ "Unity"
-				+ "-"
-				+ platformVersion
-				+ "-"
-				+ platformName
-				+ "-"
-				+ API_Version;
-		    
-		    return signature;    
+					+ "Unity"
+					+ "-"
+					+ platformVersion
+					+ "-"
+					+ platformName
+					+ "-"
+					+ API_VERSION;
+			
+			return signature;    
 		}
-	
+		
 		// Pulls the serial number (physical address) of the device being used
 		public static string getDeviceSerial() 
 		{
-	        NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-	
+			NetworkInterface adapter = getActiveNetwork();
+
+			if (adapter == null) {
+				return null;
+			}
+			Debug.Log(adapter.Description);	
+			Debug.Log("  Interface type .......................... : " + adapter.NetworkInterfaceType);
+			Debug.Log("  Physical Address ........................ : " + adapter.GetPhysicalAddress().ToString());
+			Debug.Log("  Is receive only.......................... : " + adapter.IsReceiveOnly);
+			Debug.Log("  Multicast................................ : " + adapter.SupportsMulticast);
+			return adapter.GetPhysicalAddress().ToString();
+		}
+		
+		public static string getMacAddress()
+		{
+			NetworkInterface adapter = getActiveNetwork();
+			
+			if (adapter == null) {
+				return "";
+			}
+			
+			PhysicalAddress address = adapter.GetPhysicalAddress();
+			byte[] bytes = address.GetAddressBytes();
+			string mac = null;
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				mac = string.Concat(mac +(string.Format("{0}", bytes[i].ToString("X2"))));
+			}
+			Debug.Log("MAC: " + mac);
+			return mac;
+		}
+
+		private static NetworkInterface getActiveNetwork()
+		{
+			NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+			NetworkInterface result = null;
+			long highestSpeed = -1;
+
+			foreach (NetworkInterface adapter in nics) {
+				if (adapter.Speed > highestSpeed && adapter.GetPhysicalAddress().ToString() != "") {
+					result = adapter;
+					highestSpeed = adapter.Speed;
+				}
+			}
+			return result;
+		}
+		
+		
+		// Pulls the type of the device being used
+		public static string getDeviceType() 
+		{
+			NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+			
 			if (nics.Length == 0) {
-	        	Debug.LogWarning("No Network interface found! Using default 00000");
+				Debug.LogWarning("No Network interface found! Using default 00000");
 				return "00000";
 			}
 			
 			NetworkInterface adapter = nics[nics.Length - 1];
-            Debug.Log(adapter.Description);	
-            Debug.Log("  Interface type .......................... : " + adapter.NetworkInterfaceType);
-            Debug.Log("  Physical Address ........................ : " + adapter.GetPhysicalAddress().ToString());
-            Debug.Log("  Is receive only.......................... : " + adapter.IsReceiveOnly);
-            Debug.Log("  Multicast................................ : " + adapter.SupportsMulticast);
-			return adapter.GetPhysicalAddress().ToString();
+			return adapter.GetType().ToString();
 		}
-
-        public static string getMacAddress()
-        {
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            string info = null;
-            
-            foreach (NetworkInterface adapter in nics)
-            {
-                PhysicalAddress address = adapter.GetPhysicalAddress();
-                byte[] bytes = address.GetAddressBytes();
-                string mac = null;
-                for (int i = 0; i < bytes.Length; i++)
-                {
-                    mac = string.Concat(mac +(string.Format("{0}", bytes[i].ToString("X2"))));
-                }
-                                info = mac;
-            }
-                        Debug.Log("MAC: " + info);
-            return info;
-        }
-
-
-        // Pulls the type of the device being used
-        public static string getDeviceType() 
-        {
-            NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-            
-            if (nics.Length == 0) {
-                    Debug.LogWarning("No Network interface found! Using default 00000");
-                    return "00000";
-            }
-            
-            NetworkInterface adapter = nics[nics.Length - 1];
-            return adapter.GetType().ToString();
-        }
-	
+		
 		// SHA1 Encryption
 		public static string sha1(string input) 
 		{
@@ -186,7 +153,7 @@ namespace Knetik
 			byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
 			byte[] hash = sha1.ComputeHash(inputBytes);
 			string result = "";
-
+			
 			for (int i = 0; i < hash.Length; i++) 
 			{
 				result += hash[i].ToString("X2");
@@ -194,7 +161,7 @@ namespace Knetik
 			
 			return result.ToLower();			
 		}
-
+		
 		// MD5 Sum Encryption
 		public static string md5(string input) 
 		{
@@ -202,7 +169,7 @@ namespace Knetik
 			byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
 			byte[] hash = md5.ComputeHash(inputBytes);
 			string result = "";
-
+			
 			for (int i = 0; i < hash.Length; i++) 
 			{
 				result += hash[i].ToString("X2");
@@ -210,7 +177,7 @@ namespace Knetik
 			
 			return result.ToLower();			
 		}
-
+		
 		// Hash Encryption
 		public static string hashHmac(string input, string key) 
 		{
@@ -223,4 +190,3 @@ namespace Knetik
 		}
 	}
 }
-
