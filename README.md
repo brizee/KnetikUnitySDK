@@ -37,10 +37,11 @@ To call a service method asyncronously, call the method with a callback function
 KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => {
   // Handle response here.
 });
+```
 
 Using the asyncronous execution will allow you to make nonblocking calls to the API.
 
-###4. Login Service
+##4. Login Service
 
 Login requires a valid username/password pair to proceed, thus the user would already be registered.  For registration, please see section 2.2. The sample request below involves passing username/password by a Unity form:
 
@@ -65,7 +66,7 @@ else
 }
 ```
 
-###5. Registration Service
+##5. Registration Service
 
 Registration requires three fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
 
@@ -97,7 +98,7 @@ UserSessionUtils.setUserSession(0, registrationView.data.login, KnetikClient.Ins
 Application.LoadLevel(1);
 ```
 
-###6. UserInfo Service
+##6. UserInfo Service
 
 There are three methods for UserInfo:
 - GetUserInfo, which requires no arguments and gets the info of the current user.
@@ -121,7 +122,7 @@ var response = KnetikClient.Instance.PutUserInfoWithProduct(configName, configVa
 Debug.Log(response.Body);
 ```
 
-###7. Metrics Service
+##7. Metrics Service
 
 ```
 int metricId = 1;
@@ -141,7 +142,7 @@ var response = KnetikClient.Instance.GetLeaderboard(leaderboardId, level);
 Debug.Log(response.Body);
 ```
 
-###8. GameOptions Service
+##8. GameOptions Service
 
 ```
 int productId = 1;
