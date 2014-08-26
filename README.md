@@ -118,7 +118,7 @@ Debug.Log(response.Body);
 string configName = "lang";
 string configValue = "es";
 
-var response = KnetikClient.Instance.PutUserInfoWithProduct(configName, configValue);
+var response = KnetikClient.Instance.PutUserInfo(configName, configValue);
 Debug.Log(response.Body);
 ```
 
@@ -135,7 +135,7 @@ Dictionary<string, string> obj = new Dictionary<string, string> {
 var response = KnetikClient.Instance.RecordValueMetric(metricId, score, level);
 Debug.Log(response.Body);
 
-var response = KnetikClient.Instance.GetUserInfoWithProduct(metricId, obj, level);
+var response = KnetikClient.Instance.RecordObjectMetric(metricId, obj, level);
 Debug.Log(response.Body);
 
 var response = KnetikClient.Instance.GetLeaderboard(leaderboardId, level);
