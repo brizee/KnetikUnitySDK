@@ -43,7 +43,7 @@ Using the asyncronous execution will allow you to make nonblocking calls to the 
 
 ##4. Login Service
 
-Login requires a valid username/password pair to proceed, thus the user would already be registered.  For registration, please see section 2.2. The sample request below involves passing username/password by a Unity form:
+Login requires a valid username/password pair to proceed, thus the user would already be registered.  For registration, please see section 5. The sample request below involves passing username/password by a Unity form:
 
 EXAMPLE:
 
@@ -68,7 +68,7 @@ else
 
 ##5. Registration Service
 
-Registration requires three fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
+Registration requires four fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
 
 EXAMPLE:
 
