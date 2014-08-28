@@ -66,6 +66,19 @@ else
 }
 ```
 
+###4.1 Login as Guest
+
+Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away.  They can login after and their session will be upgraded to the authenticated session.
+
+```
+var response = KnetikClient.Instance.GuestLogin();
+
+if (response.Status == KnetikApiResponse.StatusType.Success) 
+{
+   // The user now is logged in as a guest.  They can login to get their guest session upgraded.
+}
+```
+
 ##5. Registration Service
 
 Registration requires four fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
