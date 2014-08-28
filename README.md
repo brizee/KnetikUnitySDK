@@ -10,7 +10,7 @@
 
 ##2. Getting Started
 
-  To use the Knetik Unity SDK, add a new empty GameObject to your scene (GameObject -> Create Empty).  Name it "KnetikInitializer" and add the "KnetikInitializationScript" component to the new object.  This script will configure your connection to the Knetik Service API.  There are a few properties on the script which you will want to set:
+  To use the Knetik Unity SDK, drag the KnetikInitializer prefab from the Knetik SDK onto the scene.  This object will connect Unity to the Knetik API with the settings in the “Knetik Initialization Script” component on the prefab:
 
   - **Base URL:** The URL of the Knetik Java Service API as provided by Knetik including the protocol (http:// or https://).  Example: *https://jsapi.knetik.com:8080*
   - **Client ID:** Generated along with the secret key in the Admin Panel under Products -> Game Vendors for a particular Game Vendor.
