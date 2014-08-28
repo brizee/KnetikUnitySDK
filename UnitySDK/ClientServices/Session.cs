@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Knetik
 {
@@ -32,6 +33,18 @@ namespace Knetik
 			KnetikRequest req = CreateRequest(SessionEndpoint, body);
 			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
 			return res;
+		}
+
+		private string BuildLoginBody()
+		{
+			JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
+			json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
+			json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
+			// Device Type is currently limited to 3 characters in the DB
+			json.AddField ("device_type", SystemInfo.deviceType.ToString().Substring(0, 3));
+			json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
+			
+			return json.Print ();
 		}
 	}
 }

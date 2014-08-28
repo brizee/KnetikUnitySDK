@@ -14,7 +14,7 @@ namespace Knetik
         public KnetikApiResponse GetUserInfoWithProduct(int productId, Action<KnetikApiResponse> cb = null)
         {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("product_id", productId);
+            j.AddField ("productId", productId);
             String body = j.Print ();
 
             KnetikRequest req = CreateRequest(GetUserInfoWithProductEndpoint, body);
@@ -29,7 +29,7 @@ namespace Knetik
             j.AddField ("configValue", value);
             String body = j.Print ();
             
-            KnetikRequest req = CreateRequest(PutUserInfoWithProductEndpoint, body);
+            KnetikRequest req = CreateRequest(PutUserInfoEndpoint, body);
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;
         }

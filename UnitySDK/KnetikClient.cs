@@ -78,7 +78,6 @@ namespace Knetik
 			
 			KnetikRequest req = new KnetikRequest (method, url, data);
 
-			req.SetHeader("Host", BaseURL);
 			req.SetHeader("Content-type", "application/json");
 			req.SetHeader("User-Agent", "Unity Knetik SDK");
 
@@ -128,18 +127,6 @@ namespace Knetik
 		{
 			TimeSpan t = (DateTime.UtcNow - new DateTime (1970, 1, 1));
 			return (int)t.TotalSeconds;
-		}
-
-		private string BuildLoginBody()
-		{
-			JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
-			json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
-			json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
-			// Device Type is currently limited to 3 characters in the DB
-			json.AddField ("device_type", SystemInfo.deviceType.ToString().Substring(0, 3));
-			json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
-			
-			return json.Print ();
 		}
 
 		#endregion

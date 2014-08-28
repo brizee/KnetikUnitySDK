@@ -435,11 +435,13 @@ namespace KnetikSimpleJSON
 		
 		public void SaveToFile(string aFileName)
 		{
+#if !UNITY_WEBPLAYER
 			System.IO.Directory.CreateDirectory((new System.IO.FileInfo(aFileName)).Directory.FullName);
 			using(var F = System.IO.File.OpenWrite(aFileName))
 			{
 				SaveToStream(F);
 			}
+#endif
 		}
 		public string SaveToBase64()
 		{

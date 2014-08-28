@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+
+#if !UNITY_WEBPLAYER
 using System.Net.NetworkInformation;
+#endif
 
 namespace Knetik
 {
@@ -81,6 +84,7 @@ namespace Knetik
 			return signature;    
 		}
 		
+#if !UNITY_WEBPLAYER
 		// Pulls the serial number (physical address) of the device being used
 		public static string getDeviceSerial() 
 		{
@@ -116,6 +120,19 @@ namespace Knetik
 			return mac;
 		}
 
+        // Pulls the type of the device being used
+        public static string getDeviceType() 
+        {
+            NetworkInterface adapter = getActiveNetwork();
+            
+            if (adapter == null) {
+                Debug.LogWarning("No Network interface found! Using default 00000");
+                return "00000";
+            }
+            
+            return adapter.GetType().ToString();
+        }
+
 		private static NetworkInterface getActiveNetwork()
 		{
 			NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
@@ -130,21 +147,24 @@ namespace Knetik
 			}
 			return result;
 		}
-		
-		
-		// Pulls the type of the device being used
-		public static string getDeviceType() 
-		{
-			NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
-			
-			if (nics.Length == 0) {
-				Debug.LogWarning("No Network interface found! Using default 00000");
-				return "00000";
-			}
-			
-			NetworkInterface adapter = nics[nics.Length - 1];
-			return adapter.GetType().ToString();
-		}
+#else
+        // Pulls the serial number (physical address) of the device being used
+        public static string getDeviceSerial() 
+        {
+            return "0:0:0:0";
+        }
+        
+        public static string getMacAddress()
+        {
+            return "0:0:0:0";
+        }
+        
+        // Pulls the type of the device being used
+        public static string getDeviceType() 
+        {
+            return "WEB";
+        }
+#endif
 		
 		// SHA1 Encryption
 		public static string sha1(string input) 

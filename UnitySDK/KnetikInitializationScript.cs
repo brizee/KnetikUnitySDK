@@ -14,7 +14,7 @@ public class KnetikInitializationScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		if (Singleton) {
-			throw new UnityException("Only 1 KnetikInitializationScript is allowed!");
+            return;
 		}
 		Singleton = this;
         KnetikClient.Instance.BaseURL = BaseURL;
