@@ -32,6 +32,30 @@ namespace Knetik
 			set;
 		}
 
+        public bool IsPending {
+            get {
+                return Status == StatusType.Pending;
+            }
+        }
+
+        public bool IsSuccess {
+            get {
+                return Status == StatusType.Success;
+            }
+        }
+
+        public bool IsFailure {
+            get {
+                return Status == StatusType.Failure;
+            }
+        }
+
+        public bool IsError {
+            get {
+                return Status == StatusType.Error;
+            }
+        }
+
 		public Action<KnetikApiResponse> Callback {
 			get;
 			protected set;

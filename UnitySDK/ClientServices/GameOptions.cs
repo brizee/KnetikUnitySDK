@@ -5,10 +5,14 @@ namespace Knetik
 {
     public partial class KnetikClient
 	{
-        public KnetikApiResponse CreateGameOption(int productId, string optionName, string optionValue, Action<KnetikApiResponse> cb = null)
-		{
+        public KnetikApiResponse CreateGameOption(
+            int gameId,
+            string optionName,
+            string optionValue,
+            Action<KnetikApiResponse> cb = null
+        ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("productId", productId);
+            j.AddField ("productId", gameId);
             j.AddField ("optionName", optionName);
             j.AddField ("optionValue", optionValue);
             String body = j.Print ();
@@ -16,13 +20,17 @@ namespace Knetik
             KnetikRequest req = CreateRequest(CreateGameOptionEndpoint, body);
             
             KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
-            return  response;
+            return response;
 		}
 
-        public KnetikApiResponse UpdateGameOption(int productId, string optionName, string optionValue, Action<KnetikApiResponse> cb = null)
-		{
+        public KnetikApiResponse UpdateGameOption(
+            int gameId,
+            string optionName,
+            string optionValue,
+            Action<KnetikApiResponse> cb = null
+        ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("productId", productId);
+            j.AddField ("productId", gameId);
             j.AddField ("optionName", optionName);
             j.AddField ("optionValue", optionValue);
             String body = j.Print ();
@@ -30,7 +38,7 @@ namespace Knetik
             KnetikRequest req = CreateRequest(UpdateGameOptionEndpoint, body);
             
             KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
-            return  response;
+            return response;
 		}
 	}
 }

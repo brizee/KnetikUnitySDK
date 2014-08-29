@@ -4,6 +4,16 @@ namespace Knetik
 {
     public partial class KnetikClient
 	{
+        private UserInfo _userInfo;
+        public UserInfo UserInfo {
+            get {
+                if (_userInfo == null) {
+                    _userInfo = new UserInfo(this);
+                }
+                return _userInfo;
+            }
+        }
+
         public KnetikApiResponse GetUserInfo(Action<KnetikApiResponse> cb = null)
         {
             KnetikRequest req = CreateRequest(GetUserInfoEndpoint);
