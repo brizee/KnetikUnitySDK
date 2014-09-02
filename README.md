@@ -18,78 +18,11 @@
 
   Once you configure the initialization script, you can connect to the API via the *KnetikClient.Instance* variable.
 
-##5. Models
-
-The simplest method of accessing the Knetik API is through the Model interface.  The Model interface is a convenience wrapper around the API Services and parses the responses into C# objects.
-
-###5.1 UserInfo
-
-The UserInfo model represents nformation about the current user.  As long as the user is signed in, you can retrieve its UserInfo from the UserInfo property on the KnetikClient instance:
-
-```
-Knetik.Instance.UserInfo
-```
-
-Initially, the UserInfo object isn’t populated with data as it hasn’t been retrieved yet.  To remedy this, use the Load or LoadWithGame methods:
-
-```
-Knetik.Instance.UserInfo.Load((result) {
-  Debug.WriteLine(“Finished loading user info: ” + result.Value); // result.Value is the UserInfo object
-});
-
-int gameId = 1;
-Knetik.Instance.UserInfo.LoadWithGame(gameId, (result) {
-  Debug.WriteLine(“Finished loading user info: ” + result.Value); // result.Value is the Game object
-});
-```
-
-You can also make changes to the UserInfo object.  Currently, only the *AvatarURL* and *Language* properties can be updated through the API.
-
-```
-Knetik.Instance.UserInfo.AvatarURL = “http://placehold.it/400x300.jpg”;
-Knetik.Instance.UserInfo.Save((res) {
-  Debug.WriteLine(“Updated!”);
-});
-```
-
-###5.2 Game
-
-Game objects are retrieved through using the ```UserInfo.LoadWithGame```method and providing the game’s ID.  With the game object, you can read its properties, GameOptions, and record metrics by name for the game.
-
-```
-int gameId = 1;
-Knetik.Instance.UserInfo.LoadWithGame(gameId, (result) {
-  var game = result.Value;
-  if (game.Options.ContainsKey(“invert-y”)) {
-    Debug.WriteLine(“Invert-Y: ” + game.Options[“invert-y”].Value);
-  }
-});
-```
-
-###5.3 Metric
-
-Metric objects are used to record new metrics (either values or objects).  Metric objects can be created right from the Client instance given a metric ID or from a Game instance given the metric name.
-
-```
-// ‘game’ variable is a Game object
-ValueMetric score = game.CreateValueMetric(“score”);
-score.Value = 300;
-score.Save((res) {
-  Debug.WriteLine(“Score posted…”);
-});
-
-ObjectMetric savedGame = game.CreateObjectMetric(“saved_game”);
-savedGame = new Dictionary<string, string> {{“level”, “first”}};
-savedGame.Save((res) {
-  Debug.WriteLine(“Game saved…”);
-});
-```
-
-##4. Services
+##3. Services
 
 The Knetik API Client provides several services, such as Login, Registration, UserInfo, and Metrics.  The service methods can be executed either syncronously or asyncronously.
 
-###4.1 Syncronous vs. Asyncronous Execution
+###3.1 Syncronous vs. Asyncronous Execution
 
 To call a service method syncronously, call the method which returns a KnetikApiResponse instance:
 
@@ -108,7 +41,7 @@ KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => 
 
 Using the asyncronous execution will allow you to make nonblocking calls to the API.
 
-###4.2 Login Service
+###3.2 Login Service
 
 Login requires a valid username/password pair to proceed, thus the user would already be registered.  For registration, please see section 5. The sample request below involves passing username/password by a Unity form:
 
@@ -133,7 +66,7 @@ else
 }
 ```
 
-####4.2.1 Login as Guest
+####3.2.1 Login as Guest
 
 Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away.  They can login after and their session will be upgraded to the authenticated session.
 
@@ -146,7 +79,7 @@ if (response.Status == KnetikApiResponse.StatusType.Success)
 }
 ```
 
-###4.3 Registration Service
+###3.3 Registration Service
 
 Registration requires four fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
 
@@ -178,7 +111,7 @@ UserSessionUtils.setUserSession(0, registrationView.data.login, KnetikClient.Ins
 Application.LoadLevel(1);
 ```
 
-###4.4 UserInfo Service
+###3.4 UserInfo Service
 
 There are three methods for UserInfo:
 - GetUserInfo, which requires no arguments and gets the info of the current user.
@@ -202,7 +135,9 @@ var response = KnetikClient.Instance.PutUserInfo(configName, configValue);
 Debug.Log(response.Body);
 ```
 
-###4.5 Metrics Service
+###3.5 Metrics Service
+
+The Metrics service is used to push numerical or object data to the Knetik API.
 
 ```
 int metricId = 1;
@@ -222,7 +157,9 @@ var response = KnetikClient.Instance.GetLeaderboard(leaderboardId, level);
 Debug.Log(response.Body);
 ```
 
-###4.6 GameOptions Service
+###3.6 GameOptions Service
+
+The GameOptions service is used to create or update key-value pairs for a given Game.
 
 ```
 int productId = 1;
@@ -235,4 +172,117 @@ string optionValue = "false";
 
 var response = KnetikClient.Instance.UpdateGameOption(productId, optionName, optionValue);
 Debug.Log(response.Body);
+```
+
+###3.7 Business Rules/Events Service
+
+The Business Rules Engine (BRE) / Events service is used to trigger events in the BRE API.
+
+```
+string eventName = “game_finished”;
+Dictionary<string, string> parameters = new Dictionary<string, string> {
+  {“level”: “first”},
+  {“score”: “50000”},
+  {“duration”: “300”}
+};
+KnetikClient.Instance.FireEvent(eventName, parameters, (res) => {
+  Debug.Log(“Event fired”);
+});
+```
+
+###3.8 Achievements Service
+
+The Achievements service lists the achievements available to the user.  The *pageIndex* and *pageSize* parameters 
+
+```
+int pageIndex = 1;
+int pageSize = 25;
+KnetikClient.Instance.ListAchievements(pageIndex, pageSize, (res) => {
+  Debug.Log(“Handle achievements response”);
+});
+```
+
+##4. Models
+
+The simplest method of accessing the Knetik API is through the Model interface.  The Model interface is a convenience wrapper around the API Services and parses the responses into C# objects.
+
+###4.1 UserInfo
+
+The UserInfo model represents nformation about the current user.  As long as the user is signed in, you can retrieve its UserInfo from the UserInfo property on the KnetikClient instance:
+
+```
+Knetik.Instance.UserInfo
+```
+
+Initially, the UserInfo object isn’t populated with data as it hasn’t been retrieved yet.  To remedy this, use the Load or LoadWithGame methods:
+
+```
+Knetik.Instance.UserInfo.Load((result) {
+  Debug.Log(“Finished loading user info: ” + result.Value); // result.Value is the UserInfo object
+});
+
+int gameId = 1;
+Knetik.Instance.UserInfo.LoadWithGame(gameId, (result) {
+  Debug.Log(“Finished loading user info: ” + result.Value); // result.Value is the Game object
+});
+```
+
+You can also make changes to the UserInfo object.  Currently, only the *AvatarURL* and *Language* properties can be updated through the API.
+
+```
+Knetik.Instance.UserInfo.AvatarURL = “http://placehold.it/400x300.jpg”;
+Knetik.Instance.UserInfo.Save((res) {
+  Debug.Log(“Updated!”);
+});
+```
+
+###4.2 Game
+
+Game objects are retrieved through using the ```UserInfo.LoadWithGame```method and providing the game’s ID.  With the game object, you can read its properties, GameOptions, and record metrics by name for the game.
+
+```
+int gameId = 1;
+Knetik.Instance.UserInfo.LoadWithGame(gameId, (result) {
+  var game = result.Value;
+  if (game.Options.ContainsKey(“invert-y”)) {
+    Debug.Log(“Invert-Y: ” + game.Options[“invert-y”].Value);
+  }
+});
+```
+
+###4.3 Metric
+
+Metric objects are used to record new metrics (either values or objects).  Metric objects can be created right from the Client instance given a metric ID or from a Game instance given the metric name.
+
+```
+// ‘game’ variable is a Game object
+ValueMetric score = game.CreateValueMetric(“score”);
+score.Value = 300;
+score.Save((res) {
+  Debug.Log(“Score posted…”);
+});
+
+ObjectMetric savedGame = game.CreateObjectMetric(“saved_game”);
+savedGame = new Dictionary<string, string> {{“level”, “first”}};
+savedGame.Save((res) {
+  Debug.Log(“Game saved…”);
+});
+```
+
+###4.4 Achievement
+
+The AchievementsQuery object handles paginating through the Achievements list.
+
+```
+Action<KnetikResult<AchievementsQuery>> callback = null;
+callback = (KnetikResult<AchievementsQuery> result) => {
+    // Process the current page of achievements
+    Debug.Log (result.Value.Achievements);
+
+    // If there’s more, load the next page with this same callback.
+    if (result.Value.HasMore) {
+        result.Value.NextPage(callback);
+    }
+};
+KnetikClient.Instance.Achievements.Load (callback);
 ```

@@ -4,7 +4,17 @@ namespace Knetik
 {
 	public partial class KnetikClient
 	{
-		public KnetikApiResponse ListAchievements (
+        private AchievementsQuery _achievements;
+        public AchievementsQuery Achievements {
+            get {
+                if (_achievements == null) {
+                    _achievements = new AchievementsQuery(this);
+                }
+                return _achievements;
+            }
+        }
+
+        public KnetikApiResponse ListAchievements (
             int page = 1,
             int perPage = 25,
             Action<KnetikApiResponse> cb = null

@@ -4,12 +4,24 @@ using KnetikSimpleJSON;
 
 namespace Knetik
 {
-    public class Achievement : KnetikModel
+    public class Achievement : Item
 	{
-		public Achievement (KnetikClient client)
-            : base(client)
+        public int Value {
+            get;
+            set;
+        }
+
+		public Achievement (KnetikClient client, int id)
+            : base(client, id)
 		{
 		}
+
+        public override void Deserialize (KnetikJSONNode json)
+        {
+            base.Deserialize (json);
+
+            Value = json["value"].AsInt;
+        }
 	}
 }
 
