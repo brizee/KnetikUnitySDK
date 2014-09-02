@@ -6,6 +6,8 @@ namespace Knetik
 {
     public class UserInfo : KnetikModel
     {
+        private KnetikDirtyTracker dirtyTracker;
+
         public int ID {
             get;
             set;
@@ -31,9 +33,15 @@ namespace Knetik
             set;
         }
 
+        private string _avatarURL;
         public string AvatarURL {
-            get;
-            set;
+            get {
+                return _avatarURL;
+            }
+            set {
+                dirtyTracker.MarkDirty("AvatarURL");
+                _avatarURL = value;
+            }
         }
 
         public string FirstName {
@@ -56,9 +64,15 @@ namespace Knetik
             set;
         }
 
+        private string _language;
         public string Language {
-            get;
-            set;
+            get {
+                return _language;
+            }
+            set {
+                dirtyTracker.MarkDirty("Language");
+                _language = value;
+            }
         }
 
         public string Country {
@@ -74,13 +88,13 @@ namespace Knetik
         public UserInfo (KnetikClient client)
             : base(client)
         {
-
+            dirtyTracker = new KnetikDirtyTracker ();
         }
 
         public void Load(Action<KnetikResult<UserInfo>> cb)
         {
             Client.GetUserInfo ((res) => {
-                var result = new KnetikResult<Game> {
+                var result = new KnetikResult<UserInfo> {
                     Response = res
                 };
                 if (!res.IsSuccess) {
@@ -94,6 +108,23 @@ namespace Knetik
                 result.Value = this;
                 cb(result);
             });
+        }
+
+        public void Save(Action<KnetikApiResponse> cb)
+        {
+            Action<KnetikApiResponse> updateLang = (r) => {
+                if (dirtyTracker.IsDirty ("Language")) {
+                    Client.PutUserInfo("lang", Language, cb);
+                } else {
+                    cb(r);
+                }
+            };
+            if (dirtyTracker.IsDirty ("AvatarURL")) {
+                Client.PutUserInfo ("avatar", AvatarURL, updateLang);
+            } else {
+                updateLang(null);
+            }
+
         }
 
         public void FindGame(int gameId, Action<KnetikResult<Game>> cb)
@@ -129,11 +160,14 @@ namespace Knetik
             Language = json ["lang"].ToString ();
             Country = json ["country"].ToString ();
             Wallets = new List<Wallet> ();
-            foreach (KnetikJSONNode node in json["wallet"]) {
+            foreach (KnetikJSONNode node in json["wallet"].Children) {
                 Wallet wallet = new Wallet(Client);
                 wallet.Deserialize(node);
                 Wallets.Add(wallet);
             }
+
+            // Reset the dirty tracker since we have clean data
+            dirtyTracker.Reset ();
         }
     }
 }

@@ -76,13 +76,13 @@ namespace KnetikSimpleJSON
 		public virtual KnetikJSONNode Remove(int aIndex) { return null; }
 		public virtual KnetikJSONNode Remove(KnetikJSONNode aNode) { return aNode; }
 
-		public virtual IEnumerable<KnetikJSONNode> Childs { get { yield break;} }
-		public IEnumerable<KnetikJSONNode> DeepChilds
+		public virtual IEnumerable<KnetikJSONNode> Children { get { yield break;} }
+		public IEnumerable<KnetikJSONNode> DeepChildren
         {
             get
             {
-                foreach (var C in Childs)
-                    foreach (var D in C.DeepChilds)
+                foreach (var C in Children)
+                    foreach (var D in C.DeepChildren)
                         yield return D;
             }
         }
@@ -608,7 +608,7 @@ namespace KnetikSimpleJSON
             m_List.Remove(aNode);
             return aNode;
         }
-		public override IEnumerable<KnetikJSONNode> Childs
+		public override IEnumerable<KnetikJSONNode> Children
         {
             get
             {
@@ -742,7 +742,7 @@ namespace KnetikSimpleJSON
             }
         }
 
-		public override IEnumerable<KnetikJSONNode> Childs
+		public override IEnumerable<KnetikJSONNode> Children
         {
             get
             {

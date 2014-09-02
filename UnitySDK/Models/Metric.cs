@@ -4,7 +4,7 @@ using KnetikSimpleJSON;
 
 namespace Knetik
 {
-    public class Metric : KnetikModel
+    public abstract class Metric : KnetikModel
     {
         public int ID {
             get;
@@ -21,7 +21,7 @@ namespace Knetik
             set;
         }
 
-        public string Value {
+        public string Level {
             get;
             set;
         }
@@ -35,14 +35,12 @@ namespace Knetik
         public Metric (KnetikClient client, Game game, string name)
             : base(client)
         {
+            ID = -1;
             Game = game;
             Name = name;
         }
 
-        public void Save(Action<KnetikApiResponse> res)
-        {
-
-        }
+        public abstract void Save(Action<KnetikApiResponse> cb);
     }
 }
 

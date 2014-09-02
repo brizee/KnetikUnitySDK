@@ -30,6 +30,16 @@ namespace Knetik
             : base(client)
         {
             Game = game;
+            ID = -1;
+        }
+
+        public void Save(Action<KnetikApiResponse> cb)
+        {
+            if (ID == -1) {
+                Client.CreateGameOption(Game.ID, Key, Value, cb);
+            } else {
+                Client.UpdateGameOption(Game.ID, Key, Value, cb);
+            }
         }
 
         public override void Deserialize (KnetikJSONNode json)

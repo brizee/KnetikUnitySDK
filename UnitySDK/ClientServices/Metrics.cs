@@ -6,15 +6,20 @@ namespace Knetik
 {
     public partial class KnetikClient
 	{
-        public Metric CreateMetric(int metricId)
+        public ValueMetric CreateValueMetric(int metricId)
         {
-            return new Metric (this, metricId);
+            return new ValueMetric (this, metricId);
+        }
+
+        public ObjectMetric CreateObjectMetric(int metricId)
+        {
+            return new ObjectMetric (this, metricId);
         }
 
         public KnetikApiResponse RecordValueMetric(
             int gameId,
             string metricName,
-            int value,
+            float value,
             string level = null,
             Action<KnetikApiResponse> cb = null
         ) {
@@ -37,7 +42,7 @@ namespace Knetik
 
         public KnetikApiResponse RecordValueMetric(
             int metricId,
-            int value,
+            float value,
             string level = null,
             Action<KnetikApiResponse> cb = null
         ) {
