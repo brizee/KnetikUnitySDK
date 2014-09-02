@@ -6,7 +6,7 @@ namespace Knetik
 {
     public class Game : Item
     {
-        public List<GameOption> Options {
+        public Dictionary<string, GameOption> Options {
             get;
             set;
         }
@@ -29,11 +29,11 @@ namespace Knetik
         public override void Deserialize (KnetikJSONNode json)
         {
             base.Deserialize (json);
-            Options = new List<GameOption> ();
+            Options = new Dictionary<string, GameOption> ();
             foreach (KnetikJSONNode node in json["user_item_options"].Children) {
                 GameOption option = new GameOption(Client, this);
                 option.Deserialize(node);
-                Options.Add(option);
+                Options.Add(option.Key, option);
             }
         }
     }

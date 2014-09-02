@@ -91,6 +91,23 @@ namespace Knetik
             dirtyTracker = new KnetikDirtyTracker ();
         }
 
+        public void Save(Action<KnetikApiResponse> cb)
+        {
+            Action<KnetikApiResponse> updateLang = (r) => {
+                if (dirtyTracker.IsDirty ("Language")) {
+                    Client.PutUserInfo("lang", Language, cb);
+                } else {
+                    cb(r);
+                }
+            };
+            if (dirtyTracker.IsDirty ("AvatarURL")) {
+                Client.PutUserInfo ("avatar", AvatarURL, updateLang);
+            } else {
+                updateLang(null);
+            }
+            
+        }
+
         public void Load(Action<KnetikResult<UserInfo>> cb)
         {
             Client.GetUserInfo ((res) => {
@@ -110,24 +127,7 @@ namespace Knetik
             });
         }
 
-        public void Save(Action<KnetikApiResponse> cb)
-        {
-            Action<KnetikApiResponse> updateLang = (r) => {
-                if (dirtyTracker.IsDirty ("Language")) {
-                    Client.PutUserInfo("lang", Language, cb);
-                } else {
-                    cb(r);
-                }
-            };
-            if (dirtyTracker.IsDirty ("AvatarURL")) {
-                Client.PutUserInfo ("avatar", AvatarURL, updateLang);
-            } else {
-                updateLang(null);
-            }
-
-        }
-
-        public void FindGame(int gameId, Action<KnetikResult<Game>> cb)
+        public void LoadWithGame(int gameId, Action<KnetikResult<Game>> cb)
         {
             Client.GetUserInfoWithProduct (gameId, (res) => {
                 var result = new KnetikResult<Game> {
@@ -137,6 +137,8 @@ namespace Knetik
                     cb(result);
                     return;
                 }
+                Response = res;
+
                 Game game = new Game(Client, gameId);
                 result.Value = game;
                 this.Deserialize(res.Body["result"]);
