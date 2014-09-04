@@ -1,19 +1,15 @@
 #define PRETTY		//Comment out when you no longer need to read JSON to disable pretty Print system-wide
-//Using doubles will cause errors in VectorTemplates.cs; Unity speaks floats
 #define USEFLOAT	//Use floats for numbers instead of doubles	(enable if you're getting too many significant digits in string output)
 //#define POOLING	//Currently using a build setting for this one (also it's experimental)
 
 using System.Diagnostics;
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Debug = UnityEngine.Debug;
 
 /*
  * http://www.opensource.org/licenses/lgpl-2.1.php
  * JSONObject class
- * for use with Unity
  * Copyright Matt Schoen 2010 - 2013
  */
 
@@ -232,7 +228,6 @@ public class JSONObject {
 			if(strict) {
 				if(str[0] != '[' && str[0] != '{') {
 					type = Type.NULL;
-					Debug.LogWarning("Improper (strict) JSON formatting.  First character must be [ or {");
 					return;
 				}
 			}
@@ -301,7 +296,6 @@ public class JSONObject {
 								type = Type.NUMBER;
 							} catch(System.FormatException) {
 								type = Type.NULL;
-								Debug.LogWarning("improper JSON formatting:" + str);
 							}
 							return;
 					}
@@ -576,7 +570,6 @@ public class JSONObject {
 			}
 		} else if(left.type == Type.ARRAY && right.type == Type.ARRAY) {
 			if(right.Count > left.Count) {
-				Debug.LogError("Cannot merge arrays when right object has more elements");
 				return;
 			}
 			for(int i = 0; i < right.list.Count; i++) {
@@ -630,7 +623,6 @@ public class JSONObject {
 	IEnumerable StringifyAsync(int depth, StringBuilder builder, bool pretty = false) {	//Convert the JSONObject into a string
 		//Profiler.BeginSample("JSONprint");
 		if(depth++ > MAX_DEPTH) {
-			Debug.Log("reached max depth!");
 			yield break;
 		}
 		if(printWatch.Elapsed.TotalSeconds > maxFrameTime) {
@@ -767,7 +759,6 @@ public class JSONObject {
 	void Stringify(int depth, StringBuilder builder, bool pretty = false) {	//Convert the JSONObject into a string
 		//Profiler.BeginSample("JSONprint");
 		if(depth++ > MAX_DEPTH) {
-			Debug.Log("reached max depth!");
 			return;
 		}
 		switch(type) {
@@ -888,19 +879,6 @@ public class JSONObject {
 		//Profiler.EndSample();
 	}
 	#endregion
-	public static implicit operator WWWForm(JSONObject obj) {
-		WWWForm form = new WWWForm();
-		for(int i = 0; i < obj.list.Count; i++) {
-			string key = i + "";
-			if(obj.type == Type.OBJECT)
-				key = obj.keys[i];
-			string val = obj.list[i].ToString();
-			if(obj.list[i].type == Type.STRING)
-				val = val.Replace("\"", "");
-			form.AddField(key, val);
-		}
-		return form;
-	}
 	public JSONObject this[int index] {
 		get {
 			if(list.Count > index) return list[index];
@@ -934,12 +912,10 @@ public class JSONObject {
 					case Type.STRING: result.Add(keys[i], val.str); break;
 					case Type.NUMBER: result.Add(keys[i], val.n + ""); break;
 					case Type.BOOL: result.Add(keys[i], val.b + ""); break;
-					default: Debug.LogWarning("Omitting object: " + keys[i] + " in dictionary conversion"); break;
 				}
 			}
 			return result;
 		}
-		Debug.LogWarning("Tried to turn non-Object JSONObject into a dictionary");
 		return null;
 	}
 	public static implicit operator bool(JSONObject o) {

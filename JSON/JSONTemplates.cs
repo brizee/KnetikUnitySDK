@@ -1,11 +1,9 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Reflection;
 
 /*
  * http://www.opensource.org/licenses/lgpl-2.1.php
  * JSONTemplates class
- * for use with Unity
  * Copyright Matt Schoen 2010
  */
 
@@ -33,7 +31,6 @@ public static partial class JSONTemplates {
 				if(val) {
 					if(val.type != JSONObject.Type.NULL)
 						result.AddField(fi.Name, val);
-					else Debug.LogWarning("Null for this non-null object, property " + fi.Name + " of class " + obj.GetType().Name + ". Object type is " + fi.FieldType.Name);
 				}
 			}
 			//Properties
@@ -55,12 +52,10 @@ public static partial class JSONTemplates {
 				if(val) {
 					if(val.type != JSONObject.Type.NULL)
 						result.AddField(pi.Name, val);
-					else Debug.LogWarning("Null for this non-null object, property " + pi.Name + " of class " + obj.GetType().Name + ". Object type is " + pi.PropertyType.Name);
 				}
 			}
 			return result;
 		} 
-		Debug.LogWarning("trying to save the same data twice");
 		return JSONObject.nullJO;
 	}
 }
