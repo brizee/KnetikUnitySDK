@@ -26,7 +26,7 @@ namespace Knetik
             if (ID != -1) {
                 Client.RecordValueMetric(ID, Value, Level, cb);
             } else if (Game != null && Name != null) {
-                Client.RecordValueMetric(Game.ID, Value, Level, cb);
+                Client.RecordValueMetric(Game.ID, Name, Value, Level, cb);
             }
         }
     }
