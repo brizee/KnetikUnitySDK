@@ -30,7 +30,7 @@ namespace Knetik
         {
             base.Deserialize (json);
             Options = new Dictionary<string, GameOption> ();
-            foreach (KnetikJSONNode node in json["user_item_options"].Children) {
+            foreach (KnetikJSONNode node in json["itemOptions"].Children) {
                 GameOption option = new GameOption(Client, this);
                 option.Deserialize(node);
                 Options.Add(option.Key, option);

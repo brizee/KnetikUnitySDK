@@ -45,8 +45,8 @@ namespace Knetik
         public override void Deserialize (KnetikJSONNode json)
         {
             ID = json ["id"].AsInt;
-            Key = json ["keye"].ToString ();
-            Value = json ["value"].ToString ();
+            Key = json ["keye"].Value;
+            Value = json ["value"].Value;
         }
     }
 }
