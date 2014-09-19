@@ -20,8 +20,8 @@ namespace Knetik
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("pageIndex", page);
-            j.AddField ("pageSize", perPage);
+            j.AddField ("page_index", page);
+            j.AddField ("page_size", perPage);
             String body = j.Print ();
             
             KnetikRequest req = CreateRequest(ListAchievementsEndpoint, body);
