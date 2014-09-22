@@ -4,50 +4,23 @@ using KnetikSimpleJSON;
 
 namespace Knetik
 {
-    public class GameOption : KnetikModel
-    {
-        public Game Game {
-            get;
-            set;
-        }
-
-        public int ID {
-            get;
-            set;
-        }
-
-        public string Key {
-            get;
-            set;
-        }
-
-        public string Value {
-            get;
-            set;
-        }
-
+	public class GameOption : Option
+	{
         public GameOption (KnetikClient client, Game game)
-            : base(client)
+            : base(client, game)
         {
-            Game = game;
-            ID = -1;
         }
 
-        public void Save(Action<KnetikApiResponse> cb)
+        public void Refresh(Action<KnetikApiResponse> cb)
         {
-            if (ID == -1) {
-                Client.CreateGameOption(Game.ID, Key, Value, cb);
-            } else {
-                Client.UpdateGameOption(Game.ID, Key, Value, cb);
-            }
-        }
+            Client.GetGameOption (Game.ID, Key, (KnetikApiResponse res) => {
+                if (res.IsSuccess) {
+                    Value = res.Body["optionValue"].Value;
+                }
 
-        public override void Deserialize (KnetikJSONNode json)
-        {
-            ID = json ["id"].AsInt;
-            Key = json ["keye"].Value;
-            Value = json ["value"].Value;
+                cb(res);
+            });
         }
-    }
+	}
 }
 

@@ -159,18 +159,26 @@ Debug.Log(response.Body);
 
 ###3.6 GameOptions Service
 
-The GameOptions service is used to create or update key-value pairs for a given Game.
+The GameOptions service is used to create or update key-value pairs for a given Game.  There are two types of options for Games: GameOptions and UserGameOptions.  GameOptions are configured in the Knetik Admin, shared amongst all users, and are read-only through the API.  UserGameOptions are defined by the client and every user has its own set.
+
+To retrieve a list of all the options for a Game (both the GameOptions and the current user’s UserGameOptions), use the GetUserInfoWithProduct service.
 
 ```
 int productId = 1;
-string optionName = "invertY";
+// Retrieve a GameOption
+string optionName = “messageOfTheDay”;
+var response = KnetikClient.Instance.GetGameOption(productId, optionName);
+Debug.Log(response.Body);
+
+// Create a UserGameOption
+string optionName = "invert-y“;
 string optionValue = "true";
-var response = KnetikClient.Instance.CreateGameOption(productId, optionName, optionValue);
+var response = KnetikClient.Instance.CreateUserGameOption(productId, optionName, optionValue);
 Debug.Log(response.Body);
 
 string optionValue = "false";
-
-var response = KnetikClient.Instance.UpdateGameOption(productId, optionName, optionValue);
+// Update it
+var response = KnetikClient.Instance.UpdateUserGameOption(productId, optionName, optionValue);
 Debug.Log(response.Body);
 ```
 
@@ -238,14 +246,22 @@ Knetik.Instance.UserInfo.Save((res) {
 
 ###4.2 Game
 
-Game objects are retrieved through using the ```UserInfo.LoadWithGame```method and providing the game’s ID.  With the game object, you can read its properties, GameOptions, and record metrics by name for the game.
+Game objects are retrieved through using the ```UserInfo.LoadWithGame```method and providing the game’s ID.  With the game object, you can read its properties, GameOptions, UserOptions, and record metrics by name for the game.  GameOptions are read-only but can be refreshed using the Refresh() method on the GameOption instance.  UserOptions can be created using the CreateUserOption method on the Game instance and saved (after being created or modified) using the Save method on the UserOption instance.
 
 ```
 int gameId = 1;
 Knetik.Instance.UserInfo.LoadWithGame(gameId, (result) {
   var game = result.Value;
-  if (game.Options.ContainsKey(“invert-y”)) {
-    Debug.Log(“Invert-Y: ” + game.Options[“invert-y”].Value);
+  UserOption optionInvertY;
+  if (game.UserOptions.ContainsKey(“invert-y”)) {
+    optionInvertY = game.UserOptions[“invert-y”];
+  } else {
+    optionInvertY = game.UserOptions.CreateUserOption(“invert-y”, “true”);
+  }
+  Debug.Log(“Invert-Y: ” + optionInvertY.Value;
+
+  if (game.GameOptions.ContainsKey(“messageOfTheDay”)) {
+    Debug.Log(“Message of the Day: ” + game.GameOptions[“messageOfTheDay”].Value);
   }
 });
 ```

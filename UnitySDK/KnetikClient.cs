@@ -143,5 +143,6 @@ namespace Knetik
 		private static string RegisterEndpoint = "registration/register";
         private static string FireEventEndpoint = "BRE/fireEvent";
         private static string ListAchievementsEndpoint = "badge/list";
+        private static string GetGameOptionEndpoint = "product/getgameoption";
 	}
 }
