@@ -15,7 +15,7 @@ namespace Knetik
         {
             Client.GetGameOption (Game.ID, Key, (KnetikApiResponse res) => {
                 if (res.IsSuccess) {
-                    Value = res.Body[Key].Value;
+                    Value = res.Body["result"][Key].Value;
                 }
 
                 cb(res);
