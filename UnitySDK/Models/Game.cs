@@ -35,7 +35,13 @@ namespace Knetik
 
         public UserOption CreateUserOption(string key, string value = null)
         {
-            UserOption option = new UserOption (Client, this);
+            UserOption option;
+            if (UserOptions.ContainsKey (key)) {
+                option = UserOptions[key];
+                option.Value = value;
+                return option;
+            }
+            option = new UserOption (Client, this);
             option.Key = key;
             option.Value = value;
             UserOptions [key] = option;
