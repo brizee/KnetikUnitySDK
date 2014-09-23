@@ -49,14 +49,14 @@ namespace Knetik
             foreach (KnetikJSONNode node in json["userItemOptions"].Children) {
                 UserOption option = new UserOption(Client, this);
                 option.Deserialize(node);
-                UserOptions.Add(option.Key, option);
+                UserOptions[option.Key] = option;
             }
 
             GameOptions.Clear ();
             foreach (KnetikJSONNode node in json["itemOptions"].Children) {
                 GameOption option = new GameOption(Client, this);
                 option.Deserialize(node);
-                GameOptions.Add(option.Key, option);
+                GameOptions[option.Key] = option;
             }
         }
     }
