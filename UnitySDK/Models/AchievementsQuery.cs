@@ -26,34 +26,32 @@ namespace Knetik
             set;
         }
 
-		public AchievementsQuery (KnetikClient client)
+        public bool IsForUser {
+            get;
+            set;
+        }
+
+		public AchievementsQuery (KnetikClient client, bool isForUser = false)
 			: base(client)
 		{
+            IsForUser = isForUser;
             PageIndex = 1;
             PageSize = 25;
 		}
 
         public void Load(Action<KnetikResult<AchievementsQuery>> cb)
         {
-            Client.ListAchievements (PageIndex, PageSize, (res) => {
-                var result = new KnetikResult<AchievementsQuery> {
-                    Response = res
-                };
-                if (!res.IsSuccess) {
-                    cb(result);
-                    return;
-                }
-                Response = res;
-                
-                this.Deserialize(res.Body["result"]);
-                
-                result.Value = this;
-                cb(result);
-            });
+            if (IsForUser)
+            {
+                Client.ListUserAchievements(PageIndex, PageSize, HandleAchievementResponse(cb));
+            } else
+            {
+                Client.ListAchievements(PageIndex, PageSize, HandleAchievementResponse(cb));
+            }
         }
 
         public AchievementsQuery NextPage(Action<KnetikResult<AchievementsQuery>> cb = null) {
-            var next = new AchievementsQuery (Client);
+            var next = new AchievementsQuery (Client, IsForUser);
             next.PageIndex = PageIndex + 1;
             next.PageSize = PageSize;
             if (cb != null) {
@@ -75,6 +73,25 @@ namespace Knetik
 
             HasMore = json ["hasMore"].AsBool;
 		}
+
+        protected Action<KnetikApiResponse> HandleAchievementResponse(Action<KnetikResult<AchievementsQuery>> cb) {
+            return (KnetikApiResponse res) => {
+                var result = new KnetikResult<AchievementsQuery> {
+                    Response = res
+                };
+                if (!res.IsSuccess)
+                {
+                    cb(result);
+                    return;
+                }
+                Response = res;
+                
+                this.Deserialize(res.Body ["result"]);
+                
+                result.Value = this;
+                cb(result);
+            };
+        }
 	}
 }
 

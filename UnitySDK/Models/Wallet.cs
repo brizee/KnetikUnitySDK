@@ -30,7 +30,7 @@ namespace Knetik
         {
             ID = json ["id"].AsInt;
             Balance = json ["balance"].AsDouble;
-            CurrencyName = json ["currency_name"].ToString ();
+            CurrencyName = json ["currency_name"].Value;
         }
 	}
 }

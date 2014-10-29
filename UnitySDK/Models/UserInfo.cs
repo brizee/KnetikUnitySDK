@@ -7,6 +7,7 @@ namespace Knetik
     public class UserInfo : KnetikModel
     {
         private KnetikDirtyTracker dirtyTracker;
+        private AchievementsQuery achievements;
 
         public int ID {
             get;
@@ -151,16 +152,16 @@ namespace Knetik
         {
             ID = json ["id"].AsInt;
             Email = json ["email"].ToString ();
-            Username = json ["username"].ToString ();
-            FullName = json ["fullname"].ToString ();
-            MobileNumber = json ["mobile_number"].ToString ();
-            AvatarURL = json ["avatar_url"].ToString ();
-            FirstName = json ["first_name"].ToString ();
-            LastName = json ["last_name"].ToString ();
-            Token = json ["token"].ToString ();
-            Gender = json ["gender"].ToString ();
-            Language = json ["lang"].ToString ();
-            Country = json ["country"].ToString ();
+            Username = json ["username"].Value;
+            FullName = json ["fullname"].Value;
+            MobileNumber = json ["mobile_number"].Value;
+            AvatarURL = json ["avatar_url"].Value;
+            FirstName = json ["first_name"].Value;
+            LastName = json ["last_name"].Value;
+            Token = json ["token"].Value;
+            Gender = json ["gender"].Value;
+            Language = json ["lang"].Value;
+            Country = json ["country"].Value;
             Wallets = new List<Wallet> ();
             foreach (KnetikJSONNode node in json["wallet"].Children) {
                 Wallet wallet = new Wallet(Client);
@@ -170,6 +171,15 @@ namespace Knetik
 
             // Reset the dirty tracker since we have clean data
             dirtyTracker.Reset ();
+        }
+
+        public AchievementsQuery Achievements {
+            get {
+                if (achievements == null) {
+                    achievements = new AchievementsQuery(Client, true);
+                }
+                return achievements;
+            }
         }
     }
 }

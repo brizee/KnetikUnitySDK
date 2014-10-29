@@ -45,21 +45,35 @@ namespace Knetik
             get;
             set;
         }
+        
+        public List<ItemAsset> Assets {
+            get;
+          	set;
+	    }
 
         public Item (KnetikClient client, int id)
             : base(client)
         {
             ID = id;
+            
+            Assets = new List<ItemAsset>();
         }
         
         public override void Deserialize (KnetikJSONNode json)
         {
             ID = json ["id"].AsInt;
-            TypeHint = json ["type_hint"].ToString ();
-            Name = json ["name"].ToString ();
-            ShortDescription = json ["short_description"].ToString ();
-            LongDescription = json ["long_description"].ToString ();
+            TypeHint = json ["type_hint"].Value;
+            Name = json ["name"].Value;
+            ShortDescription = json ["short_description"].Value;
+            LongDescription = json ["long_description"].Value;
 
+            Assets.Clear ();
+            foreach (KnetikJSONNode node in json["assets"].Children) {
+                ItemAsset asset = new ItemAsset(Client);
+                asset.Deserialize(node);
+                Assets.Add(asset);
+            }
+            
             if (json ["deleted_at"] != null && json ["deleted_at"] != "null") {
                 DeletedAt = new DateTime (json ["deleted_at"].AsInt);
             }

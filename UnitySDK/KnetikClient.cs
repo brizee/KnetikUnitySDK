@@ -57,6 +57,18 @@ namespace Knetik
 
 		#endregion
 
+        #region Public Methods
+
+        public void Logout() {
+            Username = null;
+            Password = null;
+            Session = null;
+            UserID = 0;
+            _userInfo = new UserInfo(this);
+        }
+
+        #endregion
+
 		#region Internal Methods
 
 		protected KnetikRequest CreateRequest(string path, string body = "[]", string method = "post", int timestamp = -1)
@@ -143,6 +155,7 @@ namespace Knetik
 		private static string RegisterEndpoint = "registration/register";
         private static string FireEventEndpoint = "BRE/fireEvent";
         private static string ListAchievementsEndpoint = "badge/list";
+        private static string ListUserAchievementsEndpoint = "user/getachievement";
         private static string GetGameOptionEndpoint = "product/getgameoption";
 	}
 }
