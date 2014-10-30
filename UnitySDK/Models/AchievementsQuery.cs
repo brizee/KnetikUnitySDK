@@ -86,7 +86,12 @@ namespace Knetik
                 }
                 Response = res;
                 
-                this.Deserialize(res.Body ["result"]);
+                if (res.Body["result"].Value != "null") {
+                    this.Deserialize(res.Body ["result"]);
+                } else {
+                    Achievements = new List<Achievement> ();
+                    HasMore = false;
+                }
                 
                 result.Value = this;
                 cb(result);
