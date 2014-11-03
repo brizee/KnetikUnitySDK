@@ -117,7 +117,6 @@ namespace Knetik
         // Build JSON Envelope for all Requests
         private string BuildEnvelope(string request, int timestamp, string signature)
         {
-            string ipAddress = KnetikApiUtil.getIPAddress();
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
             j.AddField ("request", request.Replace("\"", "\\\""));
             j.AddField ("timestamp", timestamp.ToString());
