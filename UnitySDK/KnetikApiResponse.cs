@@ -17,7 +17,7 @@ namespace Knetik
 			Error
 		}
 
-        public KnetikClient Client {
+				public KnetikClient Client {
 			get;
 			protected set;
 		}
@@ -32,29 +32,29 @@ namespace Knetik
 			set;
 		}
 
-        public bool IsPending {
-            get {
-                return Status == StatusType.Pending;
-            }
-        }
+				public bool IsPending {
+						get {
+								return Status == StatusType.Pending;
+						}
+				}
 
-        public bool IsSuccess {
-            get {
-                return Status == StatusType.Success;
-            }
-        }
+				public bool IsSuccess {
+						get {
+								return Status == StatusType.Success;
+						}
+				}
 
-        public bool IsFailure {
-            get {
-                return Status == StatusType.Failure;
-            }
-        }
+				public bool IsFailure {
+						get {
+								return Status == StatusType.Failure;
+						}
+				}
 
-        public bool IsError {
-            get {
-                return Status == StatusType.Error;
-            }
-        }
+				public bool IsError {
+						get {
+								return Status == StatusType.Error;
+						}
+				}
 
 		public Action<KnetikApiResponse> Callback {
 			get;
@@ -72,12 +72,12 @@ namespace Knetik
 			protected set;
 		}
 
-        public string ErrorMessage {
-            get;
-            set;
-        }
+				public string ErrorMessage {
+						get;
+						set;
+				}
 
-        public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
+				public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
 		{
 			Status = StatusType.Pending;
 			Client = client;
@@ -89,7 +89,7 @@ namespace Knetik
 				req.Send();
 				CompleteCallback (req);
 			} else {
-                Debug.Log("Executing async!");
+								Debug.Log("Executing async!");
 				req.Send(CompleteCallback);
 			}
 		}
@@ -99,15 +99,15 @@ namespace Knetik
 			Status = StatusType.Success;
 			if (req.response == null) {
 				Debug.Log("Knetik Labs SDK - ERROR 1: The response from SAPI is null.");
-                Status = StatusType.Failure;
-                ErrorMessage = "Connection error - No connection";
+								Status = StatusType.Failure;
+								ErrorMessage = "Connection error - No connection";
 				return;
 			}
 			
 			if (req.response.status != 200) {
 				Debug.LogError("Knetik Labs SDK - ERROR 2: Response returned a status of " + req.response.status);
-                Status = StatusType.Failure;
-                ErrorMessage = "Connection Error - Server problem";
+								Status = StatusType.Failure;
+								ErrorMessage = "Connection Error - Server problem";
 				return;
 			}
 			
@@ -116,21 +116,21 @@ namespace Knetik
 				
 				if (Body == null) {
 					Debug.LogError("Knetik Labs SDK - ERROR 3: Failed to Properly Parse JSON response");
-                    Status = StatusType.Failure;
-                    ErrorMessage = "Connection error - Invalid format";
+										Status = StatusType.Failure;
+										ErrorMessage = "Connection error - Invalid format";
 					return;
 				}
 			} catch(Exception e) {
 				Debug.LogException(e);
-                Status = StatusType.Failure;
-                ErrorMessage = "Connection error - Unknown exception";
+								Status = StatusType.Failure;
+								ErrorMessage = "Connection error - Unknown exception";
 				return;
 			}
 			
 			if (Body["error"] == null) {
 				Debug.LogError("Knetik Labs SDK - ERROR 4: JSON Response does NOT contain an error node!");
 				Status = StatusType.Failure;
-                ErrorMessage = "Connection error - Malformed response";
+								ErrorMessage = "Connection error - Malformed response";
 				return;
 			}
 			
@@ -139,15 +139,20 @@ namespace Knetik
 			if ((error["success"] == null) || (error["success"].AsBool == false)) {
 				Debug.LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
 				Status = StatusType.Error;
-                ErrorMessage = Body["message"];
+								ErrorMessage = Body["message"];
 				return;
 			}
 		}
 
 		private void CompleteCallback(KnetikRequest req)
 		{
-            Debug.Log ("Body:\n" + req.response.Text);
-			ValidateResponse (req);
+			if (req.response != null) {
+				Debug.Log ("Body:\n" + req.response.Text);
+				ValidateResponse (req);
+			} else {
+				Status = StatusType.Failure;
+				ErrorMessage = "Connection error - Could not connect to host";
+			}
 			
 			if (Callback != null) {
 				Callback(this);

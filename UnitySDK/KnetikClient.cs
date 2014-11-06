@@ -155,5 +155,14 @@ namespace Knetik
         private static string ListAchievementsEndpoint = "badge/list";
         private static string ListUserAchievementsEndpoint = "user/getachievement";
         private static string GetGameOptionEndpoint = "product/getgameoption";
+        private static string ListStorePageEndpoint = "store/getPage";
+        private static string CartAddEndpoint = "cart/addtocart";
+        private static string CartModifyEndpoint = "cart/modify";
+        private static string CartCheckoutEndpoint = "cart/checkout";
+        private static string CartShippingAddressEndpoint = "cart/shippingaddress";
+        private static string CartStatusEndpoint = "cart/status";
+        private static string CartGetEndpoint = "cart/get";
+        private static string CartAddDiscountEndpoint = "cart/adddiscount";
+        private static string CartCountriesEndpoint = "cart/getcountries";
     }
 }

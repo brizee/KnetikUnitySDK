@@ -200,12 +200,28 @@ KnetikClient.Instance.FireEvent(eventName, parameters, (res) => {
 
 ###3.8 Achievements Service
 
-The Achievements service lists the achievements available to the user.  The *pageIndex* and *pageSize* parameters 
+The Achievements service lists the achievements available to the user.  The *pageIndex* and *pageSize* parameters .  There are two endpoints in the Achievements service: one for listing all the achievements (including ones the user does not have) and one for listing all the achievements the user has.
+
+
+ListAchievements:
 
 ```
 int pageIndex = 1;
 int pageSize = 25;
 KnetikClient.Instance.ListAchievements(pageIndex, pageSize, (res) => {
+  Debug.Log(“Handle achievements response”);
+});
+```
+
+ListUserAchievements:
+
+Note that this endpoint can only retrieve the achievements for the currently logged in user.
+
+```
+int userId = 1;
+int pageIndex = 1;
+int pageSize = 25;
+KnetikClient.Instance.ListUserAchievements(pageIndex, pageSize, (res) => {
   Debug.Log(“Handle achievements response”);
 });
 ```
@@ -301,4 +317,20 @@ callback = (KnetikResult<AchievementsQuery> result) => {
     }
 };
 KnetikClient.Instance.Achievements.Load (callback);
+```
+
+An AchievementQuery instance is also on UserInfo, for paginating through the user’s Achievements:
+
+```
+Action<KnetikResult<AchievementsQuery>> callback = null;
+callback = (KnetikResult<AchievementsQuery> result) => {
+    // Process the current page of achievements
+    Debug.Log (result.Value.Achievements);
+
+    // If there’s more, load the next page with this same callback.
+    if (result.Value.HasMore) {
+        result.Value.NextPage(callback);
+    }
+};
+KnetikClient.Instance.UserInfo.Achievements.Load (callback);
 ```

@@ -5,17 +5,19 @@ namespace Knetik
 {
     public partial class KnetikClient
     {
-        public KnetikApiResponse FireEvent(
-            string eventName,
-            Dictionary<string, string> parameters,
+        public KnetikApiResponse ListStorePage(
+            int page = 1,
+            int limit = 10,
+            List<string> terms = null,
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("eventName", eventName);
-            j.AddField ("params", JSONObject.Create(parameters));
+            j.AddField ("page", page);
+            j.AddField ("limit", limit);
+            j.AddField ("params", JSONArray.Create(terms));
             String body = j.Print ();
             
-            KnetikRequest req = CreateRequest(FireEventEndpoint, body);
+            KnetikRequest req = CreateRequest(ListStorePageEndpoint, body);
             
             KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
             return  response;

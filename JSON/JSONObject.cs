@@ -217,6 +217,17 @@ public class JSONObject {
 		}
 		return obj;
 	}
+
+	public static JSONObject Create(List<string> l) {
+		JSONObject obj = Create();
+		obj.type = Type.ARRAY;
+		obj.list = new List<JSONObject>();
+		foreach (string val in l) {
+			obj.list.Add(CreateStringObject(val));
+		}
+		return obj;
+	}
+
 	public JSONObject() { }
 	#region PARSE
 	public JSONObject(string str, int maxDepth = -2, bool storeExcessLevels = false, bool strict = false) {	//create a new JSONObject from a string (this will also create any children, and parse the whole string)
