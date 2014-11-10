@@ -3,7 +3,7 @@ using System;
 namespace Knetik
 {
     public partial class KnetikClient
-	{
+    {
         private UserInfo _userInfo;
         public UserInfo UserInfo {
             get {
@@ -43,6 +43,6 @@ namespace Knetik
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;
         }
-	}
+    }
 }
 

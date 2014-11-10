@@ -203,7 +203,7 @@ KnetikClient.Instance.FireEvent(eventName, parameters, (res) => {
 The Achievements service lists the achievements available to the user.  The *pageIndex* and *pageSize* parameters .  There are two endpoints in the Achievements service: one for listing all the achievements (including ones the user does not have) and one for listing all the achievements the user has.
 
 
-ListAchievements:
+#### ListAchievements:
 
 ```
 int pageIndex = 1;
@@ -213,7 +213,7 @@ KnetikClient.Instance.ListAchievements(pageIndex, pageSize, (res) => {
 });
 ```
 
-ListUserAchievements:
+#### ListUserAchievements:
 
 Note that this endpoint can only retrieve the achievements for the currently logged in user.
 
@@ -226,13 +226,259 @@ KnetikClient.Instance.ListUserAchievements(pageIndex, pageSize, (res) => {
 });
 ```
 
+###3.9 Store Service
+
+The Store Service lists the sellable items available to the user.  It uses pagination similar to the Achievements Service.  Store items are filtered by terms; at least one of the terms you pass in will be matched in the result items.
+
+The Store service lists items with their catalog ID and catalog SKU ID.  These are used for adding item to the cart and purchasing.
+
+#### ListStorePage:
+
+```
+int pageIndex = 1;
+int pageSize = 25;
+List<string> terms = new List<string> { “T-Shirts”, “Knetik” };
+KnetikClient.Instance.ListStorePage(pageIndex, pageSize, terms, (res) => {
+  /* res.Body will look like this:
+  
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": [
+    {
+      "_id": 1,
+      "id": 1,
+      "sort": 0,
+      "long_description": "<p>Official Merch!</p>",
+      "short_description": "Black/Grey T-Shirt",
+      "type_hint": "physical_item",
+      "date_updated": 1415642480000,
+      "name": "Black/Grey Short Sleeve T-Shirt",
+      "deleted_at": null,
+      "unique_key": null,
+      "date_created": 1399327791000,
+      "terms": [
+        11,
+        12,
+        16
+      ],
+      "skus": [
+        {
+          "id": 30,
+          "min_inventory_threshold": null,
+          "price": 15.0,
+          "inventory": 1000,
+          "description": "Small",
+          "stop_date": null,
+          "deleted_at": null,
+          "published": true,
+          "sku": "Small",
+          "start_date": null,
+          "catalog_id": 42
+        },
+        {
+          "id": 31,
+          "min_inventory_threshold": null,
+          "price": 15.0,
+          "inventory": 1000,
+          "description": "Medium",
+          "stop_date": null,
+          "deleted_at": null,
+          "published": true,
+          "sku": "Medium",
+          "start_date": null,
+          "catalog_id": 42
+        },
+        {
+          "id": 32,
+          "min_inventory_threshold": null,
+          "price": 15.0,
+          "inventory": 1000,
+          "description": "Large",
+          "stop_date": null,
+          "deleted_at": null,
+          "published": true,
+          "sku": "Large",
+          "start_date": null,
+          "catalog_id": 42
+        },
+        {
+          "id": 33,
+          "min_inventory_threshold": null,
+          "price": 15.0,
+          "inventory": 1000,
+          "description": "XXXL",
+          "stop_date": null,
+          "deleted_at": null,
+          "published": true,
+          "sku": "XXXL",
+          "start_date": null,
+          "catalog_id": 42
+        }
+      ],
+      "assets": [
+        {
+          "id": 21,
+          "hash": "1216688581",
+          "description": null,
+          "item_id": 66,
+          "deleted_at": null,
+          "path": "/uploads/attachments/1216688581/originals/2_18803.gif",
+          "sort_order": 2,
+          "type": "image",
+          "url": "http://dev.store.teamrock.com/uploads/attachments/1216688581/originals/2_18803.gif"
+        }
+      ],
+      "behaviors": [],
+      "summary": "Official Merch!",
+      "weight_unit_of_measurement": null,
+      "height": null,
+      "weight": null,
+      "width": null,
+      "dimension_unit_of_measurement": null,
+      "shipping_tier": 1,
+      "length": null,
+      "store_start": 1230789600000,
+      "virtual_currency_id": null,
+      "displayable": true,
+      "vendor_id": 1,
+      "catalog_id": 42,
+      "store_end": 1420092000000
+    }
+  ],
+  "cached": false,
+  "message": "",
+  "parameters": [],
+  "requestId": “123456789-0”
+}
+	*/ 
+});
+```
+
+###3.10 Cart Service
+
+The Cart service allows the user to manage a shopping cart, including adding, removing, and updating items in the cart as well as checking out.
+
+#### CartGet
+
+GetCart retrieves the items in the user’s cart as well as information such as the Sub-Total, Total, and Status of the cart.  Note that this call will fail if the user does not have a cart (meaning they haven’t added an item their cart yet.)
+
+```
+var cartGetResponse = client.CartGet();
+/*
+cartGetResponse.Body will look like:
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": {
+    "cart": {
+      "shipping_address_line2": null,
+      "shipping_cost": 0.0,
+      "shipping_address_line1": null,
+      "currency": "GBP",
+      "city": null,
+      "first_name": null,
+      "cart_id": 663,
+      "postal_state_id": null,
+      "error_message": "You must select a shipping object for these items.",
+      "iso2": null,
+      "grand_total": 13.0,
+      "zip": null,
+      "state_code": null,
+      "status": "active",
+      "sub_total_after_discounts": 13.0,
+      "sub_total": 13.0,
+      "country_id": null,
+      "error_code": 112,
+      "system_sub_total": 13.0,
+      "discount_total": 0.0,
+      "country": null,
+      "tax": 0.0,
+      "session": “ABCDEF1234567890,
+      "email": null,
+      "last_name": null,
+      "postal_state": null
+    },
+    "discounts": null,
+    "items": [
+      {
+        "cart_item_id": 309,
+        "type_hint": "physical_item",
+        "system_price": 13.0,
+        "error_code": 112,
+        "qty": 1,
+        "sku_description": "Large",
+        "vendor_id": 1,
+        "sku": "Large",
+        "total_price": 13.0,
+        "unit_price": 13.0,
+        "item_url": "",
+        "thumbnail": "/uploads/attachments/1216688581/originals/3.jpg",
+        "cart_id": 663,
+        "inventory": 1000,
+        "error_message": "You must select a shipping object for these items.",
+        "name": "Black/Grey Short Sleeve T-Shirt",
+        "store_item_id": 66,
+        "stock_status": "",
+        "sku_id": 32,
+        "catalog_id": 42
+      }
+    ],
+    "shipping": []
+  },
+  "cached": false,
+  "message": "",
+  "parameters": [],
+  "requestId": "123456789-1"
+}
+*/
+```
+
+#### CartAdd
+
+CartAdd adds an item to the cart by its SKU and quantity.
+
+```
+var catalogId = 42;
+var skuId = 32;
+vart quantity = 2;
+var cartAddResponse = client.CartAdd(catalogId, skuId, quantity);
+
+// cartAddResponse.IsSuccess and the message says “Item has been added to your cart.”
+```
+
+#### CartModify
+
+CartModify works the same as CartAdd except that it sets the quantity to be exactly the amount passed in (whereas CartAdd will add the quantity onto the existing amount).
+
+```
+var catalogId = 42;
+var skuId = 32;
+vart quantity = 5;
+var cartModifyResponse = client.CartModify(catalogId, skuId, quantity);
+
+// cartModifyResponse.IsSuccess is true
+```
+
+#### CartCheckout
+
+CartCheckout attempts to checkout the cart.  It will use the user’s appropriate virtual currency as payment for the items in the cart.
+
+```
+var cartCheckoutResponse = client.CartCheckout();
+```
+
 ##4. Models
 
 The simplest method of accessing the Knetik API is through the Model interface.  The Model interface is a convenience wrapper around the API Services and parses the responses into C# objects.
 
 ###4.1 UserInfo
 
-The UserInfo model represents nformation about the current user.  As long as the user is signed in, you can retrieve its UserInfo from the UserInfo property on the KnetikClient instance:
+The UserInfo model represents information about the current user.  As long as the user is signed in, you can retrieve its UserInfo from the UserInfo property on the KnetikClient instance:
 
 ```
 Knetik.Instance.UserInfo
@@ -333,4 +579,54 @@ callback = (KnetikResult<AchievementsQuery> result) => {
     }
 };
 KnetikClient.Instance.UserInfo.Achievements.Load (callback);
+```
+
+###4.5 Store
+
+The store can be accessed through KnetikClient.Instance.Store, which is a StoreQuery instance for pagination.
+
+```
+Action<KnetikResult<StoreQuery>> callback = null;
+callback = (KnetikResult<StoreQuery> result) => {
+    // Process the current page of items
+    Debug.Log (result.Value.Items);
+
+    // If there’s more, load the next page with this same callback.
+    if (result.Value.HasMore) {
+        result.Value.NextPage(callback);
+    }
+};
+
+var store = KnetikClient.Instance.Store;
+store.Terms = new List<string> { “T-Shirts” };
+store.Load (callback);
+```
+
+###4.6 Cart
+
+The cart can be accessed through KnetikClient.Instance.Cart, which is a Cart instance and stores the items in the cart and provides some methods for manipulating it.
+
+```
+var client = Knetik.KnetikClient.Instance;
+client.Store.Load((resStore) => {
+    var firstItem = resStore.Value.Items[0];
+    var sku = firstItem.Skus[0];
+
+    // Let's add 10 of the first item's first SKU
+    client.Cart.Add(sku, 10, (resCartAdd) => {
+        Debug.Log("Item added to cart!");
+
+        client.Cart.Load((resCartLoad) => {
+          Debug.Log("Grand Total is " + resCartLoad.Value.GrandTotal);
+
+          client.Checkout((resCheckout) => {
+            if (resCheckout.IsSuccess) {
+              Debug.Log("Checkout successful!");
+            } else {
+              Debug.Log("Checkout failed!");
+            }
+          });
+        });
+    });
+});
 ```

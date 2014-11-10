@@ -91,7 +91,7 @@ namespace Knetik
             KnetikRequest req = new KnetikRequest (method, url, data);
 
             req.SetHeader("Content-type", "application/json");
-            req.SetHeader("User-Agent", "Unity Knetik SDK");
+            req.SetHeader("User-Agent", "Knetik Unity SDK");
 
             return req;
         }
@@ -155,7 +155,7 @@ namespace Knetik
         private static string ListAchievementsEndpoint = "badge/list";
         private static string ListUserAchievementsEndpoint = "user/getachievement";
         private static string GetGameOptionEndpoint = "product/getgameoption";
-        private static string ListStorePageEndpoint = "store/getPage";
+        private static string ListStorePageEndpoint = "store/getpage";
         private static string CartAddEndpoint = "cart/addtocart";
         private static string CartModifyEndpoint = "cart/modify";
         private static string CartCheckoutEndpoint = "cart/checkout";

@@ -66,8 +66,7 @@ namespace Knetik
 			
             Achievements = new List<Achievement> ();
             foreach (KnetikJSONNode node in json["achievement"].Children) {
-                Achievement achievement = new Achievement(Client, json["id"].AsInt);
-                achievement.Deserialize(node);
+                Achievement achievement = (Achievement)Item.Parse(Client, node);
                 Achievements.Add(achievement);
             }
 

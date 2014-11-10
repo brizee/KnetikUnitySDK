@@ -5,10 +5,20 @@ namespace Knetik
 {
     public partial class KnetikClient
     {
+        private Cart _cart = null;
+        public Cart Cart {
+            get {
+                if (_cart == null) {
+                    _cart = new Cart(this);
+                }
+                return _cart;
+            }
+        }
+
         public KnetikApiResponse CartAdd(
             int catalogId,
             int catalogSkuId,
-            int quantity = 1,
+            int quantity,
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
@@ -26,7 +36,7 @@ namespace Knetik
         public KnetikApiResponse CartModify(
             int catalogId,
             int catalogSkuId,
-            int quantity = 1,
+            int quantity,
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
@@ -54,7 +64,7 @@ namespace Knetik
         }
 
         public KnetikApiResponse CartShippingAddress(
-            CartShippingAddress address,
+            ShippingAddress address,
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
@@ -75,7 +85,7 @@ namespace Knetik
             return  response;
         }
 
-        public CartS CartStatus(
+        public KnetikApiResponse CartStatus(
             string status,
             Action<KnetikApiResponse> cb = null
         ) {
@@ -127,16 +137,16 @@ namespace Knetik
             return  response;
         }
 
-        struct CartShippingAddress {
-            string FirstName;
-            string LastName;
-            string AddressLine1;
-            string AddressLine2;
-            string City;
-            string PostalState;
-            string Zip;
-            string Country;
-            string Email;
+        public struct ShippingAddress {
+            public string FirstName;
+            public string LastName;
+            public string AddressLine1;
+            public string AddressLine2;
+            public string City;
+            public string PostalState;
+            public string Zip;
+            public string Country;
+            public string Email;
         }
     }
 }
