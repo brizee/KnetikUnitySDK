@@ -88,6 +88,22 @@ namespace Knetik
             protected set;
         }
 
+        public ItemAsset ThumbnailAsset {
+            get {
+                if (Assets.Count == 0) {
+                    return null;
+                } else {
+                    return Assets[0];
+                }
+            }
+        }
+
+        public bool IsPurchasable {
+            get {
+                return Skus.Count > 0;
+            }
+        }
+
         public Item (KnetikClient client, int id)
             : base(client)
         {

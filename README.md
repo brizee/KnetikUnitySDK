@@ -630,3 +630,23 @@ client.Store.Load((resStore) => {
     });
 });
 ```
+
+#### Quick Purchase
+
+For one-click purchase scenarios, there is a shortcut method QuickPurchase that will add an item to the cart and checkout in a single call:
+
+```
+var client = Knetik.KnetikClient.Instance;
+client.Store.Load((resStore) => {
+    var firstItem = resStore.Value.Items[0];
+    var sku = firstItem.Skus[0];
+
+    client.Cart.QuickPurchase(sku, (resCartQuickPurchase) => {
+        if (resCartQuickPurchase.IsSuccess) {
+            Debug.Log(“Quick purchase successful!");
+        } else {
+            Debug.Log(“Quick purchase failed!");
+       }
+    });
+});
+```

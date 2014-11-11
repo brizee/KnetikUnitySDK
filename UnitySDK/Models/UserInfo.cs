@@ -140,6 +140,13 @@ namespace Knetik
                 }
                 Response = res;
 
+                if (res.Body["result"]["product_item"].AsObject == null) {
+                    result.Response.Status = KnetikApiResponse.StatusType.Error;
+                    result.Response.ErrorMessage = "Item not found";
+                    cb(result);
+                    return;
+                }
+
                 Game game = new Game(Client, gameId);
                 result.Value = game;
                 this.Deserialize(res.Body["result"]);

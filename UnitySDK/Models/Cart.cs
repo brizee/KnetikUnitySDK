@@ -20,6 +20,31 @@ namespace Knetik
             Items = new List<CartItem>();
     	}
 
+        public void QuickPurchase(CatalogSku sku, Action<KnetikResult<Cart>> cb)
+        {
+            Client.CartAdd(sku.CatalogID, sku.ID, 1, (addResponse) => {
+                var result = new KnetikResult<Cart> {
+                    Response = addResponse
+                };
+                if (!addResponse.IsSuccess) {
+                    cb(result);
+                    return;
+                }
+
+                Client.CartCheckout((checkoutResponse) => {
+                    result.Response = checkoutResponse;
+
+                    if (!checkoutResponse.IsSuccess) {
+                        cb(result);
+                        return;
+                    }
+
+                    result.Value = this;
+                    cb(result);
+                });
+            });
+        }
+
     	public void Load(Action<KnetikResult<Cart>> cb)
         {
             Client.CartGet ((res) => {
