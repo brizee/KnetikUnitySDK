@@ -650,3 +650,7 @@ client.Store.Load((resStore) => {
     });
 });
 ```
+
+##5. Android Compatibility
+
+On Android, the ACCESS_WIFI_STATE permission must be set in the AndroidManifest.xml file in your project’s Assets->Plugins->Android folder.  An example AndroidManifest.xml has been included in this project, called “AndroidManifest.example.xml”.

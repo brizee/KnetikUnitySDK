@@ -84,9 +84,41 @@ namespace Knetik
 			return signature;    
 		}
 		
-#if !UNITY_WEBPLAYER
-		// Pulls the serial number (physical address) of the device being used
-		public static string getDeviceSerial() 
+#if UNITY_ANDROID
+        public static string getDeviceSerial() 
+        {
+            AndroidJavaClass clsUnity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            AndroidJavaObject objActivity = clsUnity.GetStatic<AndroidJavaObject>("currentActivity");
+            AndroidJavaObject objResolver = objActivity.Call<AndroidJavaObject>("getContentResolver");
+            AndroidJavaClass clsSecure = new AndroidJavaClass("android.provider.Settings$Secure");
+            return clsSecure.CallStatic<string>("getString", objResolver, "android_id");
+        }
+        
+        private static AndroidJavaObject mWiFiManager;
+        
+        public static string getMacAddress()
+        {
+            string macAddr = "";
+            if (mWiFiManager == null)
+            {
+                using (AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity"))
+                {
+                    mWiFiManager = activity.Call<AndroidJavaObject>("getSystemService","wifi");
+                }
+            }
+            macAddr = mWiFiManager.Call<AndroidJavaObject>("getConnectionInfo").Call<string>("getMacAddress");
+            
+            return macAddr;
+        }
+        
+        public static string getDeviceType() 
+        {
+            return "AND";
+        }
+        
+#elif !UNITY_WEBPLAYER
+        // Pulls the serial number (physical address) of the device being used
+        public static string getDeviceSerial() 
 		{
 			NetworkInterface adapter = getActiveNetwork();
 
