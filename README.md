@@ -94,10 +94,12 @@ if (registrationView.data.password != registrationView.data.passwordConfirm)
   return;
 }
 
-var response = KnetikClient.Instance.Register(registrationView.data.login, 
-                                              registrationView.data.password, 
-                                              registrationView.data.email, 
-                                              registrationView.data.login);
+var response = KnetikClient.Instance.Register(
+  registrationView.data.username,
+  registrationView.data.password,
+  registrationView.data.email,
+  registrationView.data.fullname
+);
 
 if (response.Status != KnetikApiResponse.StatusType.Success) {
   registrationView.error = true;
@@ -105,10 +107,32 @@ if (response.Status != KnetikApiResponse.StatusType.Success) {
   return;
 }
 
-// Save off the existing user session
-UserSessionUtils.setUserSession(0, registrationView.data.login, KnetikClient.Instance.ClientID);
 // Load the StartMenu again, the registered user must now login
 Application.LoadLevel(1);
+```
+
+####3.3.1 Register as Guest
+
+It is possible to register a user a guest which will let them call endpoints that require a user.
+
+```
+KnetikClient.Instance.GuestRegister();
+// Now logged in as a registered guest.
+```
+
+####3.3.2 Upgrade a Guest to a Registered User
+
+As a registered guest, the user can enter registration info to upgrade the guest user to a registered user.
+
+```
+KnetikClient.Instance.GuestRegister();
+KnetikClient.Instance.UpgradeFromRegisteredGuest(
+  registrationView.data.username,
+  registrationView.data.password,
+  registrationView.data.email,
+  registrationView.data.fullname
+);
+// The user is now fully registered.
 ```
 
 ###3.4 UserInfo Service
