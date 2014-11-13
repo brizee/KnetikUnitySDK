@@ -84,7 +84,7 @@ namespace Knetik
 			return signature;    
 		}
 		
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
         public static string getDeviceSerial() 
         {
             AndroidJavaClass clsUnity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
