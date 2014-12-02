@@ -40,7 +40,7 @@ namespace Knetik
 
         public void Load(Action<KnetikResult<StoreQuery>> cb)
         {
-            Client.ListStorePage(PageIndex, PageSize, null, HandleResponse(cb));
+            Client.ListStorePage(PageIndex, PageSize, Terms, HandleResponse(cb));
         }
 
         public StoreQuery NextPage(Action<KnetikResult<StoreQuery>> cb = null)
@@ -48,6 +48,7 @@ namespace Knetik
             var next = new StoreQuery (Client);
             next.PageIndex = PageIndex + 1;
             next.PageSize = PageSize;
+            next.Terms = Terms;
             if (cb != null) {
                 next.Load (cb);
             }
