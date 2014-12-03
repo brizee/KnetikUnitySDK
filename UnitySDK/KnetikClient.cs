@@ -176,6 +176,7 @@ namespace Knetik
         private static string UsernameKey = "knetik.username";
         private static string PasswordKey = "knetik.password";
         private static string UserIDKey = "knetik.userid";
+        private static string SessionEndpoint = "session";
         private static string RecordMetricEndpoint = "metrics/record";
         private static string GetLeaderboardEndpoint = "metrics/getLeaderboard";
         private static string GetUserInfoEndpoint = "user/getinfo";
