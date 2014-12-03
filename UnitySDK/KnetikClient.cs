@@ -59,12 +59,42 @@ namespace Knetik
 
         #region Public Methods
 
-        public void Logout() {
+        public void Logout()
+        {
             Username = null;
             Password = null;
             Session = null;
             UserID = 0;
             _userInfo = new UserInfo(this);
+
+            PlayerPrefs.DeleteKey(SessionKey);
+            PlayerPrefs.DeleteKey(UserIDKey);
+            PlayerPrefs.DeleteKey(UsernameKey);
+            PlayerPrefs.DeleteKey(PasswordKey);
+        }
+
+        public bool SaveSession()
+        {
+            if (!(Session != null && Session != ""))
+            {
+                return false;
+            }
+            PlayerPrefs.SetString(SessionKey, Session);
+            PlayerPrefs.SetInt(UserIDKey, UserID);
+            PlayerPrefs.SetString(UsernameKey, Username);
+            PlayerPrefs.SetString(PasswordKey, Password);
+
+            return true;
+        }
+
+        public bool LoadSession()
+        {
+            Session = PlayerPrefs.GetString(SessionKey);
+            UserID = PlayerPrefs.GetInt(UserIDKey);
+            Username = PlayerPrefs.GetString(UsernameKey);
+            Password = PlayerPrefs.GetString(PasswordKey);
+
+            return Session != null && Session != "";
         }
 
         #endregion
@@ -142,7 +172,10 @@ namespace Knetik
         #endregion
         
         private static string Prefix = "/rest/services/latest/";
-        private static string SessionEndpoint = "session";
+        private static string SessionKey = "knetik.session";
+        private static string UsernameKey = "knetik.username";
+        private static string PasswordKey = "knetik.password";
+        private static string UserIDKey = "knetik.userid";
         private static string RecordMetricEndpoint = "metrics/record";
         private static string GetLeaderboardEndpoint = "metrics/getLeaderboard";
         private static string GetUserInfoEndpoint = "user/getinfo";
@@ -166,5 +199,9 @@ namespace Knetik
         private static string CartGetEndpoint = "cart/get";
         private static string CartAddDiscountEndpoint = "cart/adddiscount";
         private static string CartCountriesEndpoint = "cart/getcountries";
+    }
+
+    class KnetikSavedSession {
+        
     }
 }

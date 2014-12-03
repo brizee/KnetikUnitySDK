@@ -41,7 +41,9 @@ KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => 
 
 Using the asyncronous execution will allow you to make nonblocking calls to the API.
 
-###3.2 Login Service
+###3.2 Session Service
+
+####3.2.1 Login Service
 
 Login requires a valid username/password pair to proceed, thus the user would already be registered.  For registration, please see section 5. The sample request below involves passing username/password by a Unity form:
 
@@ -66,7 +68,7 @@ else
 }
 ```
 
-####3.2.1 Login as Guest
+####3.2.2 Login as Guest
 
 Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away.  They can login after and their session will be upgraded to the authenticated session.
 
@@ -78,6 +80,35 @@ if (response.Status == KnetikApiResponse.StatusType.Success)
    // The user now is logged in as a guest.  They can login to get their guest session upgraded.
 }
 ```
+
+####3.2.3 Persisting session between launches
+
+To keep a session between launches of your game -- for example, to keep an authenticated guest session -- use the SaveSession and LoadSession methods:
+
+LoadSession:
+```
+if (KnetikClient.Instance.LoadSession())
+{
+  // We loaded the user's session, so we can skip login here.
+  Menu.SetScreen("profile");
+}
+```
+
+SaveSession:
+```
+KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, (res) => {
+  if (res.IsSuccess) {
+    // Store the user's session for retrieving later.
+    KnetikClient.Instance.SaveSession();
+    Menu.SetScreen("profile");
+  } else { 
+    ErrorMessageText.text = res.ErrorMessage;
+    ErrorMessageText.gameObject.SetActive(true);
+  }
+});
+```
+
+When the user logs out, their saved session will be deleted as well.
 
 ###3.3 Registration Service
 
