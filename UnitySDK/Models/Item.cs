@@ -42,7 +42,12 @@ namespace Knetik
             get;
             set;
         }
-        
+
+        public string UniqueKey {
+            get;
+            set;
+        }
+
         public string TypeHint {
             get;
             set;
@@ -116,6 +121,7 @@ namespace Knetik
         public override void Deserialize (KnetikJSONNode json)
         {
             ID = json ["id"].AsInt;
+            UniqueKey = json ["unique_key"].Value;
             TypeHint = json ["type_hint"].Value;
             Name = json ["name"].Value;
             ShortDescription = json ["short_description"].Value;

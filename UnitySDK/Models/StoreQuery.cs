@@ -21,6 +21,11 @@ namespace Knetik
             set;
         }
 
+        public List<string> Related {
+            get;
+            set;
+        }
+
         public bool HasMore {
             get;
             set;
@@ -40,7 +45,7 @@ namespace Knetik
 
         public void Load(Action<KnetikResult<StoreQuery>> cb)
         {
-            Client.ListStorePage(PageIndex, PageSize, Terms, HandleResponse(cb));
+            Client.ListStorePage(PageIndex, PageSize, Terms, Related, HandleResponse(cb));
         }
 
         public StoreQuery NextPage(Action<KnetikResult<StoreQuery>> cb = null)
@@ -49,6 +54,7 @@ namespace Knetik
             next.PageIndex = PageIndex + 1;
             next.PageSize = PageSize;
             next.Terms = Terms;
+            next.Related = Related;
             if (cb != null) {
                 next.Load (cb);
             }

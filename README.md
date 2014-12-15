@@ -283,7 +283,7 @@ KnetikClient.Instance.ListUserAchievements(pageIndex, pageSize, (res) => {
 
 ###3.9 Store Service
 
-The Store Service lists the sellable items available to the user.  It uses pagination similar to the Achievements Service.  Store items are filtered by terms; at least one of the terms you pass in will be matched in the result items.
+The Store Service lists the sellable items available to the user.  It uses pagination similar to the Achievements Service.  Store items are filtered by terms or related items.  When you search by terms, at least one of the terms you pass in will be matched in the result items.  When you search by related items, the results will be the items related to the items you pass in.
 
 The Store service lists items with their catalog ID and catalog SKU ID.  These are used for adding item to the cart and purchasing.
 
@@ -293,7 +293,7 @@ The Store service lists items with their catalog ID and catalog SKU ID.  These a
 int pageIndex = 1;
 int pageSize = 25;
 List<string> terms = new List<string> { “T-Shirts”, “Knetik” };
-KnetikClient.Instance.ListStorePage(pageIndex, pageSize, terms, (res) => {
+KnetikClient.Instance.ListStorePage(pageIndex, pageSize, terms, null, (res) => {
   /* res.Body will look like this:
   
 {
@@ -655,6 +655,30 @@ callback = (KnetikResult<StoreQuery> result) => {
 var store = KnetikClient.Instance.Store;
 store.Terms = new List<string> { “T-Shirts” };
 store.Load (callback);
+```
+
+Example searching for all related items to a game:
+
+```
+Action<KnetikResult<StoreQuery>> callback = null;
+callback = (KnetikResult<StoreQuery> result) => {
+    // Process the current page of items
+    Debug.Log (result.Value.Items);
+
+    // If there’s more, load the next page with this same callback.
+    if (result.Value.HasMore) {
+        result.Value.NextPage(callback);
+    }
+};
+
+client.userInfo.LoadWithGame(gameId, (res) => {
+  Game game = res.Value;
+
+  var store = KnetikClient.Instance.Store;
+  store.Terms = null; // not going to search by terms
+  store.Related = new string[] { game.UniqueKey };
+  store.Load (callback);  
+});
 ```
 
 ###4.6 Cart

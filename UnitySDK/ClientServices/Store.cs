@@ -20,6 +20,7 @@ namespace Knetik
             int page = 1,
             int limit = 10,
             List<string> terms = null,
+            List<string> related = null,
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
@@ -27,9 +28,11 @@ namespace Knetik
             j.AddField ("limit", limit);
             if (terms != null) {
                 j.AddField ("terms", JSONObject.Create(terms));
-            } else {
-                j.AddField ("terms", JSONObject.Create(new List<string> {"T-Shirts"}));
             }
+            if (terms != null) {
+                j.AddField ("related", JSONObject.Create(related));
+            }
+
             String body = j.Print ();
             
             KnetikRequest req = CreateRequest(ListStorePageEndpoint, body);
