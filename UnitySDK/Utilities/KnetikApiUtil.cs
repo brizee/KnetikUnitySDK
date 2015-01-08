@@ -153,16 +153,11 @@ namespace Knetik
 		}
 
         // Pulls the type of the device being used
-        public static string getDeviceType() 
+        public static string getDeviceType()
         {
-            NetworkInterface adapter = getActiveNetwork();
-            
-            if (adapter == null) {
-                Debug.LogWarning("No Network interface found! Using default 00000");
-                return "00000";
-            }
-            
-            return adapter.GetType().ToString();
+            Debug.Log("Device type: " + SystemInfo.deviceType);
+
+            return SystemInfo.deviceType.ToString();
         }
 
 		private static NetworkInterface getActiveNetwork()

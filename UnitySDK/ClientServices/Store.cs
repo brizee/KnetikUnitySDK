@@ -29,7 +29,7 @@ namespace Knetik
             if (terms != null) {
                 j.AddField ("terms", JSONObject.Create(terms));
             }
-            if (terms != null) {
+            if (related != null) {
                 j.AddField ("related", JSONObject.Create(related));
             }
 
