@@ -101,14 +101,15 @@ namespace Knetik
 
         #region Internal Methods
 
-        protected KnetikRequest CreateRequest(string path, string body = "[]", string method = "post", int timestamp = -1)
+        protected KnetikRequest CreateRequest(string path, string body = "[]", string method = "post", int timestamp = -1, string serviceBundle = null)
         {
             if (timestamp == -1) {
                 TimeSpan t = (DateTime.UtcNow - new DateTime (1970, 1, 1));
                 timestamp = (int)t.TotalSeconds;
             }
+            
+            string url = BuildUrl (path, serviceBundle);
 
-            string url = BuildUrl (path);
             string signature = BuildSignature (body, timestamp);
             string envelope = BuildEnvelope (body, timestamp, signature);
 
@@ -126,9 +127,19 @@ namespace Knetik
             return req;
         }
 
-        private string BuildUrl(string path)
+        private string BuildUrl(string path, string serviceBundle)
         {
-            return BaseURL + Prefix + path;
+            if (serviceBundle != null)
+            {
+                if (serviceBundle == "") {
+                    return BaseURL + Prefix + path;
+                } else {
+                    return BaseURL + Prefix + serviceBundle + "/" + path;
+                }
+            } else
+            {
+                return BaseURL + Prefix + DefaultServiceBundle + "/" + path;
+            }
         }
 
         private string BuildSignature(string request, int timestamp)
@@ -171,7 +182,8 @@ namespace Knetik
 
         #endregion
         
-        private static string Prefix = "/rest/services/latest/";
+        private static string Prefix = "/rest/services/";
+        private static string DefaultServiceBundle = "latest";
         private static string SessionKey = "knetik.session";
         private static string UsernameKey = "knetik.username";
         private static string PasswordKey = "knetik.password";

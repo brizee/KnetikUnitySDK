@@ -527,6 +527,55 @@ CartCheckout attempts to checkout the cart.  It will use the user’s appropriat
 var cartCheckoutResponse = client.CartCheckout();
 ```
 
+###3.11 Custom Calls
+
+There are two methods provided to allow you to make calls to custom service endpoints for client-specific logic; one is for custom login calls and the other is for other, general type of calls.
+
+#### CustomLogin
+
+CustomLogin lets you call a custom service and will create an authenticated session if it succeeds.  It has a few arguments:
+
+- **serviceEndpoint** - the name of the service to call
+- **usernameOrEmail** - the username or email to login with
+- **password** - the password
+- **isEmail** - true if the usernameOrEmail is an email, false if it's a username
+
+Example
+```
+var serviceEndpoint = "customSSO/login";
+var username = "bobby@email.com";
+var password = "bobbyftw";
+
+KnetikClient.Instance.CustomLogin(serviceEndpoint, username, password, true, (res) => {
+  Debug.Log("Logged in!");
+});
+```
+
+#### CustomCall
+
+CustomCall works like CustomLogin but isn't specific to logging in. It lets you call a custom service and you can parse the response.  It has a couple arguments:
+
+- **serviceEndpoint** - the name of the service to call
+- **parameters** - the parameters to send to the endpoint
+
+Example
+```
+var serviceEndpoint = "customSSO/register";
+
+var email = "bobby@email.com";
+var password = "bobbyftw";
+var fullname = "Bobby User";
+
+var parameters = new Dictionary<string, string>();
+parameters.Add("email", email);
+parameters.Add("password", password);
+parameters.Add("fullname", fullname);
+
+KnetikClient.Instance.CustomCall(serviceEndpoint, parameters, (res) => {
+  Debug.Log("Registered!");
+});
+```
+
 ##4. Models
 
 The simplest method of accessing the Knetik API is through the Model interface.  The Model interface is a convenience wrapper around the API Services and parses the responses into C# objects.
