@@ -21,6 +21,11 @@ namespace Knetik
             set;
         }
 
+        public string CurrencyCode {
+            get;
+            set;
+        }
+
 		public Wallet (KnetikClient client)
 			: base(client)
 		{
@@ -31,6 +36,7 @@ namespace Knetik
             ID = json ["id"].AsInt;
             Balance = json ["balance"].AsDouble;
             CurrencyName = json ["currency_name"].Value;
+            CurrencyCode = json ["code"].Value;
         }
 	}
 }
