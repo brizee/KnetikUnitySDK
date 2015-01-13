@@ -42,7 +42,7 @@ namespace Knetik
             JSONObject json = new JSONObject(parameters);
             string body = json.Print();
             
-            KnetikRequest req = CreateRequest(SessionEndpoint, body, "POST", -1, "");
+            KnetikRequest req = CreateRequest(serviceEndpoint, body, "POST", -1, "");
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;
         }
