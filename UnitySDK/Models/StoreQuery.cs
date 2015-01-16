@@ -26,6 +26,17 @@ namespace Knetik
             set;
         }
 
+        public bool UseCatalog
+        {
+            get;
+            set;
+        }
+
+        public List<string> ItemTypes {
+            get;
+            set;
+        }
+
         public bool HasMore {
             get;
             set;
@@ -41,11 +52,12 @@ namespace Knetik
         {
             PageIndex = 1;
             PageSize = 25;
+            UseCatalog = true;
         }
 
         public void Load(Action<KnetikResult<StoreQuery>> cb)
         {
-            Client.ListStorePage(PageIndex, PageSize, Terms, Related, HandleResponse(cb));
+            Client.ListStorePage(PageIndex, PageSize, Terms, Related, UseCatalog, HandleResponse(cb));
         }
 
         public StoreQuery NextPage(Action<KnetikResult<StoreQuery>> cb = null)
@@ -68,12 +80,14 @@ namespace Knetik
             Items = new List<Item> ();
             foreach (KnetikJSONNode node in json.Children) {
                 Item item = Item.Parse(Client, node);
-                Items.Add(item);
+                if (ItemTypes == null || ItemTypes.Contains(item.TypeHint)) {
+                    Items.Add(item);
+                }
             }
 
             // JSAPI doesn't return hasMore so we keep paging until we get
             // a page with less than PageSize items.
-            HasMore = Items.Count == PageSize;
+            HasMore = Items.Count >= PageIndex * PageSize;
         }
 
         protected Action<KnetikApiResponse> HandleResponse(Action<KnetikResult<StoreQuery>> cb)

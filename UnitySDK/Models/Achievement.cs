@@ -20,7 +20,12 @@ namespace Knetik
             get;
             set;
         }
-        
+
+        public Achievement (KnetikClient client)
+            : base(client)
+        {
+        }
+
 		public Achievement (KnetikClient client, int id)
             : base(client, id)
 		{

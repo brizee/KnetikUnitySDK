@@ -8,6 +8,7 @@ public class KnetikInitializationScript : MonoBehaviour {
 	public string BaseURL = "http://jsapi.dev:8080";
     public string ClientID = "fake_client";
 	public string ClientSecret = "fake_secret";
+    public string Authentication = "default";
 
 	public Queue Requests = Queue.Synchronized( new Queue() );
 
@@ -20,6 +21,7 @@ public class KnetikInitializationScript : MonoBehaviour {
         KnetikClient.Instance.BaseURL = BaseURL;
         KnetikClient.Instance.ClientID = ClientID;
         KnetikClient.Instance.ClientSecret = ClientSecret;
+        KnetikClient.Instance.Authentication = Authentication;
 
         DontDestroyOnLoad (gameObject);
 	}

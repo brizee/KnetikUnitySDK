@@ -83,7 +83,12 @@ namespace Knetik
 
         public List<Wallet> Wallets {
             get;
-            set;
+            protected set;
+        }
+
+        public Inventory Inventory {
+            get;
+            protected set;
         }
 
         public UserInfo (KnetikClient client)
@@ -174,6 +179,11 @@ namespace Knetik
                 Wallet wallet = new Wallet(Client);
                 wallet.Deserialize(node);
                 Wallets.Add(wallet);
+            }
+            Inventory = new Inventory(Client);
+            if (json ["inventory"] != null)
+            {
+                Inventory.Deserialize(json ["inventory"]);
             }
 
             // Reset the dirty tracker since we have clean data

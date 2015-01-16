@@ -571,6 +571,7 @@ parameters.Add("email", email);
 parameters.Add("password", password);
 parameters.Add("fullname", fullname);
 
+
 KnetikClient.Instance.CustomCall(serviceEndpoint, parameters, (res) => {
   Debug.Log("Registered!");
 });
@@ -683,6 +684,32 @@ callback = (KnetikResult<AchievementsQuery> result) => {
     }
 };
 KnetikClient.Instance.UserInfo.Achievements.Load (callback);
+```
+
+###4.4.1 Achievements by Game
+
+To list only the Achievements related to your game (set up using the Related Items tool), use:
+
+```
+game.GetAchievements().Load((res) => {
+  // res.Value.Items is a list of all the Achievements
+});
+```
+
+To check if a user has received an Achievement, use the user's UserInfo.Inventory:
+
+```
+// "game" variable is a Game instance loaded through KnetikClient.UserInfo.LoadWithGame(gameID)
+
+game.GetAchievements().Load((res) => {
+  // res.Value.Items is a list of all the Achievements
+  foreach (Item item in res.Value.Items) {
+    var achievement = item as Achievement;
+    if (achievement != null && KnetikClient.UserInfo.Inventory.Contains(achievement.ID)) {
+      // User has earned the achievement
+    }
+  }
+});
 ```
 
 ###4.5 Store

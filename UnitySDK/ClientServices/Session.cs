@@ -11,12 +11,38 @@ namespace Knetik
 			Action<KnetikApiResponse> cb = null
 		) {
 			int timestamp = GetTimestamp ();
-			Username = username;
-			Password = EncodePassword(password, timestamp);
+            string endpoint;
+            string body;
+            string serviceBundle = null;
+
+            JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
+            json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
+            json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
+            // Device Type is currently limited to 3 characters in the DB
+            json.AddField ("device_type", KnetikApiUtil.getDeviceType().Substring(0, 3));
+            json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
+
+            if (Authentication == null || Authentication == "" || Authentication == "default")
+            {
+                endpoint = SessionEndpoint;
+
+                Username = username;
+                Password = EncodePassword(password, timestamp);
+
+            } else
+            {
+                // use SSO
+                serviceBundle = Authentication;
+                endpoint = "login";
+
+                json.AddField("username", username);
+                json.AddField("email", username);
+                json.AddField("password", password);
+            }
+
+            body = json.Print ();
 			
-			String body = BuildLoginBody ();
-			
-			KnetikRequest req = CreateRequest(SessionEndpoint, body, "post", timestamp);
+			KnetikRequest req = CreateRequest(endpoint, body, "post", timestamp, serviceBundle);
 			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
 			return res;
 		}
@@ -27,24 +53,19 @@ namespace Knetik
 			Username = "";
 			Password = "";
 			Session = "";
+
+            JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
+            json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
+            json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
+            // Device Type is currently limited to 3 characters in the DB
+            json.AddField ("device_type", KnetikApiUtil.getDeviceType().Substring(0, 3));
+            json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
 			
-			String body = BuildLoginBody ();
+			String body = json.Print();
 			
 			KnetikRequest req = CreateRequest(SessionEndpoint, body);
 			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
 			return res;
-		}
-
-		private string BuildLoginBody()
-		{
-			JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
-			json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
-			json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
-			// Device Type is currently limited to 3 characters in the DB
-            json.AddField ("device_type", KnetikApiUtil.getDeviceType().Substring(0, 3));
-			json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
-			
-			return json.Print ();
 		}
 	}
 }

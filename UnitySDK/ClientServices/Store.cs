@@ -21,6 +21,7 @@ namespace Knetik
             int limit = 10,
             List<string> terms = null,
             List<string> related = null,
+            bool useCatalog = true,
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
@@ -32,6 +33,7 @@ namespace Knetik
             if (related != null) {
                 j.AddField ("related", JSONObject.Create(related));
             }
+            j.AddField("useCatalog", useCatalog);
 
             String body = j.Print ();
             

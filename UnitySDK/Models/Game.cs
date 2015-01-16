@@ -16,6 +16,13 @@ namespace Knetik
             set;
         }
 
+        public Game (KnetikClient client)
+            : base(client)
+        {
+            GameOptions = new Dictionary<string, GameOption> ();
+            UserOptions = new Dictionary<string, UserOption> ();
+        }
+
         public Game (KnetikClient client, int id)
             : base(client, id)
         {

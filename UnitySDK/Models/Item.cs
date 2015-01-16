@@ -8,30 +8,29 @@ namespace Knetik
     {
         public static Item Parse(KnetikClient client, KnetikJSONNode json)
         {
-            int id = json ["id"].AsInt;
             string typeHint = json ["type_hint"].Value;
             Item item;
             switch (typeHint) {
                 case "game":
-                item = new Game(client, id);
+                item = new Game(client);
                 break;
                 case "physical_item":
-                item = new PhysicalItem(client, id);
+                item = new PhysicalItem(client);
                 break;
                 case "virtual_item":
-                item = new VirtualItem(client, id);
+                item = new VirtualItem(client);
                 break;
                 case "entitlement":
-                item = new Entitlement(client, id);
+                item = new Entitlement(client);
                 break;
                 case "subscription":
-                item = new Subscription(client, id);
+                item = new Subscription(client);
                 break;
                 case "achievement_item":
-                item = new Achievement(client, id);
+                item = new Achievement(client);
                 break;
                 default:
-                item = new Item(client, id);
+                item = new Item(client);
                 break;
             }
             item.Deserialize(json);
@@ -109,18 +108,40 @@ namespace Knetik
             }
         }
 
-        public Item (KnetikClient client, int id)
+        public Item (KnetikClient client)
             : base(client)
         {
-            ID = id;
-            
             Assets = new List<ItemAsset>();
             Skus = new List<CatalogSku>();
+        }
+
+        public Item (KnetikClient client, int id)
+            : this(client)
+        {
+            ID = id;
+        }
+
+        public StoreQuery GetAchievements()
+        {
+            StoreQuery query = GetRelatedItems();
+            query.ItemTypes = new List<string> { "achievement_item", "game_achievement_item" };
+            return query;
+        }
+
+        public StoreQuery GetRelatedItems()
+        {
+            StoreQuery query = new StoreQuery(Client);
+            query.Related = new List<string> { this.UniqueKey };
+            query.UseCatalog = false;
+            return query;
         }
         
         public override void Deserialize (KnetikJSONNode json)
         {
-            ID = json ["id"].AsInt;
+            if (json ["id"] != null && json ["id"] != "null")
+            {
+                ID = json ["id"].AsInt;
+            }
             UniqueKey = json ["unique_key"].Value;
             TypeHint = json ["type_hint"].Value;
             Name = json ["name"].Value;

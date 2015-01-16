@@ -55,6 +55,12 @@ namespace Knetik
             set;
         }
 
+        public string Authentication
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Public Methods
