@@ -157,7 +157,17 @@ namespace Knetik
         {
             Debug.Log("Device type: " + SystemInfo.deviceType);
 
-            return SystemInfo.deviceType.ToString();
+            switch (SystemInfo.deviceType)
+            {
+                case DeviceType.Console:
+                    return "STB";
+                case DeviceType.Handheld:
+                    return "MOB";
+                case DeviceType.Desktop:
+                    return "PC";
+                case DeviceType.Unknown:
+                    return "PC";
+            }
         }
 
 		private static NetworkInterface getActiveNetwork()
