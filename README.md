@@ -786,6 +786,30 @@ client.Store.Load((resStore) => {
 });
 ```
 
+###4.7 Leaderboard
+
+To load a leaderboard, you need a leaderboard ID from the admin.  You can load and display the entries from the leaderboard like so:
+
+```
+KnetikClient.Instance.Leaderboard(KnetikGlobal.LeaderboardID).Load((res) => {
+  if (res.Response.IsSuccess) {
+    var leaderboard = res.Value;
+
+    string output = "";
+    
+    // only show top 10 entries
+    int count = Math.Min(10, leaderboard.Entries.Count);
+
+    for (int i = 0; i < count; i++) {
+      var entry = leaderboard.Entries[i];
+      output += entry.DisplayName + ": " + (int)entry.Score + "\n";
+    }
+
+    LeaderboardText.text = output;
+  }
+});
+```
+
 #### Quick Purchase
 
 For one-click purchase scenarios, there is a shortcut method QuickPurchase that will add an item to the cart and checkout in a single call:

@@ -16,6 +16,14 @@ namespace Knetik
             return new ObjectMetric (this, metricId);
         }
 
+        public Leaderboard Leaderboard(int leaderboardId, string level = null)
+        {
+            Leaderboard leaderboard = new Leaderboard(this);
+            leaderboard.ID = leaderboardId;
+            leaderboard.Level = level;
+            return leaderboard;
+        }
+
         public KnetikApiResponse RecordValueMetric(
             int gameId,
             string metricName,
@@ -118,6 +126,7 @@ namespace Knetik
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
             j.AddField ("leaderboard_id", leaderboardId);
+            j.AddField ("displayStyle", "pretty");
 
             if (level != null) {
                 j.AddField ("level", level);

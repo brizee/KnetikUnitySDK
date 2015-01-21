@@ -29,6 +29,9 @@ namespace Knetik
                 case "achievement_item":
                 item = new Achievement(client);
                 break;
+                case "leaderboard":
+                item = new Leaderboard(client);
+                break;
                 default:
                 item = new Item(client);
                 break;
