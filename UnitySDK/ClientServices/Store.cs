@@ -42,6 +42,19 @@ namespace Knetik
             KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
             return  response;
         }
+
+        public KnetikApiResponse UseItem(
+            int itemID,
+            Action<KnetikApiResponse> cb = null
+        ) {
+            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+            j.AddField ("item_id", itemID);
+            String body = j.Print ();
+            
+            KnetikRequest req = CreateRequest(UseItemEndpoint, body);
+            
+            return new KnetikApiResponse(this, req, cb);
+        }
     }
 }
 

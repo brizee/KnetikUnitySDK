@@ -59,14 +59,14 @@ namespace Knetik
         {
             base.Deserialize (json);
             UserOptions.Clear ();
-            foreach (KnetikJSONNode node in json["userItemOptions"].Children) {
+            foreach (KnetikJSONNode node in json["user_item_options"].Children) {
                 UserOption option = new UserOption(Client, this);
                 option.Deserialize(node);
                 UserOptions[option.Key] = option;
             }
 
             GameOptions.Clear ();
-            foreach (KnetikJSONNode node in json["itemOptions"].Children) {
+            foreach (KnetikJSONNode node in json["item_options"].Children) {
                 GameOption option = new GameOption(Client, this);
                 option.Deserialize(node);
                 GameOptions[option.Key] = option;

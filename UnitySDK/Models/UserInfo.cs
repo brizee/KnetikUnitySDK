@@ -135,7 +135,12 @@ namespace Knetik
 
         public void LoadWithGame(int gameId, Action<KnetikResult<Game>> cb)
         {
-            Client.GetUserInfoWithProduct (gameId, (res) => {
+            LoadWithGame(gameId.ToString(), cb);
+        }
+
+        public void LoadWithGame(string gameIdentifier, Action<KnetikResult<Game>> cb)
+        {
+            Client.GetUserInfoWithProduct (gameIdentifier, (res) => {
                 var result = new KnetikResult<Game> {
                     Response = res
                 };
@@ -152,7 +157,7 @@ namespace Knetik
                     return;
                 }
 
-                Game game = new Game(Client, gameId);
+                Game game = new Game(Client);
                 result.Value = game;
                 this.Deserialize(res.Body["result"]);
                 game.Deserialize(res.Body["result"]["product_item"]);

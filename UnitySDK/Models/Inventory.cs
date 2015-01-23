@@ -30,23 +30,19 @@ namespace Knetik
         public override void Deserialize (KnetikJSONNode json)
         {
             items = new Dictionary<int, List<InventoryItem>>();
-            foreach (KnetikJSONNode node in json.Children) {
-                Item item = Item.Parse(Client, json);
-                item.ID = node ["item_id"].AsInt;
-                int inventoryID = node["inventory_id"].AsInt;
-                if (!items.ContainsKey(item.ID)) {
-                    items.Add(item.ID, new List<InventoryItem>());
+            foreach (KnetikJSONNode node in json.Children)
+            {
+                InventoryItem invItem = new InventoryItem(Client);
+                invItem.Deserialize(node);
+                if (invItem.Item.ID > 0)
+                {
+                    if (!items.ContainsKey(invItem.Item.ID))
+                    {
+                        items.Add(invItem.Item.ID, new List<InventoryItem>());
+                    }
+                    items[invItem.Item.ID].Add(invItem);
                 }
-                items[item.ID].Add(new InventoryItem {
-                    InventoryID = inventoryID,
-                    Item = item
-                });
             }
-        }
-
-        public struct InventoryItem {
-            public int InventoryID;
-            public Item Item;
         }
     }
 }

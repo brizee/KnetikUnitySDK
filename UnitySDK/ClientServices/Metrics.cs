@@ -16,6 +16,14 @@ namespace Knetik
             return new ObjectMetric (this, metricId);
         }
 
+        public Leaderboard Leaderboard(string leaderboardKey, string level = null)
+        {
+            Leaderboard leaderboard = new Leaderboard(this);
+            leaderboard.UniqueKey = leaderboardKey;
+            leaderboard.Level = level;
+            return leaderboard;
+        }
+
         public Leaderboard Leaderboard(int leaderboardId, string level = null)
         {
             Leaderboard leaderboard = new Leaderboard(this);
@@ -124,10 +132,18 @@ namespace Knetik
             string level = null,
             Action<KnetikApiResponse> cb = null
         ) {
-            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("leaderboard_id", leaderboardId);
-            j.AddField ("displayStyle", "pretty");
+            return GetLeaderboard(leaderboardId.ToString(), level, cb);
+        }
 
+        public KnetikApiResponse GetLeaderboard(
+            string leaderboardIdentifier,
+            string level = null,
+            Action<KnetikApiResponse> cb = null
+            ) {
+            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+            j.AddField ("leaderboard_id", leaderboardIdentifier);
+            j.AddField ("displayStyle", "pretty");
+            
             if (level != null) {
                 j.AddField ("level", level);
             }

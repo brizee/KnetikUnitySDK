@@ -168,6 +168,8 @@ namespace Knetik
                 case DeviceType.Unknown:
                     return "PC";
             }
+
+            return "PC";
         }
 
 		private static NetworkInterface getActiveNetwork()

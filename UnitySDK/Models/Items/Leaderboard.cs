@@ -63,7 +63,14 @@ namespace Knetik
 
         public void Load(Action<KnetikResult<Leaderboard>> cb)
         {
-            Client.GetLeaderboard(ID, Level, (res) => {
+            string identifier;
+            if (ID > 0)
+            {
+                identifier = ID.ToString();
+            } else {
+                identifier = UniqueKey;
+            }
+            Client.GetLeaderboard(identifier, Level, (res) => {
                 var result = new KnetikResult<Leaderboard> {
                     Response = res
                 };

@@ -23,10 +23,15 @@ namespace Knetik
 
         public KnetikApiResponse GetUserInfoWithProduct(int productId, Action<KnetikApiResponse> cb = null)
         {
-            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("productId", productId);
-            String body = j.Print ();
+            return GetUserInfoWithProduct(productId.ToString(), cb);
+        }
 
+        public KnetikApiResponse GetUserInfoWithProduct(string productIdentifier, Action<KnetikApiResponse> cb = null)
+        {
+            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+            j.AddField ("productId", productIdentifier);
+            String body = j.Print ();
+            
             KnetikRequest req = CreateRequest(GetUserInfoWithProductEndpoint, body);
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;

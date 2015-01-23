@@ -142,7 +142,7 @@ if (response.Status != KnetikApiResponse.StatusType.Success) {
 Application.LoadLevel(1);
 ```
 
-####3.3.1 Register as Guest
+#### Register as Guest
 
 It is possible to register a user a guest which will let them call endpoints that require a user.
 
@@ -151,7 +151,7 @@ KnetikClient.Instance.GuestRegister();
 // Now logged in as a registered guest.
 ```
 
-####3.3.2 Upgrade a Guest to a Registered User
+#### Upgrade a Guest to a Registered User
 
 As a registered guest, the user can enter registration info to upgrade the guest user to a registered user.
 
@@ -164,6 +164,53 @@ KnetikClient.Instance.UpgradeFromRegisteredGuest(
   registrationView.data.fullname
 );
 // The user is now fully registered.
+```
+
+
+#### CustomLogin
+
+CustomLogin lets you call a custom service and will create an authenticated session if it succeeds.  It has a few arguments:
+
+- **serviceEndpoint** - the name of the service to call
+- **usernameOrEmail** - the username or email to login with
+- **password** - the password
+- **isEmail** - true if the usernameOrEmail is an email, false if it's a username
+
+Example
+```
+var serviceEndpoint = "customSSO/login";
+var username = "bobby@email.com";
+var password = "bobbyftw";
+
+KnetikClient.Instance.CustomLogin(serviceEndpoint, username, password, true, (res) => {
+  Debug.Log("Logged in!");
+});
+```
+
+#### CustomCall
+
+CustomCall works like CustomLogin but isn't specific to logging in. It lets you call a custom service and you can parse the response.  It has a couple arguments:
+
+- **serviceEndpoint** - the name of the service to call
+- **parameters** - the parameters to send to the endpoint
+
+Example
+```
+var serviceEndpoint = "customSSO/register";
+
+var email = "bobby@email.com";
+var password = "bobbyftw";
+var fullname = "Bobby User";
+
+var parameters = new Dictionary<string, string>();
+parameters.Add("email", email);
+parameters.Add("password", password);
+parameters.Add("fullname", fullname);
+
+
+KnetikClient.Instance.CustomCall(serviceEndpoint, parameters, (res) => {
+  Debug.Log("Registered!");
+});
 ```
 
 ###3.4 UserInfo Service
@@ -531,51 +578,19 @@ var cartCheckoutResponse = client.CartCheckout();
 
 There are two methods provided to allow you to make calls to custom service endpoints for client-specific logic; one is for custom login calls and the other is for other, general type of calls.
 
-#### CustomLogin
+###3.11 Items
 
-CustomLogin lets you call a custom service and will create an authenticated session if it succeeds.  It has a few arguments:
+#### UseItem
 
-- **serviceEndpoint** - the name of the service to call
-- **usernameOrEmail** - the username or email to login with
-- **password** - the password
-- **isEmail** - true if the usernameOrEmail is an email, false if it's a username
+To use an item (such as a consumable), use the UseItem endpoint:
 
-Example
 ```
-var serviceEndpoint = "customSSO/login";
-var username = "bobby@email.com";
-var password = "bobbyftw";
-
-KnetikClient.Instance.CustomLogin(serviceEndpoint, username, password, true, (res) => {
-  Debug.Log("Logged in!");
-});
+int itemID = 197
+var response = Client.UseItem(itemID);
+Debug.Log("Success: " + response.IsSuccess ? "yes" : "no");
 ```
 
-#### CustomCall
-
-CustomCall works like CustomLogin but isn't specific to logging in. It lets you call a custom service and you can parse the response.  It has a couple arguments:
-
-- **serviceEndpoint** - the name of the service to call
-- **parameters** - the parameters to send to the endpoint
-
-Example
-```
-var serviceEndpoint = "customSSO/register";
-
-var email = "bobby@email.com";
-var password = "bobbyftw";
-var fullname = "Bobby User";
-
-var parameters = new Dictionary<string, string>();
-parameters.Add("email", email);
-parameters.Add("password", password);
-parameters.Add("fullname", fullname);
-
-
-KnetikClient.Instance.CustomCall(serviceEndpoint, parameters, (res) => {
-  Debug.Log("Registered!");
-});
-```
+This will consume the item from the user's inventory.
 
 ##4. Models
 
@@ -829,6 +844,12 @@ client.Store.Load((resStore) => {
     });
 });
 ```
+
+#### Inventory
+
+When you use UserInfo.LoadWithGame, the UserInfo will contain the Inventory object.  The inventory contains a list of all the items the user has that are related to the game.  You can get a list of all the items in the inventory using the "Inventory.Items" property.
+
+Each item is an instance of InventoryItem.  This instance contains some information about the user's instance of that item, such as how many times it has been used and when it expires (null if it doesn't).  You can call InventoryItem.Consume() to use the item, causing the UseCount to increase.  If the UseCount matches the the item's Consumable behavior's MaxUse value, the item will be used up and will not be in the user's inventory anymore.
 
 ##5. Android Compatibility
 

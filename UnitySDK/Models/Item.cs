@@ -95,6 +95,11 @@ namespace Knetik
             protected set;
         }
 
+        public Dictionary<string, Behavior> Behaviors {
+            get;
+            protected set;
+        }
+
         public ItemAsset ThumbnailAsset {
             get {
                 if (Assets.Count == 0) {
@@ -116,6 +121,7 @@ namespace Knetik
         {
             Assets = new List<ItemAsset>();
             Skus = new List<CatalogSku>();
+            Behaviors = new Dictionary<string, Behavior>();
         }
 
         public Item (KnetikClient client, int id)
@@ -138,6 +144,11 @@ namespace Knetik
             query.UseCatalog = false;
             return query;
         }
+
+        public bool HasBehavior(string behavior)
+        {
+            return Behaviors.ContainsKey(behavior);
+        }
         
         public override void Deserialize (KnetikJSONNode json)
         {
@@ -152,28 +163,40 @@ namespace Knetik
             LongDescription = json ["long_description"].Value;
 
             Assets.Clear ();
-            foreach (KnetikJSONNode node in json["assets"].Children) {
+            foreach (KnetikJSONNode node in json["assets"].Children)
+            {
                 ItemAsset asset = new ItemAsset(Client);
                 asset.Deserialize(node);
                 Assets.Add(asset);
             }
             
             Skus.Clear ();
-            foreach (KnetikJSONNode node in json["skus"].Children) {
+            foreach (KnetikJSONNode node in json["skus"].Children)
+            {
                 CatalogSku sku = new CatalogSku(Client, this);
                 sku.Deserialize(node);
                 Skus.Add(sku);
             }
 
-            if (json ["deleted_at"] != null && json ["deleted_at"] != "null") {
+            Behaviors.Clear();
+            foreach (KnetikJSONNode node in json["behaviors"].Children)
+            {
+                Behavior behavior = Behavior.Parse(Client, node);
+                Behaviors.Add(behavior.TypeHint, behavior);
+            }
+
+            if (json ["deleted_at"] != null && json ["deleted_at"] != "null")
+            {
                 DeletedAt = new DateTime (json ["deleted_at"].AsInt);
             }
 
-            if (json ["date_created"] != null && json ["date_created"] != "null") {
+            if (json ["date_created"] != null && json ["date_created"] != "null")
+            {
                 DateCreated = new DateTime (json ["date_created"].AsInt);
             }
 
-            if (json ["date_updated"] != null && json ["date_updated"] != "null") {
+            if (json ["date_updated"] != null && json ["date_updated"] != "null")
+            {
                 DateUpdated = new DateTime (json ["date_updated"].AsInt);
             }
         }
