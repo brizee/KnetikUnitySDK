@@ -58,7 +58,7 @@ namespace Knetik
             json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
             json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
             // Device Type is currently limited to 3 characters in the DB
-            json.AddField ("device_type", KnetikApiUtil.getDeviceType().Substring(0, 3));
+            json.AddField ("device_type", KnetikApiUtil.getDeviceType());
             json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
 			
 			String body = json.Print();

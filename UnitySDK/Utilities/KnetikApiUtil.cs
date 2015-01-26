@@ -113,7 +113,7 @@ namespace Knetik
         
         public static string getDeviceType() 
         {
-            return "AND";
+            return "MOB";
         }
         
 #elif !UNITY_WEBPLAYER
