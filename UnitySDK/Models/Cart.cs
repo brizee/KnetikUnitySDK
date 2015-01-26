@@ -22,25 +22,34 @@ namespace Knetik
 
         public void QuickPurchase(CatalogSku sku, Action<KnetikResult<Cart>> cb)
         {
-            Client.CartAdd(sku.CatalogID, sku.ID, 1, (addResponse) => {
-                var result = new KnetikResult<Cart> {
-                    Response = addResponse
-                };
-                if (!addResponse.IsSuccess) {
-                    cb(result);
-                    return;
+            Client.CartGet((res) => {
+                if (res.IsSuccess) {
+                    KnetikJSONNode existingItems = res.Body["result"]["items"];
+                    foreach (KnetikJSONNode json in existingItems.Children) {
+                        Client.CartModify(json["catalog_id"].AsInt, json["sku_id"].AsInt, 0);
+                    }
                 }
 
-                Client.CartCheckout((checkoutResponse) => {
-                    result.Response = checkoutResponse;
-
-                    if (!checkoutResponse.IsSuccess) {
+                Client.CartAdd(sku.CatalogID, sku.ID, 1, (addResponse) => {
+                    var result = new KnetikResult<Cart> {
+                        Response = addResponse
+                    };
+                    if (!addResponse.IsSuccess) {
                         cb(result);
                         return;
                     }
-
-                    result.Value = this;
-                    cb(result);
+    
+                    Client.CartCheckout((checkoutResponse) => {
+                        result.Response = checkoutResponse;
+    
+                        if (!checkoutResponse.IsSuccess) {
+                            cb(result);
+                            return;
+                        }
+    
+                        result.Value = this;
+                        cb(result);
+                    });
                 });
             });
         }
