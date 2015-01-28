@@ -851,6 +851,8 @@ When you use UserInfo.LoadWithGame, the UserInfo will contain the Inventory obje
 
 Each item is an instance of InventoryItem.  This instance contains some information about the user's instance of that item, such as how many times it has been used and when it expires (null if it doesn't).  You can call InventoryItem.Consume() to use the item, causing the UseCount to increase.  If the UseCount matches the the item's Consumable behavior's MaxUse value, the item will be used up and will not be in the user's inventory anymore.
 
+For downloadable content, the Downloadable behavior contains the URLs by name as set up in the admin.  With the URL, you can load images or sound files in dynamically based on what is in the user's inventory.
+
 ##5. Android Compatibility
 
 On Android, the ACCESS_WIFI_STATE permission must be set in the AndroidManifest.xml file in your project’s Assets->Plugins->Android folder.  An example AndroidManifest.xml has been included in this project, called “AndroidManifest.example.xml”.

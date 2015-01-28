@@ -15,6 +15,9 @@ namespace Knetik {
                 case "consumable":
                     behavior = new Consumable(client);
                     break;
+                case "downloadable":
+                    behavior = new Downloadable(client);
+                    break;
                 default:
                     behavior = new Behavior(client);
                     break;

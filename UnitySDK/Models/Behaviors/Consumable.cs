@@ -2,8 +2,10 @@
 using System.Collections;
 using KnetikSimpleJSON;
 
-namespace Knetik {
-    public class Consumable : Behavior {
+namespace Knetik
+{
+    public class Consumable : Behavior
+    {
         public Consumable(KnetikClient client)
             : base(client) 
         {
