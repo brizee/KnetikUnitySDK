@@ -165,6 +165,8 @@ namespace Knetik
             });
         }
 
+        
+
         public override void Deserialize (KnetikJSONNode json)
         {
             ID = json ["id"].AsInt;

@@ -48,6 +48,18 @@ namespace Knetik
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;
         }
+
+        public KnetikApiResponse GetRelationships(int ancestorDepth, int descendantDepth, bool includeSiblings, Action<KnetikApiResponse> cb = null) {
+            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+            j.AddField ("ancestorDepth", ancestorDepth);
+            j.AddField ("descendantDepth", descendantDepth);
+            j.AddField ("includeSiblings", includeSiblings);
+            String body = j.Print ();
+            
+            KnetikRequest req = CreateRequest(UserGetRelationshipsEndpoint, body);
+            KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
+            return res;
+        }
     }
 }
 

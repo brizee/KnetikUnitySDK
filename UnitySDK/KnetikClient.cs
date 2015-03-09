@@ -219,6 +219,7 @@ namespace Knetik
         private static string CartAddDiscountEndpoint = "cart/adddiscount";
         private static string CartCountriesEndpoint = "cart/getcountries";
         private static string UseItemEndpoint = "game/gamestart";
+        private static string UserGetRelationshipsEndpoint = "user/getrelationships";
     }
 
     class KnetikSavedSession {
