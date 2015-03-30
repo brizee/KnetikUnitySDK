@@ -626,6 +626,48 @@ Knetik.Instance.UserInfo.Save((res) {
 });
 ```
 
+###4.1.1 User Relationships
+
+The UserInfo object has a Relationships object that allows you to retrieve information about the hierarchical relationships that the user is in.
+
+The Ancestors are returned in order of ancestry with the highest ancestor listed first.
+
+For example:
+
+[Great Grandparent, Grandparent, Parent]
+
+By default, the results include the direct ancestor (AncestorDepth = 1), the direct descendants (DescendantDepth = 1), and siblings (IncludeSiblings = true).
+
+```
+/*
+You can set how many ancestors, descendants to find and whether to return siblings:
+
+KnetikClient.Instance.UserInfo.Relationships.AncestorDepth = 10;
+KnetikClient.Instance.UserInfo.Relationships.DescendantDepth = 10;
+KnetikClient.Instance.UserInfo.Relationships.IncludeSiblings = true;
+*/
+
+KnetikClient.Instance.UserInfo.Relationships.Load((relationshipsResult) => {
+  if (relationshipsResult.Response.IsSuccess) {
+    foreach (var kvp in relationshipsResult.Value.Relationships) {
+      Debug.Log("Name: " + kvp.Key);
+      Debug.Log("Ancestors:");
+      foreach (var ancestor in kvp.Value.Ancestors) {
+        Debug.Log(ancestor.Username);
+      }
+      Debug.Log("Siblings:");
+      foreach (var sibling in kvp.Value.Siblings) {
+        Debug.Log(sibling.Username);
+      }
+      Debug.Log("Descendants:");
+      foreach (var descendant in kvp.Value.Descendants) {
+        Debug.Log(descendant.Username);
+      }
+    }
+  }
+});
+```
+
 ###4.2 Game
 
 Game objects are retrieved through using the ```UserInfo.LoadWithGame```method and providing the game’s ID.  With the game object, you can read its properties, GameOptions, UserOptions, and record metrics by name for the game.  GameOptions are read-only but can be refreshed using the Refresh() method on the GameOption instance.  UserOptions can be created using the CreateUserOption method on the Game instance and saved (after being created or modified) using the Save method on the UserOption instance.

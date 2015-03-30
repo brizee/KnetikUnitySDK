@@ -90,10 +90,14 @@ namespace Knetik
             Gender = json ["gender"].Value;
 
             Descendants = new List<UserHierarchyNode>();
-            foreach (KnetikJSONNode node in json["descendants"].Children) {
-                UserHierarchyNode descendant = new UserHierarchyNode(Client);
-                descendant.Deserialize(node);
-                Descendants.Add(descendant);
+            if (json ["descendants"] != null && json ["descendants"].Count > 0)
+            {
+                foreach (KnetikJSONNode node in json["descendants"].Children)
+                {
+                    UserHierarchyNode descendant = new UserHierarchyNode(Client);
+                    descendant.Deserialize(node);
+                    Descendants.Add(descendant);
+                }
             }
         }
     }

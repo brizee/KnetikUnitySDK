@@ -6,9 +6,9 @@ namespace Knetik
 {
     public class UserHierarchy : KnetikModel
     {
-        List<UserHierarchyNode> Ancestors;
-        List<UserHierarchyNode> Siblings;
-        List<UserHierarchyNode> Descendants;
+        public List<UserHierarchyNode> Ancestors { get; private set; }
+        public List<UserHierarchyNode> Siblings { get; private set; }
+        public List<UserHierarchyNode> Descendants { get; private set; }
 
         public UserHierarchy(KnetikClient client)
             : base(client) {

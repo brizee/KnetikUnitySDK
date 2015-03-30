@@ -8,6 +8,7 @@ namespace Knetik
     {
         private KnetikDirtyTracker dirtyTracker;
         private AchievementsQuery achievements;
+        private RelationshipsQuery relationships;
 
         public int ID {
             get;
@@ -182,10 +183,14 @@ namespace Knetik
             Language = json ["lang"].Value;
             Country = json ["country"].Value;
             Wallets = new List<Wallet> ();
-            foreach (KnetikJSONNode node in json["wallet"].Children) {
-                Wallet wallet = new Wallet(Client);
-                wallet.Deserialize(node);
-                Wallets.Add(wallet);
+            if (json ["wallet"] != null && json ["wallet"].Count > 0)
+            {
+                foreach (KnetikJSONNode node in json["wallet"].Children)
+                {
+                    Wallet wallet = new Wallet(Client);
+                    wallet.Deserialize(node);
+                    Wallets.Add(wallet);
+                }
             }
             Inventory = new Inventory(Client);
             if (json ["inventory"] != null)
@@ -203,6 +208,15 @@ namespace Knetik
                     achievements = new AchievementsQuery(Client, true);
                 }
                 return achievements;
+            }
+        }
+
+        public RelationshipsQuery Relationships {
+            get {
+                if (relationships == null) {
+                    relationships = new RelationshipsQuery(Client);
+                }
+                return relationships;
             }
         }
     }
