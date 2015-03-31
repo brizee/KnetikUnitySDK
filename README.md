@@ -41,6 +41,22 @@ KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => 
 
 Using the asyncronous execution will allow you to make nonblocking calls to the API.
 
+This also applies to model methods.  For example:
+
+```
+// sync
+string gameKey = "angry-bots-sample";
+var syncResult = KnetikClient.Instance.UserInfo.LoadWithGame(gameKey);
+Game syncGame = syncResult.Value;
+
+// async
+KnetikClient.Instance.UserInfo.LoadWithGame(gameKey, (asyncResult) => {
+	Game asyncGame = asyncResult.Value;
+});
+```
+
+Note that using synchronous methods can have a serious impact on performance, as the call will block the current thread until a response is received.
+
 ###3.2 Session Service
 
 ####3.2.1 Login Service

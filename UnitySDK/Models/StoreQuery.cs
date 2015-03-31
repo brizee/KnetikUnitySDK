@@ -55,9 +55,18 @@ namespace Knetik
             UseCatalog = true;
         }
 
-        public void Load(Action<KnetikResult<StoreQuery>> cb)
+        public KnetikResult<StoreQuery> Load(Action<KnetikResult<StoreQuery>> cb = null)
         {
-            Client.ListStorePage(PageIndex, PageSize, Terms, Related, UseCatalog, HandleResponse(cb));
+            if (cb != null)
+            {
+                // async
+                Client.ListStorePage(PageIndex, PageSize, Terms, Related, UseCatalog, HandleResponse(cb));
+                return null;
+            } else
+            {
+                // sync
+                return OnLoad(Client.ListStorePage(PageIndex, PageSize, Terms, Related, UseCatalog));
+            }
         }
 
         public StoreQuery NextPage(Action<KnetikResult<StoreQuery>> cb = null)
@@ -90,29 +99,33 @@ namespace Knetik
             HasMore = Items.Count >= PageIndex * PageSize;
         }
 
-        protected Action<KnetikApiResponse> HandleResponse(Action<KnetikResult<StoreQuery>> cb)
+        private Action<KnetikApiResponse> HandleResponse(Action<KnetikResult<StoreQuery>> cb)
         {
             return (KnetikApiResponse res) => {
-                var result = new KnetikResult<StoreQuery> {
-                    Response = res
-                };
-                if (!res.IsSuccess)
-                {
-                    cb(result);
-                    return;
-                }
-                Response = res;
-                
-                if (res.Body["result"].Value != "null") {
-                    this.Deserialize(res.Body ["result"]);
-                } else {
-                    Items = new List<Item> ();
-                    HasMore = false;
-                }
-                
-                result.Value = this;
-                cb(result);
+                cb(OnLoad(res));
             };
+        }
+
+        private KnetikResult<StoreQuery> OnLoad(KnetikApiResponse res)
+        {
+            var result = new KnetikResult<StoreQuery> {
+                Response = res
+            };
+            if (!res.IsSuccess)
+            {
+                return result;
+            }
+            Response = res;
+            
+            if (res.Body["result"].Value != "null") {
+                this.Deserialize(res.Body ["result"]);
+            } else {
+                Items = new List<Item> ();
+                HasMore = false;
+            }
+            
+            result.Value = this;
+            return result;
         }
     }
 }

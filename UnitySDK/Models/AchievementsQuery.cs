@@ -39,14 +39,29 @@ namespace Knetik
             PageSize = 25;
 		}
 
-        public void Load(Action<KnetikResult<AchievementsQuery>> cb)
+        public KnetikResult<AchievementsQuery> Load(Action<KnetikResult<AchievementsQuery>> cb = null)
         {
-            if (IsForUser)
+            if (cb != null)
             {
-                Client.ListUserAchievements(PageIndex, PageSize, HandleAchievementResponse(cb));
+                // async
+                if (IsForUser)
+                {
+                    Client.ListUserAchievements(PageIndex, PageSize, HandleAchievementResponse(cb));
+                } else
+                {
+                    Client.ListAchievements(PageIndex, PageSize, HandleAchievementResponse(cb));
+                }
+                return null;
             } else
             {
-                Client.ListAchievements(PageIndex, PageSize, HandleAchievementResponse(cb));
+                // sync
+                if (IsForUser)
+                {
+                    return OnLoad(Client.ListUserAchievements(PageIndex, PageSize));
+                } else
+                {
+                    return OnLoad(Client.ListAchievements(PageIndex, PageSize));
+                }
             }
         }
 
@@ -73,28 +88,33 @@ namespace Knetik
             HasMore = json ["hasMore"].AsBool;
 		}
 
-        protected Action<KnetikApiResponse> HandleAchievementResponse(Action<KnetikResult<AchievementsQuery>> cb) {
+        private Action<KnetikApiResponse> HandleAchievementResponse(Action<KnetikResult<AchievementsQuery>> cb)
+        {
             return (KnetikApiResponse res) => {
-                var result = new KnetikResult<AchievementsQuery> {
-                    Response = res
-                };
-                if (!res.IsSuccess)
-                {
-                    cb(result);
-                    return;
-                }
-                Response = res;
-                
-                if (res.Body["result"].Value != "null") {
-                    this.Deserialize(res.Body ["result"]);
-                } else {
-                    Achievements = new List<Achievement> ();
-                    HasMore = false;
-                }
-                
-                result.Value = this;
-                cb(result);
+                cb(OnLoad(res));
             };
+        }
+
+        private KnetikResult<AchievementsQuery> OnLoad(KnetikApiResponse res)
+        {
+            var result = new KnetikResult<AchievementsQuery> {
+                Response = res
+            };
+            if (!res.IsSuccess)
+            {
+                return result;
+            }
+            Response = res;
+            
+            if (res.Body["result"].Value != "null") {
+                this.Deserialize(res.Body ["result"]);
+            } else {
+                Achievements = new List<Achievement> ();
+                HasMore = false;
+            }
+            
+            result.Value = this;
+            return result;
         }
 	}
 }

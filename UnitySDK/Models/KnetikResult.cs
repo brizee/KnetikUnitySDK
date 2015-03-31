@@ -2,7 +2,7 @@ using System;
 
 namespace Knetik
 {
-	public struct KnetikResult<T> where T : KnetikModel
+	public class KnetikResult<T> where T : KnetikModel
 	{
         public T Value {
             get;

@@ -21,13 +21,16 @@ namespace Knetik
         {
         }
         
-        public override void Save(Action<KnetikApiResponse> cb)
+        public override KnetikApiResponse Save(Action<KnetikApiResponse> cb = null)
         {
-            if (ID != -1) {
-                Client.RecordObjectMetric(ID, Value, Level, cb);
-            } else if (Game != null && Name != null) {
-                Client.RecordObjectMetric(Game.ID, Value, Level, cb);
+            if (ID != -1)
+            {
+                return Client.RecordObjectMetric(ID, Value, Level, cb);
+            } else if (Game != null && Name != null)
+            {
+                return Client.RecordObjectMetric(Game.ID, Value, Level, cb);
             }
+            return null;
         }
     }
 }

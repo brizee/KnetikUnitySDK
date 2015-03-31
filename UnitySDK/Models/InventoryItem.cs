@@ -30,9 +30,9 @@ namespace Knetik
             }
         }
 
-        public void Consume(Action<KnetikApiResponse> cb)
+        public KnetikApiResponse Consume(Action<KnetikApiResponse> cb = null)
         {
-            Client.UseItem(Item.ID, cb);
+            return Client.UseItem(Item.ID, cb);
         }
     }
 }

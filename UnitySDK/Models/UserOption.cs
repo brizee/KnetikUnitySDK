@@ -11,20 +11,32 @@ namespace Knetik
         {
         }
 
-        public void Save(Action<KnetikApiResponse> cb)
+        public KnetikApiResponse Save(Action<KnetikApiResponse> cb = null)
         {
-            if (ID == -1) {
-                Client.CreateUserGameOption(Game.ID, Key, Value, (res) => {
-                    if (res.IsSuccess) {
-                        // API doesn't return an ID, but we're persisted now so
-                        // we dont want to keep calling Create endpoint
-                        ID = 0;
-                    }
-                    cb(res);
-                });
+            if (ID == -1)
+            {
+                if (cb != null)
+                {
+                    Client.CreateUserGameOption(Game.ID, Key, Value, (res) => {
+                        cb(OnSave(res));
+                    });
+                    return null;
+                } else {
+                    return OnSave(Client.CreateUserGameOption(Game.ID, Key, Value));
+                }
             } else {
-                Client.UpdateUserGameOption(Game.ID, Key, Value, cb);
+                return Client.UpdateUserGameOption(Game.ID, Key, Value, cb);
             }
+        }
+
+        private KnetikApiResponse OnSave(KnetikApiResponse res)
+        {
+            if (res.IsSuccess) {
+                // API doesn't return an ID, but we're persisted now so
+                // we dont want to keep calling Create endpoint
+                ID = 0;
+            }
+            return res;
         }
 	}
 }

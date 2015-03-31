@@ -11,15 +11,30 @@ namespace Knetik
         {
         }
 
-        public void Refresh(Action<KnetikApiResponse> cb)
+        public KnetikApiResponse Refresh(Action<KnetikApiResponse> cb = null)
         {
-            Client.GetGameOption (Game.ID, Key, (KnetikApiResponse res) => {
-                if (res.IsSuccess) {
-                    Value = res.Body["result"][Key].Value;
-                }
+            if (cb != null)
+            {
+                // async
+                Client.GetGameOption(Game.ID, Key, (KnetikApiResponse res) => {
+                    cb(OnRefresh(res));
+                });
+                return null;
+            } else
+            {
+                // sync
+                return OnRefresh(Client.GetGameOption(Game.ID, Key));
+            }
+        }
 
-                cb(res);
-            });
+        private KnetikApiResponse OnRefresh(KnetikApiResponse res)
+        {
+            if (res.IsSuccess)
+            {
+                Value = res.Body ["result"] [Key].Value;
+            }
+            
+            return res;
         }
 	}
 }

@@ -40,7 +40,7 @@ namespace Knetik
             Name = name;
         }
 
-        public abstract void Save(Action<KnetikApiResponse> cb);
+        public abstract KnetikApiResponse Save(Action<KnetikApiResponse> cb = null);
     }
 }
 

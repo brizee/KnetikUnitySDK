@@ -98,75 +98,126 @@ namespace Knetik
             dirtyTracker = new KnetikDirtyTracker ();
         }
 
-        public void Save(Action<KnetikApiResponse> cb)
+        public KnetikApiResponse Save(Action<KnetikApiResponse> cb = null)
         {
-            Action<KnetikApiResponse> updateLang = (r) => {
-                if (dirtyTracker.IsDirty ("Language")) {
-                    Client.PutUserInfo("lang", Language, cb);
-                } else {
-                    cb(r);
+            if (cb != null)
+            {
+                // async
+                Action<KnetikApiResponse> updateLang = (r) => {
+                    if (dirtyTracker.IsDirty("Language"))
+                    {
+                        Client.PutUserInfo("lang", Language, cb);
+                    } else
+                    {
+                        cb(r);
+                    }
+                };
+                if (dirtyTracker.IsDirty("AvatarURL"))
+                {
+                    Client.PutUserInfo("avatar", AvatarURL, updateLang);
+                } else
+                {
+                    updateLang(null);
                 }
+                return null;
+            } else
+            {
+                // sync
+                KnetikApiResponse res = null;
+                if (dirtyTracker.IsDirty ("Language")) {
+                    res = Client.PutUserInfo("lang", Language);
+                }
+                
+                if (res != null && !res.IsSuccess)
+                {
+                    return res;
+                }
+                
+                if (dirtyTracker.IsDirty ("AvatarURL")) {
+                    res = Client.PutUserInfo ("avatar", AvatarURL);
+                }
+
+                return res;
+            }
+        }
+
+        public KnetikResult<UserInfo> Load(Action<KnetikResult<UserInfo>> cb = null)
+        {
+            if (cb != null)
+            {
+                // async
+                Client.GetUserInfo((res) => {
+                    cb(OnLoad(res));
+                });
+
+                return null;
+            } else
+            {
+                // sync
+                return OnLoad(Client.GetUserInfo());
+            }
+        }
+
+        private KnetikResult<UserInfo> OnLoad(KnetikApiResponse res)
+        {
+            var result = new KnetikResult<UserInfo> {
+                Response = res
             };
-            if (dirtyTracker.IsDirty ("AvatarURL")) {
-                Client.PutUserInfo ("avatar", AvatarURL, updateLang);
-            } else {
-                updateLang(null);
+            if (!res.IsSuccess)
+            {
+                return result;
+            }
+            Response = res;
+            
+            this.Deserialize(res.Body ["result"]);
+            
+            result.Value = this;
+            return result;
+        }
+
+        public KnetikResult<Game> LoadWithGame(int gameId, Action<KnetikResult<Game>> cb = null)
+        {
+            return LoadWithGame(gameId.ToString(), cb);
+        }
+
+        public KnetikResult<Game> LoadWithGame(string gameIdentifier, Action<KnetikResult<Game>> cb = null)
+        {
+            if (cb != null)
+            {
+                // async
+                Client.GetUserInfoWithProduct (gameIdentifier, (res) => {
+                    cb(OnLoadWithGame(res));
+                });
+                return null;
+            } else
+            {
+                // sync
+                return OnLoadWithGame(Client.GetUserInfoWithProduct(gameIdentifier));
+            }
+        }
+
+        private KnetikResult<Game> OnLoadWithGame(KnetikApiResponse res)
+        {
+            var result = new KnetikResult<Game> {
+                Response = res
+            };
+            if (!res.IsSuccess) {
+                return result;
+            }
+            Response = res;
+            
+            if (res.Body["result"]["product_item"].AsObject == null) {
+                result.Response.Status = KnetikApiResponse.StatusType.Error;
+                result.Response.ErrorMessage = "Item not found";
+                return result;
             }
             
+            Game game = new Game(Client);
+            result.Value = game;
+            this.Deserialize(res.Body["result"]);
+            game.Deserialize(res.Body["result"]["product_item"]);
+            return result;
         }
-
-        public void Load(Action<KnetikResult<UserInfo>> cb)
-        {
-            Client.GetUserInfo ((res) => {
-                var result = new KnetikResult<UserInfo> {
-                    Response = res
-                };
-                if (!res.IsSuccess) {
-                    cb(result);
-                    return;
-                }
-                Response = res;
-
-                this.Deserialize(res.Body["result"]);
-
-                result.Value = this;
-                cb(result);
-            });
-        }
-
-        public void LoadWithGame(int gameId, Action<KnetikResult<Game>> cb)
-        {
-            LoadWithGame(gameId.ToString(), cb);
-        }
-
-        public void LoadWithGame(string gameIdentifier, Action<KnetikResult<Game>> cb)
-        {
-            Client.GetUserInfoWithProduct (gameIdentifier, (res) => {
-                var result = new KnetikResult<Game> {
-                    Response = res
-                };
-                if (!res.IsSuccess) {
-                    cb(result);
-                    return;
-                }
-                Response = res;
-
-                if (res.Body["result"]["product_item"].AsObject == null) {
-                    result.Response.Status = KnetikApiResponse.StatusType.Error;
-                    result.Response.ErrorMessage = "Item not found";
-                    cb(result);
-                    return;
-                }
-
-                Game game = new Game(Client);
-                result.Value = game;
-                this.Deserialize(res.Body["result"]);
-                game.Deserialize(res.Body["result"]["product_item"]);
-                cb(result);
-            });
-        }
-
-        
 
         public override void Deserialize (KnetikJSONNode json)
         {
