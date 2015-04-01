@@ -77,6 +77,16 @@ namespace Knetik
             }
         }
 
+        public int Age {
+            get;
+            set;
+        }
+
+        public DateTime DateOfBirth {
+            get;
+            set;
+        }
+
         public string Country {
             get;
             set;
@@ -233,6 +243,13 @@ namespace Knetik
             Gender = json ["gender"].Value;
             Language = json ["lang"].Value;
             Country = json ["country"].Value;
+            Age = json ["age"].AsInt;
+
+            string dobRaw = json ["date_of_birth"].Value;
+            if (dobRaw != null && dobRaw != "null") {
+                DateOfBirth = DateTime.Parse(dobRaw);
+            }
+
             Wallets = new List<Wallet> ();
             if (json ["wallet"] != null && json ["wallet"].Count > 0)
             {
