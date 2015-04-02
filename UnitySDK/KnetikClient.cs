@@ -220,27 +220,27 @@ namespace Knetik
         private static string CartCountriesEndpoint = "cart/getcountries";
         private static string UseItemEndpoint = "game/gamestart";
         private static string UserGetRelationshipsEndpoint = "user/getrelationships";
-    }
 
-    private void Log(String msg)
-    {
-        #if UNITY_EDITOR
-        Debug.Log(msg);
-        #endif
-    }
-    
-    private void LogError(String msg)
-    {
-        #if UNITY_EDITOR
-        Debug.LogError(msg);
-        #endif
-    }
-    
-    private void LogException(Exception e)
-    {
-        #if UNITY_EDITOR
-        Debug.LogException(e);
-        #endif
+        private void Log(String msg)
+        {
+            #if UNITY_EDITOR
+            Debug.Log(msg);
+            #endif
+        }
+        
+        private void LogError(String msg)
+        {
+            #if UNITY_EDITOR
+            Debug.LogError(msg);
+            #endif
+        }
+        
+        private void LogException(Exception e)
+        {
+            #if UNITY_EDITOR
+            Debug.LogException(e);
+            #endif
+        }
     }
 
     class KnetikSavedSession {
