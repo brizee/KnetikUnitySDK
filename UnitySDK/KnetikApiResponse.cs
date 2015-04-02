@@ -98,14 +98,14 @@ namespace Knetik
 		{
 			Status = StatusType.Success;
 			if (req.response == null) {
-				Debug.Log("Knetik Labs SDK - ERROR 1: The response from SAPI is null.");
+				Log("Knetik Labs SDK - ERROR 1: The response from SAPI is null.");
 								Status = StatusType.Failure;
 								ErrorMessage = "Connection error - No connection";
 				return;
 			}
 			
 			if (req.response.status != 200) {
-				Debug.LogError("Knetik Labs SDK - ERROR 2: Response returned a status of " + req.response.status);
+				LogError("Knetik Labs SDK - ERROR 2: Response returned a status of " + req.response.status);
 								Status = StatusType.Failure;
 								ErrorMessage = "Connection Error - Server problem";
 				return;
@@ -115,20 +115,20 @@ namespace Knetik
 				Body = KnetikJSON.Parse(req.response.Text);
 				
 				if (Body == null) {
-					Debug.LogError("Knetik Labs SDK - ERROR 3: Failed to Properly Parse JSON response");
+					LogError("Knetik Labs SDK - ERROR 3: Failed to Properly Parse JSON response");
 										Status = StatusType.Failure;
 										ErrorMessage = "Connection error - Invalid format";
 					return;
 				}
 			} catch(Exception e) {
-				Debug.LogException(e);
+				LogException(e);
 								Status = StatusType.Failure;
 								ErrorMessage = "Connection error - Unknown exception";
 				return;
 			}
 			
 			if (Body["error"] == null) {
-				Debug.LogError("Knetik Labs SDK - ERROR 4: JSON Response does NOT contain an error node!");
+				LogError("Knetik Labs SDK - ERROR 4: JSON Response does NOT contain an error node!");
 				Status = StatusType.Failure;
 								ErrorMessage = "Connection error - Malformed response";
 				return;
@@ -137,7 +137,7 @@ namespace Knetik
 			KnetikJSONNode error = Body["error"];
 			
 			if ((error["success"] == null) || (error["success"].AsBool == false)) {
-				Debug.LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
+				LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
 				Status = StatusType.Error;
 								ErrorMessage = Body["message"];
 				return;
@@ -147,7 +147,7 @@ namespace Knetik
 		private void CompleteCallback(KnetikRequest req)
 		{
 			if (req.response != null) {
-				Debug.Log ("Body:\n" + req.response.Text);
+				Log ("Body:\n" + req.response.Text);
 				ValidateResponse (req);
 			} else {
 				Status = StatusType.Failure;
@@ -158,6 +158,27 @@ namespace Knetik
 				Callback(this);
 			}
 		}
+
+        private void Log(String msg)
+        {
+#if UNITY_EDITOR
+            Debug.Log(msg);
+#endif
+        }
+
+        private void LogError(String msg)
+        {
+            #if UNITY_EDITOR
+            Debug.LogError(msg);
+            #endif
+        }
+
+        private void LogException(Exception e)
+        {
+            #if UNITY_EDITOR
+            Debug.LogException(e);
+            #endif
+        }
 	}
 }
 

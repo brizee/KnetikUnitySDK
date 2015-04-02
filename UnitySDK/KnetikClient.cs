@@ -119,8 +119,8 @@ namespace Knetik
             string signature = BuildSignature (body, timestamp);
             string envelope = BuildEnvelope (body, timestamp, signature);
 
-            Debug.Log ("URL: " + url);
-            Debug.Log ("Envelope:\n" + envelope);
+            Log ("URL: " + url);
+            Log ("Envelope:\n" + envelope);
 
             System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
             byte[] data = encoding.GetBytes(envelope);
@@ -156,7 +156,7 @@ namespace Knetik
                                 Username +
                                 Password;
 
-            Debug.Log ("Signature Text: " + text);
+            Log ("Signature Text: " + text);
 
             return KnetikApiUtil.hashHmac (text, ClientSecret);
         }
@@ -220,6 +220,27 @@ namespace Knetik
         private static string CartCountriesEndpoint = "cart/getcountries";
         private static string UseItemEndpoint = "game/gamestart";
         private static string UserGetRelationshipsEndpoint = "user/getrelationships";
+    }
+
+    private void Log(String msg)
+    {
+        #if UNITY_EDITOR
+        Debug.Log(msg);
+        #endif
+    }
+    
+    private void LogError(String msg)
+    {
+        #if UNITY_EDITOR
+        Debug.LogError(msg);
+        #endif
+    }
+    
+    private void LogException(Exception e)
+    {
+        #if UNITY_EDITOR
+        Debug.LogException(e);
+        #endif
     }
 
     class KnetikSavedSession {
