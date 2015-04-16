@@ -19,31 +19,23 @@ namespace Knetik
 				return;
 			}
 
-			KnetikJSONNode result = Body ["result"];
+			KnetikJSONNode result = Body ["access_token"];
 			if (result == null || result.Value == "null") {
 				Debug.LogError("Knetik Labs SDK - ERROR 304: Existing User could not be successfully logged in, server has no response!");
 				Debug.LogError("Knetik Labs SDK: JSON Request: " + req);
-                ErrorMessage = "Connection error - No server response";
-				Status = StatusType.Error;
-			}
-			KnetikJSONNode session = result ["session"];
-            if (session == null || session.Value == "null") {
-				Debug.LogError("Knetik Labs SDK - ERROR 305: Existing User could not be successfully logged in, server did not return a session!");
-				Debug.LogError("Knetik Labs SDK: JSON Request: " + req);
-                Debug.LogError("Body: " + Body);
-                ErrorMessage = "Connection error - Invalid session";
+                ErrorMessage = "Connection error - Invalid access token";
 				Status = StatusType.Error;
 			}
 
 			Debug.Log ("Existing User successfully logged in.");
-			Client.Session = session;
+			Client.AccessToken = result.Value;
 
-            if (result["user_id"] == null || result["user_id"].Value == "null") {
-				Debug.Log ("Guest Session has been established.");
-			} else {
-				Debug.Log ("Authenticated Session has been established. (" + result["user_id"] + ")");
-				Client.UserID = result["user_id"].AsInt;
-			}
+//            if (result["user_id"] == null || result["user_id"].Value == "null") {
+//				Debug.Log ("Guest Session has been established.");
+//			} else {
+//				Debug.Log ("Authenticated Session has been established. (" + result["user_id"] + ")");
+//				Client.UserID = result["user_id"].AsInt;
+//			}
 		}
 	}
 }

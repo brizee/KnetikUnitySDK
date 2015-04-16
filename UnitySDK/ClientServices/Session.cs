@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using System.Text;
 
 namespace Knetik
 {
@@ -11,38 +12,19 @@ namespace Knetik
 			Action<KnetikApiResponse> cb = null
 		) {
 			int timestamp = GetTimestamp ();
-            string endpoint;
             string body;
             string serviceBundle = null;
 
-            JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
-            json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
-            json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
-            // Device Type is currently limited to 3 characters in the DB
-            json.AddField ("device_type", KnetikApiUtil.getDeviceType());
-            json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
-
-            if (Authentication == null || Authentication == "" || Authentication == "default")
-            {
-                endpoint = SessionEndpoint;
-
-                Username = username;
-                Password = EncodePassword(password, timestamp);
-
-            } else
-            {
-                // use SSO
-                serviceBundle = Authentication;
-                endpoint = "login";
-
-                json.AddField("username", username);
-                json.AddField("email", username);
-                json.AddField("password", password);
-            }
-
-            body = json.Print ();
+            StringBuilder bodyBuilder = new StringBuilder();
+            bodyBuilder.AppendFormat(
+                "grant_type=password&username={0}&password={1}&client_id={2}",
+                System.Uri.EscapeDataString(username),
+                System.Uri.EscapeDataString(password),
+                System.Uri.EscapeDataString(ClientID)
+            );
+            body = bodyBuilder.ToString();
 			
-			KnetikRequest req = CreateRequest(endpoint, body, "post", timestamp, serviceBundle);
+			KnetikRequest req = CreateRequest(SessionEndpoint, body, "post", timestamp, serviceBundle, true);
 			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
 			return res;
 		}
@@ -50,22 +32,12 @@ namespace Knetik
 		public KnetikApiResponse GuestLogin(
 			Action<KnetikApiResponse> cb = null
 		) {
-			Username = "";
-			Password = "";
-			Session = "";
-
-            JSONObject json = new JSONObject (JSONObject.Type.OBJECT);
-            json.AddField ("serial", KnetikApiUtil.getDeviceSerial());
-            json.AddField ("mac_address", KnetikApiUtil.getMacAddress ());
-            // Device Type is currently limited to 3 characters in the DB
-            json.AddField ("device_type", KnetikApiUtil.getDeviceType());
-            json.AddField ("signature", KnetikApiUtil.getDeviceSignature());
-			
-			String body = json.Print();
-			
-			KnetikRequest req = CreateRequest(SessionEndpoint, body);
-			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
-			return res;
+            KnetikApiResponse res = new KnetikApiResponse(KnetikClient.Instance, null);
+			if (cb != null)
+            {
+                cb(res);
+            }
+            return res;
 		}
 	}
 }

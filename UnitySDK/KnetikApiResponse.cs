@@ -127,19 +127,10 @@ namespace Knetik
 				return;
 			}
 			
-			if (Body["error"] == null) {
-				LogError("Knetik Labs SDK - ERROR 4: JSON Response does NOT contain an error node!");
-				Status = StatusType.Failure;
-								ErrorMessage = "Connection error - Malformed response";
-				return;
-			}
-			
-			KnetikJSONNode error = Body["error"];
-			
-			if ((error["success"] == null) || (error["success"].AsBool == false)) {
+            if (Body["error"] != null && ((Body["error"]["success"] == null) || (Body["error"]["success"].AsBool == false))) {
 				LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
 				Status = StatusType.Error;
-								ErrorMessage = Body["message"];
+				ErrorMessage = Body["message"];
 				return;
 			}
 		}
