@@ -182,7 +182,7 @@ namespace Knetik
             foreach (KnetikJSONNode node in json["behaviors"].Children)
             {
                 Behavior behavior = Behavior.Parse(Client, node);
-                Behaviors.Add(behavior.TypeHint, behavior);
+                Behaviors[behavior.TypeHint] = behavior;
             }
 
             if (json ["deleted_at"] != null && json ["deleted_at"] != "null")
