@@ -17,10 +17,11 @@ namespace Knetik
 
             StringBuilder bodyBuilder = new StringBuilder();
             bodyBuilder.AppendFormat(
-                "grant_type=password&username={0}&password={1}&client_id={2}",
+				"grant_type=password&username={0}&password={1}&client_id={2}&client_secret={3}",
                 System.Uri.EscapeDataString(username),
                 System.Uri.EscapeDataString(password),
-                System.Uri.EscapeDataString(ClientID)
+                System.Uri.EscapeDataString(ClientID),
+				System.Uri.EscapeDataString(ClientSecret)
             );
             body = bodyBuilder.ToString();
 			

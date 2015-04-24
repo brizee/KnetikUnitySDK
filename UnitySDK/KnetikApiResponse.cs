@@ -17,7 +17,7 @@ namespace Knetik
 			Error
 		}
 
-				public KnetikClient Client {
+		public KnetikClient Client {
 			get;
 			protected set;
 		}
@@ -77,7 +77,7 @@ namespace Knetik
 						set;
 				}
 
-				public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
+		public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
 		{
 			Status = StatusType.Pending;
 			Client = client;
@@ -122,8 +122,8 @@ namespace Knetik
 				}
 			} catch(Exception e) {
 				LogException(e);
-								Status = StatusType.Failure;
-								ErrorMessage = "Connection error - Unknown exception";
+				Status = StatusType.Failure;
+				ErrorMessage = "Connection error - Unknown exception";
 				return;
 			}
 			

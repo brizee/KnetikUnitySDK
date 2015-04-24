@@ -121,6 +121,7 @@ namespace Knetik
                 req.SetHeader("Content-type", "application/x-www-form-urlencoded");
             } else {
                 req.SetHeader("Content-type", "application/json");
+				req.SetHeader("Accept", "application/json");
             }
             req.SetHeader("User-Agent", "Knetik Unity SDK");
 
@@ -150,7 +151,7 @@ namespace Knetik
 
         #endregion
         
-        private static string Prefix = "/rest/";
+        private static string Prefix = "/jsapi/";
         private static string AccessTokenKey = "knetik.access_token";
         private static string UsernameKey = "knetik.username";
         private static string PasswordKey = "knetik.password";
@@ -172,13 +173,18 @@ namespace Knetik
         private static string GetGameOptionEndpoint = "services/latest/product/getgameoption";
         private static string ListStorePageEndpoint = "services/latest/store/getpage";
         private static string CartAddEndpoint = "services/latest/cart/addtocart";
-        private static string CartModifyEndpoint = "services/latest/cart/modify";
-        private static string CartCheckoutEndpoint = "services/latest/cart/checkout";
+		private static string CartItemsEndpoint = "services/latest/carts/{0}/items"; //{0} cart Number 
+		private static string CartModifyEndpoint = "services/latest/cart/modify";
+		private static string CartCheckoutEndpoint = "services/latest/carts/{0}/checkout";//cartNumber
         private static string CartShippingAddressEndpoint = "services/latest/cart/shippingaddress";
-        private static string CartStatusEndpoint = "services/latest/cart/status";
-        private static string CartGetEndpoint = "services/latest/cart/get";
-        private static string CartAddDiscountEndpoint = "services/latest/cart/adddiscount";
-        private static string CartCountriesEndpoint = "services/latest/cart/getcountries";
+		private static string CartModifyShippingAddressEndpoint = "services/latest/carts/{0}/shipping-address"; //{0} cartNumber
+		private static string CartStatusEndpoint = "services/latest/cart/status";
+		private static string CartShippableEndpoint = "services/latest/carts/{0}/shippable"; //{0}cart Number
+		private static string CartGetEndpoint = "services/latest/carts/"; //need to add CartNumber to Request Endpoint
+		private static string CartEndpoint = "services/latest/carts/"; //need to add CartNumber to Request Endpoint
+		private static string CartCreateEndpoint = "services/latest/carts";
+		private static string CartAddDiscountEndpoint = "services/latest/carts/{0}/adddiscount";
+		private static string CartCountriesEndpoint = "services/latest/carts/{0}/countries"; //{0}Cart Number 
         private static string UseItemEndpoint = "services/latest/game/gamestart";
         private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
 
