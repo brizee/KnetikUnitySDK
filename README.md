@@ -473,18 +473,37 @@ KnetikClient.Instance.ListStorePage(pageIndex, pageSize, terms, null, (res) => {
 }
 	*/ 
 });
-```
 
+```
 ###3.10 Cart Service
 
-The Cart service allows the user to manage a shopping cart, including adding, removing, and updating items in the cart as well as checking out.
+The Cart service allows the user to manage a shopping cart, including Create Cart ,Get Cart Details ,modify shipping address ,is cart shippable, adding, removing, and updating items in the cart as well as checking out.
 
+#### CartCreate
+CartCreate Create a new Cart 
+```
+Client.CartCreate (createResponse);
+createResponse.Body will look like :
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": "ae88766d-5c45-4143-b510-0ba1e66d463d",  // result is the new Cart Number 
+  "cached": false,
+  "message": "",
+  "parameters": [
+    
+  ],
+  "requestId": "1429886757938-1002"
+}
+```
 #### CartGet
 
 GetCart retrieves the items in the user’s cart as well as information such as the Sub-Total, Total, and Status of the cart.  Note that this call will fail if the user does not have a cart (meaning they haven’t added an item their cart yet.)
 
 ```
-var cartGetResponse = client.CartGet();
+var cartGetResponse = client.Client.CartGet (cartNumber);  
 /*
 cartGetResponse.Body will look like:
 {
@@ -564,7 +583,7 @@ CartAdd adds an item to the cart by its SKU and quantity.
 var catalogId = 42;
 var skuId = 32;
 vart quantity = 2;
-var cartAddResponse = client.CartAdd(catalogId, skuId, quantity);
+var cartAddResponse = client.CartAdd(cartNumber,catalogId, skuId, quantity);
 
 // cartAddResponse.IsSuccess and the message says “Item has been added to your cart.”
 ```
@@ -577,9 +596,32 @@ CartModify works the same as CartAdd except that it sets the quantity to be exac
 var catalogId = 42;
 var skuId = 32;
 vart quantity = 5;
-var cartModifyResponse = client.CartModify(catalogId, skuId, quantity);
+var cartModifyResponse = client.CartModify(cartNumber,catalogId, skuId, quantity);
 
 // cartModifyResponse.IsSuccess is true
+```
+#### CartShippingAddress
+
+CartShippingAddress Modify Shipping Address for a specific Cart
+
+```
+ShippingAddress shipping; //Create a shipping address Object 
+  shipping.PrefixName ="prefixName"; 
+  shipping.AddressLine1 ="AdressLin1";
+  shipping.AddressLine2 ="AdressLin1";
+  shipping.City ="AdressLin1";
+  shipping.Country ="country";
+  shipping.Email ="knetik@knetik.com";
+  shipping.FirstName ="First Name";
+  shipping.LastName ="Last Name";
+  shipping.PostalState ="163"; //Postal state ID
+  shipping.Zip ="123123";
+  shipping.OrderNotes="notes";
+  shipping.Country_id="225";
+  
+var CartShippingAddressResponse = Client.CartShippingAddress(cartNumber,shipping);
+
+// CartShippingAddressResponse.IsSuccess is true
 ```
 
 #### CartCheckout
@@ -587,7 +629,89 @@ var cartModifyResponse = client.CartModify(catalogId, skuId, quantity);
 CartCheckout attempts to checkout the cart.  It will use the user’s appropriate virtual currency as payment for the items in the cart.
 
 ```
-var cartCheckoutResponse = client.CartCheckout();
+var cartCheckoutResponse = client.CartCheckout(cartNumber);
+
+cartCheckoutResponse.Body will look like :
+
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": {
+    "invoices": [
+      {
+        "name_prefix": null,
+        "phone": null,
+        "city_name": null,
+        "phone_number": null,
+        "billing_postal_code": null,
+        "current_fulfillment_status": 8,
+        "current_fulfillment_status_name": "unfulfilled",
+        "billing_city_name": null,
+        "address1": null,
+        "address2": null,
+        "current_fulfillment_status_description": "The invoice has not yet been fulfilled",
+        "current_status_name": "paid",
+        "state_name": null,
+        "country_name": null,
+        "currency": "GOL",
+        "id": 10535,
+        "shipping": 0.0,
+        "cart_id": 10534,
+        "create_date": "2015-04-24 17:54:42",
+        "fed_tax": 0.0,
+        "current_status_description": "The invoice has been paid for",
+        "user_id": 7700,
+        "billing_state_name": null,
+        "billing_country_name": null,
+        "grand_total": 0.0,
+        "billing_address1": null,
+        "billing_address2": null,
+        "state_tax": 0.0,
+        "subtotal": 0.0,
+        "vendor_id": 1,
+        "deleted": 0,
+        "current_status": 2,
+        "discount": 0.0,
+        "parent_invoice_id": null,
+        "order_notes": null,
+        "email": null,
+        "postal_code": null,
+        "update_date": "2015-04-24 17:54:42",
+        "full_name": "null null"
+      }
+    ],
+    "discounts": [
+      
+    ],
+    "items": [
+      {
+        "type_hint": "physical_item",
+        "system_price": 5.99,
+        "qty": 0,
+        "sku_description": "sm-white-pocket",
+        "affiliate_id": null,
+        "sku": "KIA1425393515-9623",
+        "deleted": 0,
+        "unit_price": 5.99,
+        "total_price": 0.0,
+        "id": 1083,
+        "thumbnail": "",
+        "item_name": "test_item_2",
+        "item_id": 9,
+        "sku_id": 5,
+        "invoice_id": 10535
+      }
+    ]
+  },
+  "cached": false,
+  "message": "",
+  "parameters": [
+    
+  ],
+  "requestId": "1429887282012-1004"
+}
 ```
 
 ###3.11 Custom Calls
