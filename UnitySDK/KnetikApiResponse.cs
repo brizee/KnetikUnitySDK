@@ -89,7 +89,7 @@ namespace Knetik
 				req.Send();
 				CompleteCallback (req);
 			} else {
-								Debug.Log("Executing async!");
+				Debug.Log("Executing async!");
 				req.Send(CompleteCallback);
 			}
 		}

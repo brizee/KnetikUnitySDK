@@ -112,7 +112,7 @@ namespace Knetik
             Log ("URL: " + url);
             Log ("Body:\n" + body);
 
-            System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
+			System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
             byte[] data = encoding.GetBytes(body);
             
             KnetikRequest req = new KnetikRequest (method, url, data);
@@ -125,7 +125,7 @@ namespace Knetik
             }
             req.SetHeader("User-Agent", "Knetik Unity SDK");
 
-            if (AccessToken != null)
+			if (AccessToken != null && AccessToken != "")
             {
                 req.SetHeader("Authorization", "Bearer " + AccessToken);
             }
@@ -151,7 +151,7 @@ namespace Knetik
 
         #endregion
         
-        private static string Prefix = "/jsapi/";
+		private static string Prefix = "/rest/";
         private static string AccessTokenKey = "knetik.access_token";
         private static string UsernameKey = "knetik.username";
         private static string PasswordKey = "knetik.password";
@@ -164,7 +164,7 @@ namespace Knetik
         private static string PutUserInfoEndpoint = "services/latest/user/update";
         private static string CreateGameOptionEndpoint = "services/latest/user/addgameoption";
         private static string UpdateGameOptionEndpoint = "services/latest/user/updategameoption";
-        private static string RegisterEndpoint = "services/latest/registration/register";
+        private static string RegisterEndpoint = "services/latest/registration";
         private static string GuestRegisterEndpoint = "services/latest/registration/guestRegister";
         private static string UpgradeFromRegisteredGuestEndpoint = "services/latest/registration/guestUpgrade";
         private static string FireEventEndpoint = "services/latest/BRE/fireEvent";
