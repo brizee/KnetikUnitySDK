@@ -40,13 +40,13 @@ namespace Knetik
             Action<KnetikApiResponse> cb = null
             ) {
             // Login as a guest
-            KnetikApiResponse loginResponse = GuestLogin ();
+            //KnetikApiResponse loginResponse = GuestLogin ();
             
-            if (loginResponse.Status != KnetikApiResponse.StatusType.Success) {
-                Debug.LogError("Guest login failed");
-                return loginResponse;
-            }
-            Debug.Log ("Guest login successful");
+//            if (loginResponse.Status != KnetikApiResponse.StatusType.Success) {
+//                Debug.LogError("Guest login failed");
+//                return loginResponse;
+//            }
+//            Debug.Log ("Guest login successful");
             
             // Then register the new user
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);

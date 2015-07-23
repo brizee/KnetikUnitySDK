@@ -5,9 +5,9 @@ using Knetik;
 public class KnetikInitializationScript : MonoBehaviour {
 	public static KnetikInitializationScript Singleton = null;
 
-	public string BaseURL = "http://staging2.games.teamrock.com:8080";
-	public string ClientID = "dc4971c4fe979a6c";
-	public string ClientSecret = "d06d489c671c0d0d";
+	public string BaseURL = "http://staging.api.games.teamrock.com:8080";
+	public string ClientID = "guerilla_tea";
+	public string ClientSecret = "HEsd0EpPRfkGGEwi";
     public string Authentication = "default";
 
 	public Queue Requests = Queue.Synchronized( new Queue() );

@@ -39,9 +39,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1009afd1fdf64d6c83917f7519805ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseURL: http://staging2.games.teamrock.com:8080
-  ClientID: dc4971c4fe979a6c
-  ClientSecret: d06d489c671c0d0d
+  BaseURL: http://staging.api.games.teamrock.com:8080
+  ClientID: guerilla_tea
+  ClientSecret: HEsd0EpPRfkGGEwi
   Authentication: default
 --- !u!1001 &100100000
 Prefab:
