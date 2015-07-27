@@ -36,12 +36,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6c7f7d028a0424ba59e41a77fa1bdfb7, type: 3}
+  m_Script: {fileID: 11500000, guid: b1009afd1fdf64d6c83917f7519805ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseURL: http://jsapi.dev:8080
-  ClientID: fake_client
-  ClientSecret: fake_secret
+  BaseURL: http://staging.api.games.teamrock.com:8080
+  ClientID: guerilla_tea
+  ClientSecret: HEsd0EpPRfkGGEwi
+  Authentication: default
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

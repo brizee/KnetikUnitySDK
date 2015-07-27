@@ -30,7 +30,7 @@ namespace Knetik
             set;
         }
 
-        public string Session {
+        public string AccessToken {
             get;
             set;
         }
@@ -69,45 +69,38 @@ namespace Knetik
         {
             Username = null;
             Password = null;
-            Session = null;
+            AccessToken = null;
             UserID = 0;
             _userInfo = new UserInfo(this);
 
-            PlayerPrefs.DeleteKey(SessionKey);
+            PlayerPrefs.DeleteKey(AccessTokenKey);
             PlayerPrefs.DeleteKey(UserIDKey);
-            PlayerPrefs.DeleteKey(UsernameKey);
-            PlayerPrefs.DeleteKey(PasswordKey);
         }
 
         public bool SaveSession()
         {
-            if (!(Session != null && Session != ""))
+            if (!(AccessToken != null && AccessToken != ""))
             {
                 return false;
             }
-            PlayerPrefs.SetString(SessionKey, Session);
+            PlayerPrefs.SetString(AccessTokenKey, AccessToken);
             PlayerPrefs.SetInt(UserIDKey, UserID);
-            PlayerPrefs.SetString(UsernameKey, Username);
-            PlayerPrefs.SetString(PasswordKey, Password);
 
             return true;
         }
 
         public bool LoadSession()
         {
-            Session = PlayerPrefs.GetString(SessionKey);
+            AccessToken = PlayerPrefs.GetString(AccessTokenKey);
             UserID = PlayerPrefs.GetInt(UserIDKey);
-            Username = PlayerPrefs.GetString(UsernameKey);
-            Password = PlayerPrefs.GetString(PasswordKey);
-
-            return Session != null && Session != "";
+            return AccessToken != null && AccessToken != "";
         }
 
         #endregion
 
         #region Internal Methods
 
-        protected KnetikRequest CreateRequest(string path, string body = "[]", string method = "post", int timestamp = -1, string serviceBundle = null)
+        protected KnetikRequest CreateRequest(string path, string body = "[]", string method = "post", int timestamp = -1, string serviceBundle = null, bool isForm = false)
         {
             if (timestamp == -1) {
                 TimeSpan t = (DateTime.UtcNow - new DateTime (1970, 1, 1));
@@ -116,63 +109,33 @@ namespace Knetik
             
             string url = BuildUrl (path, serviceBundle);
 
-            string signature = BuildSignature (body, timestamp);
-            string envelope = BuildEnvelope (body, timestamp, signature);
-
             Log ("URL: " + url);
-            Log ("Envelope:\n" + envelope);
+            Log ("Body:\n" + body);
 
-            System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
-            byte[] data = encoding.GetBytes(envelope);
+			System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
+            byte[] data = encoding.GetBytes(body);
             
             KnetikRequest req = new KnetikRequest (method, url, data);
 
-            req.SetHeader("Content-type", "application/json");
+            if (isForm) {
+                req.SetHeader("Content-type", "application/x-www-form-urlencoded");
+            } else {
+                req.SetHeader("Content-type", "application/json");
+				req.SetHeader("Accept", "application/json");
+            }
             req.SetHeader("User-Agent", "Knetik Unity SDK");
+
+			if (AccessToken != null && AccessToken != "")
+            {
+                req.SetHeader("Authorization", "Bearer " + AccessToken);
+            }
 
             return req;
         }
 
         private string BuildUrl(string path, string serviceBundle)
         {
-            if (serviceBundle != null)
-            {
-                if (serviceBundle == "") {
-                    return BaseURL + Prefix + path;
-                } else {
-                    return BaseURL + Prefix + serviceBundle + "/" + path;
-                }
-            } else
-            {
-                return BaseURL + Prefix + DefaultServiceBundle + "/" + path;
-            }
-        }
-
-        private string BuildSignature(string request, int timestamp)
-        {
-            string text = request +
-                                timestamp.ToString () +
-                                ClientID +
-                                Username +
-                                Password;
-
-            Log ("Signature Text: " + text);
-
-            return KnetikApiUtil.hashHmac (text, ClientSecret);
-        }
-
-        // Build JSON Envelope for all Requests
-        private string BuildEnvelope(string request, int timestamp, string signature)
-        {
-            JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("request", request.Replace("\"", "\\\""));
-            j.AddField ("timestamp", timestamp.ToString());
-            j.AddField ("clientId", ClientID);
-            j.AddField ("username", Username);
-            j.AddField ("password", Password);
-            j.AddField ("signature", signature);
-            j.AddField ("session", Session);
-            return j.Print ();
+                return BaseURL + Prefix + path;
         }
 
         private string EncodePassword(string password, int timestamp)
@@ -188,38 +151,42 @@ namespace Knetik
 
         #endregion
         
-        private static string Prefix = "/rest/services/";
-        private static string DefaultServiceBundle = "latest";
-        private static string SessionKey = "knetik.session";
+		private static string Prefix = "/rest/";
+        private static string AccessTokenKey = "knetik.access_token";
         private static string UsernameKey = "knetik.username";
         private static string PasswordKey = "knetik.password";
         private static string UserIDKey = "knetik.userid";
-        private static string SessionEndpoint = "session";
-        private static string RecordMetricEndpoint = "metrics/record";
-        private static string GetLeaderboardEndpoint = "metrics/getLeaderboard";
-        private static string GetUserInfoEndpoint = "user/getinfo";
-        private static string GetUserInfoWithProductEndpoint = "user/getinfowithproduct";
-        private static string PutUserInfoEndpoint = "user/update";
-        private static string CreateGameOptionEndpoint = "user/addgameoption";
-        private static string UpdateGameOptionEndpoint = "user/updategameoption";
-        private static string RegisterEndpoint = "registration/register";
-        private static string GuestRegisterEndpoint = "registration/guestRegister";
-        private static string UpgradeFromRegisteredGuestEndpoint = "registration/guestUpgrade";
-        private static string FireEventEndpoint = "BRE/fireEvent";
-        private static string ListAchievementsEndpoint = "badge/list";
-        private static string ListUserAchievementsEndpoint = "user/getachievement";
-        private static string GetGameOptionEndpoint = "product/getgameoption";
-        private static string ListStorePageEndpoint = "store/getpage";
-        private static string CartAddEndpoint = "cart/addtocart";
-        private static string CartModifyEndpoint = "cart/modify";
-        private static string CartCheckoutEndpoint = "cart/checkout";
-        private static string CartShippingAddressEndpoint = "cart/shippingaddress";
-        private static string CartStatusEndpoint = "cart/status";
-        private static string CartGetEndpoint = "cart/get";
-        private static string CartAddDiscountEndpoint = "cart/adddiscount";
-        private static string CartCountriesEndpoint = "cart/getcountries";
-        private static string UseItemEndpoint = "game/gamestart";
-        private static string UserGetRelationshipsEndpoint = "user/getrelationships";
+        private static string SessionEndpoint = "oauth/token";
+        private static string RecordMetricEndpoint = "services/latest/metrics/record";
+        private static string GetLeaderboardEndpoint = "services/latest/metrics/getLeaderboard";
+        private static string GetUserInfoEndpoint = "services/latest/user/getinfo";
+        private static string GetUserInfoWithProductEndpoint = "services/latest/user/getinfowithproduct";
+        private static string PutUserInfoEndpoint = "services/latest/user/update";
+        private static string CreateGameOptionEndpoint = "services/latest/user/addgameoption";
+        private static string UpdateGameOptionEndpoint = "services/latest/user/updategameoption";
+        private static string RegisterEndpoint = "services/latest/registration";
+		private static string GuestRegisterEndpoint = "services/latest/registration/guests";
+        private static string UpgradeFromRegisteredGuestEndpoint = "services/latest/registration/guestUpgrade";
+        private static string FireEventEndpoint = "services/latest/BRE/fireEvent";
+        private static string ListAchievementsEndpoint = "services/latest/badge/list";
+        private static string ListUserAchievementsEndpoint = "services/latest/user/getachievement";
+        private static string GetGameOptionEndpoint = "services/latest/product/getgameoption";
+        private static string ListStorePageEndpoint = "services/latest/store/getpage";
+        private static string CartAddEndpoint = "services/latest/cart/addtocart";
+		private static string CartItemsEndpoint = "services/latest/carts/{0}/items"; //{0} cart Number 
+		private static string CartModifyEndpoint = "services/latest/cart/modify";
+		private static string CartCheckoutEndpoint = "services/latest/carts/{0}/checkout";//cartNumber
+        private static string CartShippingAddressEndpoint = "services/latest/cart/shippingaddress";
+		private static string CartModifyShippingAddressEndpoint = "services/latest/carts/{0}/shipping-address"; //{0} cartNumber
+		private static string CartStatusEndpoint = "services/latest/cart/status";
+		private static string CartShippableEndpoint = "services/latest/carts/{0}/shippable"; //{0}cart Number
+		private static string CartGetEndpoint = "services/latest/carts/"; //need to add CartNumber to Request Endpoint
+		private static string CartEndpoint = "services/latest/carts/"; //need to add CartNumber to Request Endpoint
+		private static string CartCreateEndpoint = "services/latest/carts";
+		private static string CartAddDiscountEndpoint = "services/latest/carts/{0}/adddiscount";
+		private static string CartCountriesEndpoint = "services/latest/carts/{0}/countries"; //{0}Cart Number 
+        private static string UseItemEndpoint = "services/latest/game/gamestart";
+        private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
 
         private void Log(String msg)
         {

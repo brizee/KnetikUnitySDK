@@ -17,7 +17,7 @@ namespace Knetik
 			Error
 		}
 
-				public KnetikClient Client {
+		public KnetikClient Client {
 			get;
 			protected set;
 		}
@@ -77,7 +77,7 @@ namespace Knetik
 						set;
 				}
 
-				public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
+		public KnetikApiResponse (KnetikClient client, KnetikRequest req, Action<KnetikApiResponse> callback = null)
 		{
 			Status = StatusType.Pending;
 			Client = client;
@@ -89,7 +89,7 @@ namespace Knetik
 				req.Send();
 				CompleteCallback (req);
 			} else {
-								Debug.Log("Executing async!");
+				Debug.Log("Executing async!");
 				req.Send(CompleteCallback);
 			}
 		}
@@ -122,24 +122,15 @@ namespace Knetik
 				}
 			} catch(Exception e) {
 				LogException(e);
-								Status = StatusType.Failure;
-								ErrorMessage = "Connection error - Unknown exception";
-				return;
-			}
-			
-			if (Body["error"] == null) {
-				LogError("Knetik Labs SDK - ERROR 4: JSON Response does NOT contain an error node!");
 				Status = StatusType.Failure;
-								ErrorMessage = "Connection error - Malformed response";
+				ErrorMessage = "Connection error - Unknown exception";
 				return;
 			}
 			
-			KnetikJSONNode error = Body["error"];
-			
-			if ((error["success"] == null) || (error["success"].AsBool == false)) {
+            if (Body["error"] != null && ((Body["error"]["success"] == null) || (Body["error"]["success"].AsBool == false))) {
 				LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
 				Status = StatusType.Error;
-								ErrorMessage = Body["message"];
+				ErrorMessage = Body["message"];
 				return;
 			}
 		}

@@ -27,10 +27,10 @@ namespace Knetik
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
             j.AddField ("page", page);
             j.AddField ("limit", limit);
-            if (terms != null) {
+			if (terms != null) {
                 j.AddField ("terms", JSONObject.Create(terms));
             }
-            if (related != null) {
+			if (related != null) {
                 j.AddField ("related", JSONObject.Create(related));
             }
             j.AddField("useCatalog", useCatalog);
