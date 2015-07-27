@@ -20,18 +20,18 @@
 
 ##3. Services
 
-The Knetik API Client provides several services, such as Login, Registration, UserInfo, and Metrics.  The service methods can be executed either syncronously or asyncronously.
+The Knetik API Client provides several services, such as Login, Registration, UserInfo, and Metrics.  The service methods can be executed either synchronously or asynchronously.
 
-###3.1 Syncronous vs. Asyncronous Execution
+###3.1 Synchronous vs. Asynchronous Execution
 
-To call a service method syncronously, call the method which returns a KnetikApiResponse instance:
+To call a service method synchronously, call the method which returns a KnetikApiResponse instance:
 
 ```
 KnetikApiResponse response = KnetikClient.Instance.Login(username, password)
 // Handle response here
 ```
 
-To call a service method asyncronously, call the method with a callback function (Action<KnetikApiResponse>):
+To call a service method asynchronously, call the method with a callback function (Action<KnetikApiResponse>):
 
 ```
 KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => {
@@ -39,7 +39,7 @@ KnetikClient.Instance.Login(username, password, (KnetikApiResponse response) => 
 });
 ```
 
-Using the asyncronous execution will allow you to make nonblocking calls to the API.
+Using the asynchronous execution will allow you to make nonblocking calls to the API.
 
 This also applies to model methods.  For example:
 
