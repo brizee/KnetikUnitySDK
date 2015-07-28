@@ -35,7 +35,41 @@ namespace Knetik
             body = bodyBuilder.ToString();
 			
 			KnetikRequest req = CreateRequest(SessionEndpoint, body, "post", timestamp, serviceBundle, true);
-			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
+            KnetikApiResponse res;
+            if(cb != null)
+            {
+                res = new KnetikLoginResponse(this, req, (resp) => {
+                    if(resp.Status == KnetikApiResponse.StatusType.Success)
+                    {
+                        Debug.Log(resp.Body);
+                        LoadUserProfile();
+                    }
+                    else
+                    {
+                        if(OnLoginFailed != null)
+                        {
+                            OnLoginFailed(resp.ErrorMessage);
+                        }
+                    }
+                    cb(resp);
+                });
+            }
+            else
+            {
+                res = new KnetikLoginResponse(this, req, null);
+                if(res.Status == KnetikApiResponse.StatusType.Success)
+                {
+                    Debug.Log(res.Body);
+                    LoadUserProfile();
+                }
+                else
+                {
+                    if (OnLoginFailed != null)
+                    {
+                        OnLoginFailed(res.ErrorMessage);
+                    }
+                }
+            }
 			return res;
 		}
 		[Obsolete("JSAPI2 now uses GuestRegister and regular Login with user/pass combo returned", true)]

@@ -5,6 +5,8 @@ namespace Knetik
 {
     public partial class KnetikClient
 	{
+        public event KnetikEventSuccessDelegate OnRegisterComplete;
+        public event KnetikEventFailDelegate OnRegisterFailed;
 		public KnetikApiResponse Register(
 			string username,
 			string password,
@@ -12,16 +14,7 @@ namespace Knetik
 			string fullname,
 			Action<KnetikApiResponse> cb = null
 		) {
-			// Login as a guest  Register new user doen't require to create a guest account first
-//			KnetikApiResponse loginResponse = GuestLogin ();
-//			
-//			if (loginResponse.Status != KnetikApiResponse.StatusType.Success) {
-//				Debug.LogError("Guest login failed");
-//				return loginResponse;
-//			}
-//			Debug.Log ("Guest login successful");
-			
-			// Then register the new user
+
 			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
 			j.AddField ("username", username);
 			j.AddField ("password", password);
@@ -32,23 +25,50 @@ namespace Knetik
 			
 			KnetikRequest req = CreateRequest(RegisterEndpoint, body);
 			
-			KnetikApiResponse registerResponse = new KnetikApiResponse(this, req, cb);
-			return  registerResponse;
+			KnetikApiResponse res;
+            if(cb != null)
+            {
+                res = new KnetikApiResponse(this, req, (resp) =>
+                {
+                    Debug.Log(resp.Body);
+                    if(resp.Status == KnetikApiResponse.StatusType.Success)
+                    {
+                        Login(username, password, cb);
+                    }
+                    else
+                    {
+                        if (OnRegisterFailed != null)
+                        {
+                            OnRegisterFailed(resp.ErrorMessage);
+                        }
+                    }
+                    cb(resp);
+                });
+            }
+            else
+            {
+                res = new KnetikApiResponse(this, req, null);
+                Debug.Log(res.Body);
+                if(res.Status == KnetikApiResponse.StatusType.Success)
+                {
+                    Debug.Log(res.Body);
+                    res = Login(username, password, null);
+                }
+                else
+                {
+                    if (OnRegisterFailed != null)
+                    {
+                        OnRegisterFailed(res.ErrorMessage);
+                    }
+                }
+            }
+			return  res;
 		}
 
         public KnetikApiResponse GuestRegister(
             Action<KnetikApiResponse> cb = null
             ) {
-            // Login as a guest
-            //KnetikApiResponse loginResponse = GuestLogin ();
-            
-//            if (loginResponse.Status != KnetikApiResponse.StatusType.Success) {
-//                Debug.LogError("Guest login failed");
-//                return loginResponse;
-//            }
-//            Debug.Log ("Guest login successful");
-            
-            // Then register the new user
+
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
             String body = j.Print ();
             

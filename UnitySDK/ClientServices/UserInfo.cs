@@ -47,6 +47,26 @@ namespace Knetik
                 {
                     if(res.Response.Status == KnetikApiResponse.StatusType.Success)
                     {
+                        
+                        if(string.IsNullOrEmpty(Username))
+                        {
+                            Username = UserInfo.Username;
+                            if (isGuest)
+                            {
+                                if (OnGuestLogIn != null)
+                                    OnGuestLogIn();
+                            }
+                            else
+                            {
+                                if (OnLoggedIn != null)
+                                    OnLoggedIn();
+                            }
+                        }
+                        else
+                        {
+                            Username = UserInfo.Username;
+                        }
+                        SaveSession();
                         if (OnUserInfoLoaded != null)
                         {
                             OnUserInfoLoaded();
