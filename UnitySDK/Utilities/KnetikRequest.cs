@@ -33,8 +33,8 @@ namespace Knetik
 	
 	public class KnetikRequest
 	{
-		public static bool LogAllRequests = false;
-		public static bool VerboseLogging = false;
+		public static bool LogAllRequests = true;
+		public static bool VerboseLogging = true;
         public static IKnetikInitialiser KnetikInitializationScript;
 		public KnetikCookieJar cookieJar = null; //CookieJar.Instance;
 		public string method = "GET";

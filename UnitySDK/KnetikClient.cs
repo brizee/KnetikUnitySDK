@@ -106,7 +106,8 @@ namespace Knetik
             }
             PlayerPrefs.SetString(AccessTokenKey, AccessToken);
             PlayerPrefs.SetInt(UserIDKey, UserID);
-
+            PlayerPrefs.SetString(UsernameKey, Username);
+            PlayerPrefs.Save();
             return true;
         }
 
