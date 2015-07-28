@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace Knetik
 {
@@ -14,8 +13,7 @@ namespace Knetik
                 return _userInfo;
             }
         }
-        public KnetikEventSuccessDelegate OnUserInfoLoaded;
-        public KnetikEventFailDelegate OnUserInfoLoadFailure;
+
         public KnetikApiResponse GetUserInfo(Action<KnetikApiResponse> cb = null)
         {
             KnetikRequest req = CreateRequest(GetUserInfoEndpoint);
@@ -37,30 +35,6 @@ namespace Knetik
             KnetikRequest req = CreateRequest(GetUserInfoWithProductEndpoint, body);
             KnetikApiResponse res = new KnetikApiResponse(this, req, cb);
             return res;
-        }
-
-        public void LoadUserProfile()
-        {
-            if (Application.internetReachability != NetworkReachability.NotReachable)
-            {
-                UserInfo.Load((res) =>
-                {
-                    if(res.Response.Status == KnetikApiResponse.StatusType.Success)
-                    {
-                        if (OnUserInfoLoaded != null)
-                        {
-                            OnUserInfoLoaded();
-                        }
-                    }
-                    else
-                    {
-                        if(OnUserInfoLoadFailure != null)
-                        {
-                            OnUserInfoLoadFailure(res.Response.ErrorMessage);
-                        }
-                    }
-                });
-            }
         }
 
         public KnetikApiResponse PutUserInfo(string name, string value, Action<KnetikApiResponse> cb = null)

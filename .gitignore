@@ -1,1 +1,3 @@
 *.meta
+Ionic.Zlib.dll
+obj/*

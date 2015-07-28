@@ -20,8 +20,6 @@ namespace Knetik
             }
         }
 
-        public delegate void KnetikEventSuccessDelegate();
-        public delegate void KnetikEventFailDelegate(string message);
         public string Username {
             get;
             set;
@@ -62,26 +60,7 @@ namespace Knetik
             get;
             set;
         }
-        /// <summary>
-        /// True if the user has any type of account, Guest or Regular
-        /// </summary>
-        public bool isRegistered
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(AccessToken);
-            }
-        }
-        /// <summary>
-        /// True if the user has a Guest account, is !isRegistered behaviour is undefined
-        /// </summary>
-        public bool isGuest
-        {
-            get
-            {
-                return Username.Substring(0, 5).ToLower() == "guest";
-            }
-        }
+
         #endregion
 
         #region Public Methods
@@ -110,7 +89,7 @@ namespace Knetik
             return true;
         }
 
-        internal bool LoadSession()
+        public bool LoadSession()
         {
             AccessToken = PlayerPrefs.GetString(AccessTokenKey);
             UserID = PlayerPrefs.GetInt(UserIDKey);

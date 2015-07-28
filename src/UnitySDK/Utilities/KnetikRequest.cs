@@ -22,10 +22,6 @@ namespace Knetik
 		}
 	}
 	
-    public interface IKnetikInitialiser
-    {
-        Queue Requests { get; set; }
-    }
 	public enum KnetikRequestState 
 	{
 		Waiting, Reading, Done
@@ -35,7 +31,7 @@ namespace Knetik
 	{
 		public static bool LogAllRequests = false;
 		public static bool VerboseLogging = false;
-        public static IKnetikInitialiser KnetikInitializationScript;
+		
 		public KnetikCookieJar cookieJar = null; //CookieJar.Instance;
 		public string method = "GET";
 		public string protocol = "HTTP/1.1";
@@ -223,7 +219,7 @@ namespace Knetik
 					completedCallback(this);
 				} else {
 					// we have to use this dispatcher to avoid executing the callback inside this worker thread
-					KnetikInitializationScript.Requests.Enqueue( this );
+					KnetikInitializationScript.Singleton.Requests.Enqueue( this );
 				}
 			}
 			
