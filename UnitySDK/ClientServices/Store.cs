@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KnetikSimpleJSON;
+using System.Text;
 
 namespace Knetik
 {
@@ -25,19 +26,29 @@ namespace Knetik
             Action<KnetikApiResponse> cb = null
         ) {
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
-            j.AddField ("page", page);
-            j.AddField ("limit", limit);
+
+			StringBuilder storeBuilder = new StringBuilder();
+			storeBuilder.Append (ListStorePageEndpoint);
+			storeBuilder.Append ("?");
+			storeBuilder.Append ("page="+page);
+			storeBuilder.Append ("&limit="+limit);
+
+
+	//		j.AddField ("limit", limit);
 			if (terms != null) {
-                j.AddField ("terms", JSONObject.Create(terms));
+				storeBuilder.Append ("&terms="+string.Join(",", terms.ToArray()));
+		//		j.AddField ("terms", string.Join(",", terms.ToArray()));
             }
 			if (related != null) {
-                j.AddField ("related", JSONObject.Create(related));
+				storeBuilder.Append ("&related="+string.Join(",", related.ToArray()));
+		//		j.AddField ("related", string.Join(",",related.ToArray()));
             }
-            j.AddField("useCatalog", useCatalog);
+       //     j.AddField("useCatalog", useCatalog);
+			storeBuilder.Append ("&useCatalog="+useCatalog);
 
             String body = j.Print ();
             
-            KnetikRequest req = CreateRequest(ListStorePageEndpoint, body);
+			KnetikRequest req = CreateRequest(storeBuilder.ToString(), body,"GET");
             
             KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
             return  response;

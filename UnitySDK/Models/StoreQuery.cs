@@ -87,7 +87,7 @@ namespace Knetik
             base.Deserialize (json);
 
             Items = new List<Item> ();
-            foreach (KnetikJSONNode node in json.Children) {
+            foreach (KnetikJSONNode node in json["content"].Children) {
                 Item item = Item.Parse(Client, node);
                 if (ItemTypes == null || ItemTypes.Contains(item.TypeHint)) {
                     Items.Add(item);
