@@ -86,14 +86,15 @@ else
 
 ####3.2.2 Login as Guest
 
-Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away.  They can login after and their session will be upgraded to the authenticated session.
+Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away. this can be done by register a guest account then login.
 
 ```
-var response = KnetikClient.Instance.GuestLogin();
+var response=KnetikClient.Instance.GuestRegister(); //register a guest account
 
 if (response.Status == KnetikApiResponse.StatusType.Success) 
 {
-   // The user now is logged in as a guest.  They can login to get their guest session upgraded.
+   // The user now is registered  as a guest.  then you can use the generated username and password to login 
+   KnetikApiResponse response = KnetikClient.Instance.Login(guestUsername, guestPassword)
 }
 ```
 
