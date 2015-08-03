@@ -189,11 +189,11 @@ namespace Knetik
         private static string RegisterEndpoint = "services/latest/registration";
 		private static string GuestRegisterEndpoint = "services/latest/registration/guests";
         private static string UpgradeFromRegisteredGuestEndpoint = "services/latest/registration/guestUpgrade";
-        private static string FireEventEndpoint = "services/latest/BRE/fireEvent";
+        private static string FireEventEndpoint = "services/latest/bre/fireevent";
         private static string ListAchievementsEndpoint = "services/latest/badge/list";
         private static string ListUserAchievementsEndpoint = "services/latest/user/getachievement";
         private static string GetGameOptionEndpoint = "services/latest/product/getgameoption";
-        private static string ListStorePageEndpoint = "services/latest/store/getpage";
+        private static string ListStorePageEndpoint = "services/latest/store";
         private static string CartAddEndpoint = "services/latest/cart/addtocart";
 		private static string CartItemsEndpoint = "services/latest/carts/{0}/items"; //{0} cart Number 
 		private static string CartModifyEndpoint = "services/latest/cart/modify";

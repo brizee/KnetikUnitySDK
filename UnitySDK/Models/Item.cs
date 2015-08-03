@@ -163,27 +163,30 @@ namespace Knetik
             LongDescription = json ["long_description"].Value;
 
             Assets.Clear ();
-            foreach (KnetikJSONNode node in json["assets"].Children)
-            {
-                ItemAsset asset = new ItemAsset(Client);
-                asset.Deserialize(node);
-                Assets.Add(asset);
-            }
+			if (json ["assets"] != null) {
+				foreach (KnetikJSONNode node in json["assets"].Children) {
+					ItemAsset asset = new ItemAsset (Client);
+					asset.Deserialize (node);
+					Assets.Add (asset);
+				}
+			}
             
             Skus.Clear ();
-            foreach (KnetikJSONNode node in json["skus"].Children)
-            {
-                CatalogSku sku = new CatalogSku(Client, this);
-                sku.Deserialize(node);
-                Skus.Add(sku);
-            }
+			if (json ["skus"] != null) {
+				foreach (KnetikJSONNode node in json["skus"].Children) {
+					CatalogSku sku = new CatalogSku (Client, this);
+					sku.Deserialize (node);
+					Skus.Add (sku);
+				}
+			}
 
             Behaviors.Clear();
-            foreach (KnetikJSONNode node in json["behaviors"].Children)
-            {
-                Behavior behavior = Behavior.Parse(Client, node);
-                Behaviors[behavior.TypeHint] = behavior;
-            }
+			if (json ["behaviors"] != null) {
+				foreach (KnetikJSONNode node in json["behaviors"].Children) {
+					Behavior behavior = Behavior.Parse (Client, node);
+					Behaviors.Add (behavior.TypeHint, behavior);
+				}
+			}
 
             if (json ["deleted_at"] != null && json ["deleted_at"] != "null")
             {
