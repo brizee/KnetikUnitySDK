@@ -98,18 +98,9 @@ if (response.Status == KnetikApiResponse.StatusType.Success)
 }
 ```
 
-####3.2.3 Persisting session between launches
+####3.2.3 Persisting session 
 
-To keep a session between launches of your game -- for example, to keep an authenticated guest session -- use the SaveSession and LoadSession methods:
-
-LoadSession:
-```
-if (KnetikClient.Instance.LoadSession())
-{
-  // We loaded the user's session, so we can skip login here.
-  Menu.SetScreen("profile");
-}
-```
+To keep a session between launches of your game -- for example, to keep an authenticated guest session -- use the SaveSession methods:
 
 SaveSession:
 ```
