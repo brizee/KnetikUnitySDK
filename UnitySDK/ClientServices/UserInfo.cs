@@ -14,8 +14,8 @@ namespace Knetik
                 return _userInfo;
             }
         }
-        public KnetikEventSuccessDelegate OnUserInfoLoaded;
-        public KnetikEventFailDelegate OnUserInfoLoadFailure;
+        public event KnetikEventSuccessDelegate OnUserInfoLoaded;
+        public event KnetikEventFailDelegate OnUserInfoLoadFailure;
         public KnetikApiResponse GetUserInfo(Action<KnetikApiResponse> cb = null)
         {
             KnetikRequest req = CreateRequest(GetUserInfoEndpoint);

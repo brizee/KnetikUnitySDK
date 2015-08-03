@@ -230,9 +230,7 @@ namespace Knetik
 			
 			if ( LogAllRequests )
 			{
-				#if !UNITY_EDITOR
-				System.Console.WriteLine("NET: " + InfoString( VerboseLogging ));
-				#else
+				
 				if ( response != null && response.status >= 200 && response.status < 300 )
 				{
 					Debug.Log( InfoString( VerboseLogging ) );
@@ -245,7 +243,7 @@ namespace Knetik
 				{
 					Debug.LogWarning( InfoString( VerboseLogging ) );
 				}
-				#endif
+				
 			}			
 			
 		}
@@ -308,11 +306,9 @@ namespace Knetik
 		
 		public static bool ValidateServerCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
-			#if !UNITY_EDITOR
-			System.Console.WriteLine( "NET: SSL Cert: " + sslPolicyErrors.ToString() );
-			#else
+			
 			Debug.LogError("Knetik Labs SDK - ERROR 6: SSL Cert Error: " + sslPolicyErrors.ToString ());
-			#endif
+			
 			return true;
 		}
 		

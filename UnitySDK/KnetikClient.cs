@@ -212,23 +212,18 @@ namespace Knetik
 
         private void Log(String msg)
         {
-            #if UNITY_EDITOR
             Debug.Log(msg);
-            #endif
+            
         }
         
         private void LogError(String msg)
         {
-            #if UNITY_EDITOR
             Debug.LogError(msg);
-            #endif
         }
         
         private void LogException(Exception e)
         {
-            #if UNITY_EDITOR
             Debug.LogException(e);
-            #endif
         }
     }
 
