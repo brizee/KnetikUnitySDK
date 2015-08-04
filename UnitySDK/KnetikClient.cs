@@ -179,8 +179,8 @@ namespace Knetik
         private static string PasswordKey = "knetik.password";
         private static string UserIDKey = "knetik.userid";
         private static string SessionEndpoint = "oauth/token";
-        private static string RecordMetricEndpoint = "services/latest/metrics/record";
-        private static string GetLeaderboardEndpoint = "services/latest/metrics/getLeaderboard";
+		private static string RecordMetricEndpoint = "services/v1/metrics/record";
+		private static string GetLeaderboardEndpoint = "services/v1/metrics/getleaderboard";
         private static string GetUserInfoEndpoint = "services/latest/user/getinfo";
         private static string GetUserInfoWithProductEndpoint = "services/latest/user/getinfowithproduct";
         private static string PutUserInfoEndpoint = "services/latest/user/update";
