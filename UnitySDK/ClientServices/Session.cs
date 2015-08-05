@@ -42,6 +42,8 @@ namespace Knetik
                     if(resp.Status == KnetikApiResponse.StatusType.Success)
                     {
                         Debug.Log(resp.Body);
+                        PlayerPrefs.SetString(UsernameKey, username);
+                        PlayerPrefs.SetString(PasswordKey, password);
                         LoadUserProfile();
                     }
                     else
@@ -60,6 +62,8 @@ namespace Knetik
                 if(res.Status == KnetikApiResponse.StatusType.Success)
                 {
                     Debug.Log(res.Body);
+                    PlayerPrefs.SetString(UsernameKey, username);
+                    PlayerPrefs.SetString(PasswordKey, password);
                     LoadUserProfile();
                 }
                 else
@@ -89,29 +93,26 @@ namespace Knetik
         public bool SilentLogin( Action<bool> cb = null)
         {
             // Retrieve any local information
-            if(LoadSession())
+            if(PlayerPrefs.HasKey(UsernameKey) && PlayerPrefs.HasKey(PasswordKey))
             {
                 Username = PlayerPrefs.GetString(UsernameKey);
-                if(string.IsNullOrEmpty(Username))
+                Password = PlayerPrefs.GetString(PasswordKey);
+                if(string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
                 {
-                    throw new Exception("Username wasn't loaded successfully");
-                    if(isGuest)
-                    {
-                        if (OnGuestLogIn != null)
-                            OnGuestLogIn();
-                    }
+                    throw new Exception("Username/Password wasn't loaded successfully");
+                    return false;  
+                }
+                else
+                {
+                    if (cb != null)
+                        Login(Username, Password, res => {
+                            cb(res.IsSuccess);
+                        });
                     else
-                    {
-                        if (OnLoggedIn != null)
-                            OnLoggedIn();
-                    }
+                        return Login(Username, Password).IsSuccess;
                 }
             }
-            if(isRegistered)
-            {
-                LoadUserProfile();
-            }
-            return isRegistered;
+            return false;
 
         }
 	}

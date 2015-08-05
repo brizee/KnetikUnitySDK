@@ -79,7 +79,7 @@ namespace Knetik
         {
             get
             {
-                return Username.Substring(0, 5).ToLower() == "guest";
+                return string.IsNullOrEmpty(Username) ? false : Username.Substring(0, 5).ToLower() == "guest";
             }
         }
         #endregion
