@@ -187,6 +187,7 @@ namespace Knetik
 		private static string CartCountriesEndpoint = "services/latest/carts/{0}/countries"; //{0}Cart Number 
         private static string UseItemEndpoint = "services/latest/game/gamestart";
         private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
+		private static string GetInvoiceEndpoint = "/services/latest/invoice";
 
         private void Log(String msg)
         {

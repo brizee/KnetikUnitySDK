@@ -59,7 +59,7 @@ namespace Knetik
 							shipping.AddressLine1 ="AdressLin1";
 							shipping.AddressLine2 ="AdressLin1";
 							shipping.City ="AdressLin1";
-							shipping.Country ="country";
+							shipping.Country ="United Kingdom";
 							shipping.Email ="knetik@knetik.com";
 							shipping.FirstName ="First Name";
 							shipping.LastName ="Last Name";
