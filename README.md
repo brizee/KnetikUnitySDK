@@ -602,7 +602,7 @@ ShippingAddress shipping; //Create a shipping address Object
   shipping.AddressLine1 ="AdressLin1";
   shipping.AddressLine2 ="AdressLin1";
   shipping.City ="AdressLin1";
-  shipping.Country ="country";
+  shipping.Country ="United Kingdom";
   shipping.Email ="knetik@knetik.com";
   shipping.FirstName ="First Name";
   shipping.LastName ="Last Name";
@@ -1026,6 +1026,140 @@ When you use UserInfo.LoadWithGame, the UserInfo will contain the Inventory obje
 Each item is an instance of InventoryItem.  This instance contains some information about the user's instance of that item, such as how many times it has been used and when it expires (null if it doesn't).  You can call InventoryItem.Consume() to use the item, causing the UseCount to increase.  If the UseCount matches the the item's Consumable behavior's MaxUse value, the item will be used up and will not be in the user's inventory anymore.
 
 For downloadable content, the Downloadable behavior contains the URLs by name as set up in the admin.  With the URL, you can load images or sound files in dynamically based on what is in the user's inventory.
+
+
+#### Invoices
+
+to load your cart invoices you need to have Card Number (cart GUID)
+
+### GetInvoice
+
+to Get your invoice by cart ID Your cart should has at least one item and the shipping address of your cart should be correct
+
+How to prepare your cart ?
+
+1-Create cart by calling Client.CartCreate (createResponse); mentioned before in details
+
+2-Add Item to a cart by calling client.CartAdd(cartNumber,catalogId, skuId, quantity); mentioned before in details 
+
+3-Modify your cart shipping address Client.CartShippingAddress(cartNumber,shipping); mentioned before in details 
+
+How to call GetInvoice EndPoint?
+
+```
+Client.GetInvoice (cartNumber, (res) => {
+	if (res.IsSuccess) {
+	//parse response
+	Console.WriteLine("GetInvoice PASS");
+
+	}else
+{
+	Console.WriteLine("GetInvoice Failed");
+	return;
+}
+	});
+```
+
+###GetInvoice Response 
+```
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": {
+    "invoices": [
+      {
+        "name_prefix": "prefixName",
+        "phone": null,
+        "city_name": "AdressLin1",
+        "phone_number": null,
+        "billing_postal_code": null,
+        "current_fulfillment_status": 9,
+        "current_fulfillment_status_name": "unfulfilled",
+        "billing_city_name": null,
+        "address1": "AdressLin1",
+        "address2": "AdressLin1",
+        "current_fulfillment_status_description": "The invoice has not yet been fulfilled",
+        "current_status_name": "new",
+        "state_name": "Isle of Man",
+        "country_name": "United Kingdom",
+        "currency": "USD",
+        "id": 348483,
+        "shipping": 4.59,
+        "cart_id": 348479,
+        "create_date": "2015-09-03 19:48:21",
+        "fed_tax": 0.0,
+        "current_status_description": "The invoice has been created.",
+        "user_id": 348408,
+        "billing_state_name": null,
+        "billing_country_name": null,
+        "grand_total": 29.58,
+        "billing_address1": null,
+        "billing_address2": null,
+        "state_tax": 0.0,
+        "subtotal": 24.99,
+        "vendor_id": 3,
+        "deleted": 0,
+        "current_status": 1,
+        "discount": 0.0,
+        "parent_invoice_id": null,
+        "order_notes": "notes",
+        "email": "knetik@knetik.com",
+        "postal_code": "123123",
+        "update_date": "2015-09-03 19:48:21",
+        "full_name": "First Name First Name"
+      }
+    ],
+    "discounts": [
+      
+    ],
+    "items": [
+      {
+        "type_hint": "physical_item",
+        "system_price": 16.0,
+        "qty": 1,
+        "sku_description": "Symbiosis Black, Size: M",
+        "affiliate_id": null,
+        "sku": "27977-M",
+        "deleted": 0,
+        "unit_price": 24.99,
+        "total_price": 24.99,
+        "id": 584,
+        "thumbnail": "/uploads/item_assets/noise/ingested/abulletforprettyboy-abpbsymbbl-ts.jpg",
+        "item_name": "A Bullet For Pretty Boy, Symbiosis Black, T-Shirt",
+        "item_id": 55218,
+        "sku_id": 7225,
+        "invoice_id": 348483
+      },
+      {
+        "type_hint": "shipping_item",
+        "system_price": 2.98,
+        "qty": 1,
+        "sku_description": "Tracked",
+        "affiliate_id": null,
+        "sku": "579230",
+        "deleted": 0,
+        "unit_price": 4.59,
+        "total_price": 4.59,
+        "id": 585,
+        "thumbnail": "",
+        "item_name": "UK Tracked 1KG",
+        "item_id": 68714,
+        "sku_id": 38336,
+        "invoice_id": 348483
+      }
+    ]
+  },
+  "cached": false,
+  "message": "",
+  "parameters": [
+    
+  ],
+  "requestId": "1441309701613-8667"
+}
+```
+
 
 ##5. Android Compatibility
 
