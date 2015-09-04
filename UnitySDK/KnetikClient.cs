@@ -188,6 +188,7 @@ namespace Knetik
         private static string UseItemEndpoint = "services/latest/game/gamestart";
         private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
 		private static string GetInvoiceEndpoint = "/services/latest/invoice";
+		private static string GetReceiptEndpoint = "/services/latest/payment/provider/apple/receipt";
 
         private void Log(String msg)
         {
