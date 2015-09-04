@@ -1160,6 +1160,53 @@ Client.GetInvoice (cartNumber, (res) => {
 }
 ```
 
+### Apple transaction
+
+Mark an invoice paid using Apple payment recipt.
+
+#### VerifyReceipt
+
+Requirements 
+
+1- The details of the transaction must match the invoice details , including the product_id matching the sku text of the item in the invoice.
+
+#### How to call VerifyReceipt EndPoint ?
+
+```
+Client.verifyReceipt (string recipent , string TRANSACTION_ID , int64 invoiceID,(res) => 
+	{
+	if (res.IsSuccess) {
+	//parse response
+	Console.WriteLine("verifyReceipt PASS");
+	}else
+	{
+	Console.WriteLine("verifyReceipt Failed");
+	return;
+	}
+	});
+
+```
+####Response 
+
+Returns the transaction Id if successful.
+
+```
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": "1000000170178593", // transactionID should be the same of result 
+  "cached": false,
+  "message": "",
+  "parameters": [
+    
+  ],
+  "requestId": null
+}
+
+
+```
 
 ##5. Android Compatibility
 
