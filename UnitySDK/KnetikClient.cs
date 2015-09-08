@@ -210,7 +210,7 @@ namespace Knetik
         private static string UpdateGameOptionEndpoint = "services/latest/user/updategameoption";
         private static string RegisterEndpoint = "services/latest/registration";
 		private static string GuestRegisterEndpoint = "services/latest/registration/guests";
-        private static string UpgradeFromRegisteredGuestEndpoint = "services/latest/registration/guestUpgrade";
+        private static string UpgradeFromRegisteredGuestEndpoint = "services/latest/registration/guestupgrade";
         private static string FireEventEndpoint = "services/latest/bre/fireevent";
         private static string ListAchievementsEndpoint = "services/latest/badge/list";
         private static string ListUserAchievementsEndpoint = "services/latest/user/getachievement";
@@ -231,6 +231,8 @@ namespace Knetik
 		private static string CartCountriesEndpoint = "services/latest/carts/{0}/countries"; //{0}Cart Number 
         private static string UseItemEndpoint = "services/latest/game/gamestart";
         private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
+		private static string GetInvoiceEndpoint = "/services/latest/invoice";
+		private static string GetReceiptEndpoint = "/services/latest/payment/provider/apple/receipt";
 
         private void Log(String msg)
         {
