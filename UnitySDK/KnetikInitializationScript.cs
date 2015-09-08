@@ -9,11 +9,12 @@ public class KnetikInitializationScript : MonoBehaviour, IKnetikInitialiser {
 	public string ClientSecret = "HEsd0EpPRfkGGEwi";
     public string Authentication = "default";
 
-    private Queue m_requests = Queue.Synchronized(new Queue());
+    
     public Queue Requests { get; set; }
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
+        Requests = Queue.Synchronized(new Queue());
 		if (KnetikRequest.KnetikInitializationScript != null) {
             return;
 		}

@@ -40,7 +40,7 @@ namespace Knetik
         }
 
         public void LoadUserProfile()
-        {
+        {            
             if (Application.internetReachability != NetworkReachability.NotReachable)
             {
                 UserInfo.Load((res) =>
@@ -48,7 +48,7 @@ namespace Knetik
                     if(res.Response.Status == KnetikApiResponse.StatusType.Success)
                     {
                         
-                        if(string.IsNullOrEmpty(Username))
+                        if(Username == null || (Username.Length > 5 && Username.Substring(0, 5) == "Guest"))
                         {
                             Username = UserInfo.Username;
                             if (isGuest)
@@ -70,6 +70,7 @@ namespace Knetik
                         if (OnUserInfoLoaded != null)
                         {
                             OnUserInfoLoaded();
+                            
                         }
                     }
                     else

@@ -41,7 +41,6 @@ namespace Knetik
                 res = new KnetikLoginResponse(this, req, (resp) => {
                     if(resp.Status == KnetikApiResponse.StatusType.Success)
                     {
-                        Debug.Log(resp.Body);
                         PlayerPrefs.SetString(UsernameKey, username);
                         PlayerPrefs.SetString(PasswordKey, password);
                         LoadUserProfile();
@@ -61,7 +60,6 @@ namespace Knetik
                 res = new KnetikLoginResponse(this, req, null);
                 if(res.Status == KnetikApiResponse.StatusType.Success)
                 {
-                    Debug.Log(res.Body);
                     PlayerPrefs.SetString(UsernameKey, username);
                     PlayerPrefs.SetString(PasswordKey, password);
                     LoadUserProfile();

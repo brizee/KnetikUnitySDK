@@ -95,8 +95,49 @@ namespace Knetik
             
             KnetikRequest req = CreateRequest(UpgradeFromRegisteredGuestEndpoint, body);
             
-            KnetikApiResponse registerResponse = new KnetikApiResponse(this, req, cb);
-            return  registerResponse;
+            KnetikApiResponse res;
+            if (cb != null)
+            {
+                res = new KnetikApiResponse(this, req, (resp) =>
+                {
+                    Debug.Log(resp.Body);
+                    if (resp.Status == KnetikApiResponse.StatusType.Success)
+                    {
+                        if (OnRegistered != null)
+                        {
+                            OnRegistered();
+                        }
+                    }
+                    else
+                    {
+                        if (OnRegisterFailed != null)
+                        {
+                            OnRegisterFailed(resp.Body["error"]["message"]);
+                        }
+                    }
+                    cb(resp);
+                });
+            }
+            else
+            {
+                res = new KnetikApiResponse(this, req, null);
+                Debug.Log(res.Body);
+                if (res.Status == KnetikApiResponse.StatusType.Success)
+                {
+                    if (OnRegistered != null)
+                    {
+                        OnRegistered();
+                    }
+                }
+                else
+                {
+                    if (OnRegisterFailed != null)
+                    {
+                        OnRegisterFailed(res.Body["error"]["message"]);
+                    }
+                }
+            }
+            return  res;
         }
 	}
 }

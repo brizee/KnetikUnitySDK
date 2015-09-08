@@ -79,12 +79,25 @@ namespace Knetik
         {
             get
             {
-                return string.IsNullOrEmpty(Username) ? false : Username.Substring(0, 5).ToLower() == "guest";
+				if(string.IsNullOrEmpty(Username))
+				{
+					return false;
+				}
+				else if(Username.Length < 5)
+				{
+					return false;
+				}
+				else
+				{
+                	return Username.Substring(0, 5).ToLower() == "guest";
+				}
             }
         }
         #endregion
 
         #region Public Methods
+
+        public event KnetikEventSuccessDelegate OnLogoutComplete;
 
         public void Logout()
         {
@@ -96,8 +109,17 @@ namespace Knetik
 
             PlayerPrefs.DeleteKey(AccessTokenKey);
             PlayerPrefs.DeleteKey(UserIDKey);
+            if(OnLogoutComplete != null)
+            {
+                OnLogoutComplete();
+            }
         }
 
+        public void CallUserInfoLoaded()
+        {
+            if (OnUserInfoLoaded != null)
+                OnUserInfoLoaded();
+        }
         public bool SaveSession()
         {
             if (!(AccessToken != null && AccessToken != ""))

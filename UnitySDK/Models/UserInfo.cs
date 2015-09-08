@@ -265,7 +265,7 @@ namespace Knetik
             {
                 Inventory.Deserialize(json ["inventory"]);
             }
-
+            KnetikClient.Instance.CallUserInfoLoaded();
             // Reset the dirty tracker since we have clean data
             dirtyTracker.Reset ();
         }
