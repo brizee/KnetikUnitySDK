@@ -104,7 +104,7 @@ namespace Knetik
 				return;
 			}
 			
-			if (req.response.status != 200) {
+			if (req.response.status < 200 || req.response.status >= 300) {
 				LogError("Knetik Labs SDK - ERROR 2: Response returned a status of " + req.response.status);
 								Status = StatusType.Failure;
 								ErrorMessage = "Connection Error - Server problem";
