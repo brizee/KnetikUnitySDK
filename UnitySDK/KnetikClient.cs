@@ -109,9 +109,6 @@ namespace Knetik
             
             string url = BuildUrl (path, serviceBundle);
 
-            Log ("URL: " + url);
-            Log ("Body:\n" + body);
-
 			System.Text.ASCIIEncoding encoding=new System.Text.ASCIIEncoding();
             byte[] data = encoding.GetBytes(body);
             
