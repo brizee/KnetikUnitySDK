@@ -176,7 +176,7 @@ namespace Knetik
 								var ssl = ostream as SslStream;
 								ssl.AuthenticateAsClient (uri.Host);
 							} catch (Exception e) {
-								Debug.LogException (e);
+								LogException (e);
 								return;
 							}
 						}
@@ -206,7 +206,7 @@ namespace Knetik
 				}
 				
 			} catch (Exception e) {
-				Debug.LogException(e);
+				LogException(e);
 				Console.WriteLine ("Unhandled Exception, aborting request.");
 				Console.WriteLine (e);
 				exception = e;
@@ -233,15 +233,15 @@ namespace Knetik
 				
 				if ( response != null && response.status >= 200 && response.status < 300 )
 				{
-					Debug.Log( InfoString( VerboseLogging ) );
+					Log( InfoString( VerboseLogging ) );
 				}
 				else if ( response != null && response.status >= 400 )
 				{
-					Debug.LogError( InfoString( VerboseLogging ) );
+					LogError( InfoString( VerboseLogging ) );
 				}
 				else
 				{
-					Debug.LogWarning( InfoString( VerboseLogging ) );
+					LogWarning( InfoString( VerboseLogging ) );
 				}
 				
 			}			
@@ -365,5 +365,34 @@ namespace Knetik
 			
 			return result;
 		}
+		private void Log(String msg)
+		{
+			#if UNITY_EDITOR
+			Debug.Log(msg);
+			#endif
+		}
+		
+		private void LogError(String msg)
+		{
+			#if UNITY_EDITOR
+			Debug.LogError(msg);
+			#endif
+		}
+
+		private void LogWarning(String msg)
+		{
+			#if UNITY_EDITOR
+			Debug.LogWarning(msg);
+			#endif
+		}
+		
+		private void LogException(Exception e)
+		{
+			#if UNITY_EDITOR
+			Debug.LogException(e);
+			#endif
+		}
 	}
+
+
 }

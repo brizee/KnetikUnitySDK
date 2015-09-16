@@ -89,7 +89,6 @@ namespace Knetik
 				req.Send();
 				CompleteCallback (req);
 			} else {
-				Debug.Log("Executing async!");
 				req.Send(CompleteCallback);
 			}
 		}
@@ -152,9 +151,9 @@ namespace Knetik
 
         private void Log(String msg)
         {
-#if UNITY_EDITOR
-            //Debug.Log(msg);
-#endif
+			#if UNITY_EDITOR
+			//Debug.Log(msg);
+			#endif
         }
 
         private void LogError(String msg)

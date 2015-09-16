@@ -115,8 +115,27 @@ KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, (res) => {
   }
 });
 ```
-
 When the user logs out, their saved session will be deleted as well.
+
+
+####3.2.4 Session Expired  
+
+If your session has been expired and you received an Error with message "Your session has expired; Please refresh." and you got an error code equal "5" you will need to call login method again to refresh your session .
+
+### how to check your error Code ?
+
+```
+int errorCode= res.body["error"][“code”]
+
+if( errorCode == 5 )
+{
+
+	KnetikClient.Instance.Login (loginView.data.login, loginView.data.password);
+	
+}
+
+```
+
 
 ###3.3 Registration Service
 
@@ -999,7 +1018,7 @@ KnetikClient.Instance.Leaderboard(KnetikGlobal.LeaderboardID).Load((res) => {
 });
 ```
 
-#### Quick Purchase
+####4.8 Quick Purchase
 
 For one-click purchase scenarios, there is a shortcut method QuickPurchase that will add an item to the cart and checkout in a single call:
 
@@ -1019,7 +1038,7 @@ client.Store.Load((resStore) => {
 });
 ```
 
-#### Inventory
+####4.9 Inventory
 
 When you use UserInfo.LoadWithGame, the UserInfo will contain the Inventory object.  The inventory contains a list of all the items the user has that are related to the game.  You can get a list of all the items in the inventory using the "Inventory.Items" property.
 
@@ -1028,7 +1047,7 @@ Each item is an instance of InventoryItem.  This instance contains some informat
 For downloadable content, the Downloadable behavior contains the URLs by name as set up in the admin.  With the URL, you can load images or sound files in dynamically based on what is in the user's inventory.
 
 
-#### Invoices
+####5.0 Invoices
 
 to load your cart invoices you need to have Card Number (cart GUID)
 
@@ -1060,7 +1079,7 @@ Client.GetInvoice (cartNumber, (res) => {
 	});
 ```
 
-###GetInvoice Response 
+###5.1 GetInvoice Response 
 ```
 {
   "error": {
@@ -1160,7 +1179,7 @@ Client.GetInvoice (cartNumber, (res) => {
 }
 ```
 
-### Apple transaction
+###5.2 Apple transaction
 
 Mark an invoice paid using Apple payment recipt.
 
@@ -1208,6 +1227,51 @@ Returns the transaction Id if successful.
 
 ```
 
-##5. Android Compatibility
+##5.4 Entitlement services
+
+#### How to call entitlement Check EndPoint ?
+
+```
+KnetikClient.Instance.entitlementCheck("itemId","SkuId",(ress)=>{
+	if(ress.IsSuccess){
+		// parse response 
+	}
+	else{
+
+	}
+		});
+```
+
+####Response 
+
+```
+{
+  "error": {
+    "code": 0,
+    "success": true
+  },
+  "result": null,
+  "cached": false,
+  "message": "",
+  "parameters": null,
+  "requestId": "1442383363750-1268"
+}
+```
+
+```
+{
+  "error": {
+    "code": 10,
+    "success": false
+  },
+  "result": null,
+  "cached": false,
+  "message": "You are not entitled to this item. It may require a purchase or subscription.",
+  "parameters": null,
+  "requestId": "1442383363750-1268"
+}
+```
+
+##5.5 Android Compatibility
 
 On Android, the ACCESS_WIFI_STATE permission must be set in the AndroidManifest.xml file in your project’s Assets->Plugins->Android folder.  An example AndroidManifest.xml has been included in this project, called “AndroidManifest.example.xml”.

@@ -19,6 +19,7 @@ namespace Knetik
 		public string Status { get; set; }
 
 		public String cartNumber;
+		public KnetikJSONArray currencies;
 
 		public Cart (KnetikClient client)
     		: base(client)
@@ -29,7 +30,14 @@ namespace Knetik
 		public void QuickPurchase (CatalogSku sku, Action<KnetikResult<Cart>> cb)
 		{
 			//Create New Cart Number 
-			Client.CartCreate ((createRes) => {
+			Client.getCurrencies (new JSONObject (), (currenciesRes) => {
+				if (currenciesRes.IsSuccess) 
+				{
+					currencies= currenciesRes.Body["result"]["content"] as KnetikJSONArray;
+					Console.WriteLine ("Load currencies");
+				}
+
+			Client.CartCreateWithVirtualCurrency (currencies,sku,(createRes) => {
 				if (createRes.IsSuccess) {
 					cartNumber = createRes.Body ["result"].Value;
 					Console.WriteLine ("New Cart Number" + cartNumber);
@@ -44,62 +52,10 @@ namespace Knetik
 							cb (result);
 							return;
 					}
-						// Get Cart Details 
-					Client.CartGet (cartNumber, (res) => {
-							if (res.IsSuccess) {
-								KnetikJSONNode existingItems = res.Body ["result"] ["items"];
-								foreach (KnetikJSONNode json in existingItems.Children)
-								{
-									//Test Modify Cart Item Quantity set it 0
-									Client.CartModify (cartNumber, json ["catalog_id"].AsInt, json ["sku_id"].AsInt, 0);
-								}
-							}
-							ShippingAddress shipping=new ShippingAddress();
-							shipping.PrefixName ="prefixName"; 
-							shipping.AddressLine1 ="AdressLin1";
-							shipping.AddressLine2 ="AdressLin1";
-							shipping.City ="AdressLin1";
-							shipping.Country ="United Kingdom";
-							shipping.Email ="knetik@knetik.com";
-							shipping.FirstName ="First Name";
-							shipping.LastName ="Last Name";
-							shipping.PostalState ="163";
-							shipping.Zip ="123123";
-							shipping.OrderNotes="notes";
-							shipping.Country_id="225";
-							//Cart Get Shipping Address
-							Client.CartShippingAddress(cartNumber,shipping,(shippingResponse)=>
-							 {
-							if(shippingResponse.IsSuccess)
-							{
-									Console.WriteLine("shipping Address Modified");
-							}
-							//Cart Get Countries
-							Client.CartCountries(cartNumber,(cartCountriesResponse)=>
-							 {
-								if(cartCountriesResponse.IsSuccess)
-							  {
-								KnetikJSONNode countries = cartCountriesResponse.Body ["result"];
-								foreach (KnetikJSONNode json in countries.Children)
-								{
-								  //json Country Object {"id":38,"name":"Canada","iso3":"CAN","iso2":"CA"}
-								}	
-							  }
-							//Returns whether a cart requires shipping
-							Client.CartShippable(cartNumber,(shippableResponse)=>
-							 {
-							if(shippableResponse.IsSuccess)
-							{
-							KnetikJSONNode shippableRespone = shippableResponse.Body ["result"];
-								bool isShippable=shippableRespone["shippable"].AsBool;
-								int cartId=shippableRespone["cartId"].AsInt;
-							}
-
-							//Cart Checkout and close the cart 
-							Client.CartCheckout (cartNumber,(checkoutResponse) => {
-								result.Response = checkoutResponse;
-    
-								if (!checkoutResponse.IsSuccess) {
+						//Cart Checkout and close the cart 
+				Client.CartCheckout (cartNumber,(checkoutResponse) => {
+						result.Response = checkoutResponse;
+    					if (!checkoutResponse.IsSuccess) {
 									cb (result);
 									return;
 								}
@@ -107,16 +63,13 @@ namespace Knetik
 								result.Value = this;
 								cb (result);
 							});
-							});
-							});
-							});
-						});
 					});
 				
 				} else {
 					string body = createRes.Body;
 					
 				}
+			});
 			});
 		}
 
