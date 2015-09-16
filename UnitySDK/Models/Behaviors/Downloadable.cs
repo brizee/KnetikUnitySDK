@@ -30,23 +30,32 @@ namespace Knetik
             Assets = new Dictionary<string, ItemAsset>();
             URLs = new Dictionary<string, string>();
 
-            if (json ["assets"].AsArray != null)
-            {
-                foreach (KnetikJSONNode node in json["assets"].Children)
-                {
-                    string slug = node ["slug"].Value;
-                    ItemAsset asset = new ItemAsset(Client);
-                    asset.Deserialize(node ["asset"]);
-                    Assets.Add(slug, asset);
-                    URLs.Add(slug, asset.URL);
-                }
-            } else if (json ["urls"].AsArray != null)
-            {
-                foreach (KnetikJSONNode node in json["urls"].Children)
-                {
-                    URLs.Add(node["name"].Value, node["url"].Value);
-                }
-            }
+
+            // if (json ["assets"].AsArray != null)
+            // {
+                //foreach (KnetikJSONNode node in json["assets"].Children)
+                //{
+                  //  string slug = node ["slug"].Value;
+                  //  ItemAsset asset = new ItemAsset(Client);
+                  //  asset.Deserialize(node ["asset"]);
+                  //  Assets.Add(slug, asset);
+                  //  URLs.Add(slug, asset.URL);
+                //}
+            //}  if (json ["urls"].AsArray != null)
+            //{
+                //foreach (KnetikJSONNode node in json["urls"].Children)
+                //{
+                    //URLs.Add(node["name"].Value, node["url"].Value);
+                //}
+            //}
+
+			KnetikJSONNode mainNode =json["urls"];
+			if (mainNode !=null &&mainNode.Value !=null && !mainNode.Value.Equals("null") ) {
+				foreach (KnetikJSONNode node in json["urls"].Children) {
+					URLs.Add (node ["name"].Value, node ["url"].Value);
+				}
+			}
+			
         }
     }
 }
