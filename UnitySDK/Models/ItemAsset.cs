@@ -25,7 +25,16 @@ namespace Knetik
             get;
             set;
         }
+
+		public string url {
+			get;
+			set;
+		}
         
+		public int itemId {
+			get;
+			set;
+		}
         public ItemAsset (KnetikClient client)
             : base(client)
         {
@@ -37,6 +46,9 @@ namespace Knetik
             Description = json ["description"].Value;
             Type = json ["type"].Value;
             Path = json ["path"].Value;
+			url = json ["url"].Value;
+			itemId = json ["item_id"].AsInt;
+
         }
     }
 }

@@ -22,10 +22,12 @@ namespace Knetik
             base.Deserialize(json);
 
             URLs = new Dictionary<string, string>();
-            foreach (KnetikJSONNode node in json["urls"].Children)
-            {
-                URLs.Add(node["name"].Value, node["url"].Value);
-            }
+			KnetikJSONNode mainNode =json["urls"];
+			if (mainNode !=null &&mainNode.Value !=null && !mainNode.Value.Equals("null") ) {
+				foreach (KnetikJSONNode node in json["urls"].Children) {
+					URLs.Add (node ["name"].Value, node ["url"].Value);
+				}
+			}
         }
     }
 }
