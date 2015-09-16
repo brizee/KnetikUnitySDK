@@ -88,10 +88,13 @@ namespace Knetik
 
             Items = new List<Item> ();
             foreach (KnetikJSONNode node in json["content"].Children) {
-                Item item = Item.Parse(Client, node);
-                if (ItemTypes == null || ItemTypes.Contains(item.TypeHint)) {
-                    Items.Add(item);
-                }
+				if(node != null)
+				{
+	                Item item = Item.Parse(Client, node);
+	                if (ItemTypes == null || ItemTypes.Contains(item.TypeHint)) {
+	                    Items.Add(item);
+	                }
+				}
             }
 
             // JSAPI doesn't return hasMore so we keep paging until we get

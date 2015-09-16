@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using KnetikSimpleJSON;
+using UnityEngine;
 
 namespace Knetik
 {
@@ -8,7 +9,7 @@ namespace Knetik
     {
         public static Item Parse(KnetikClient client, KnetikJSONNode json)
         {
-            string typeHint = json ["type_hint"].Value;
+            string typeHint = json["type_hint"];
             Item item;
             switch (typeHint) {
                 case "game":
@@ -152,10 +153,16 @@ namespace Knetik
         
         public override void Deserialize (KnetikJSONNode json)
         {
+			if(json == null || json.ToString() == "\"null\"")
+			{
+				return;
+			}
+
             if (json ["id"] != null && json ["id"] != "null")
             {
                 ID = json ["id"].AsInt;
             }
+
             UniqueKey = json ["unique_key"].Value;
             TypeHint = json ["type_hint"].Value;
             Name = json ["name"].Value;

@@ -18,9 +18,12 @@ namespace Knetik
 
         public override void Deserialize(KnetikJSONNode json)
         {
-            ID = json ["inventory_id"].AsInt;
-            Item = Item.Parse(Client, json ["item"]);
-            UseCount = json ["use_count"].AsInt;
+			if(json["item"] != null)
+			{
+	            ID = json ["inventory_id"].AsInt;
+	            Item = Item.Parse(Client, json ["item"]);
+	            UseCount = json ["use_count"].AsInt;
+			}
         }
 
         public bool IsConsumable

@@ -81,8 +81,11 @@ namespace Knetik
 			
             Achievements = new List<Achievement> ();
             foreach (KnetikJSONNode node in json["achievement"].Children) {
-                Achievement achievement = (Achievement)Item.Parse(Client, node);
-                Achievements.Add(achievement);
+				if(node != null)
+				{
+                	Achievement achievement = (Achievement)Item.Parse(Client, node);
+                	Achievements.Add(achievement);
+				}
             }
 
             HasMore = json ["hasMore"].AsBool;
