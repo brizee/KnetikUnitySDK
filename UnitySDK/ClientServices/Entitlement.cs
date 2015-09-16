@@ -15,12 +15,12 @@ namespace Knetik
 		 */
 
 		public KnetikApiResponse entitlementCheck(String itemId,string skuId,
-		       Int64 invoiceId, Action<KnetikApiResponse> cb = null
+		       Action<KnetikApiResponse> cb = null
 		     ) {
 			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
 			j.AddField ("item_id", itemId);
 			j.AddField ("sku_id", skuId);
-			return verifyReceipt(j , cb);
+			return entitlementCheck(j , cb);
 		}
 
 
