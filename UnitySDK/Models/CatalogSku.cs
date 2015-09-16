@@ -32,6 +32,12 @@ namespace Knetik
             set;
         }
 
+		public int CurrencyId
+		{
+			get;
+			set;
+		}
+
         public string Description {
             get;
             set;
@@ -63,6 +69,7 @@ namespace Knetik
             Description = json["description"].Value;
             Inventory = json["inventory"].AsInt;
             CatalogID = json["catalog_id"].AsInt;
+			CurrencyId = json["currency_id"].AsInt;
             CurrencyCode = json ["code"].Value;
         }
     }

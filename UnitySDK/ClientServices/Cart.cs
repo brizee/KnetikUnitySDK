@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using KnetikSimpleJSON;
+
 namespace Knetik
 {
 	public struct ShippingAddress {
@@ -234,6 +236,34 @@ namespace Knetik
 			String body = j.Print ();
 			
 			KnetikRequest req = CreateRequest(CartCreateEndpoint, body);
+			
+			KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
+			return  response;
+		}
+
+		public KnetikApiResponse CartCreateWithVirtualCurrency(KnetikJSONArray currencies,CatalogSku catlog,Action<KnetikApiResponse> cb = null)
+		{
+			StringBuilder createCartBuilder = new StringBuilder();
+			createCartBuilder.Append(CartCreateEndpoint);
+
+			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+			if (catlog.Item != null) {
+				if(catlog.Item.TypeHint == "virtual_item" )
+				{
+					foreach(KnetikJSONNode element in currencies)
+					{
+						if(element["id"].AsInt == catlog.CurrencyId)
+						{
+							createCartBuilder.Append("?currency_code="+element["code"].Value);
+						}
+					}
+
+				}
+			}
+
+			String body = j.Print ();
+			
+			KnetikRequest req = CreateRequest(createCartBuilder.ToString(), body);
 			
 			KnetikApiResponse response = new KnetikApiResponse(this, req, cb);
 			return  response;

@@ -186,6 +186,8 @@ namespace Knetik
         private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
 		private static string GetInvoiceEndpoint = "/services/latest/invoice";
 		private static string GetReceiptEndpoint = "/services/latest/payment/provider/apple/receipt";
+		private static string GetCurrenciesEndpoint = "/services/latest/currencies";
+		private static string EntitlementEndpoint = "/services/latest/entitlement/entitlementcheck";
 
         private void Log(String msg)
         {
