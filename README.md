@@ -115,8 +115,27 @@ KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, (res) => {
   }
 });
 ```
-
 When the user logs out, their saved session will be deleted as well.
+
+
+####3.2.4 Session Expired  
+
+If your session has been expired and you received an Error with message "Your session has expired; Please refresh." and you got an error code equal "5" you will need to call login method again to refresh your session .
+
+### how to check your error Code ?
+
+```
+int errorCode= res.body["error"][“code”]
+
+if( errorCode == 5 )
+{
+
+	KnetikClient.Instance.Login (loginView.data.login, loginView.data.password);
+	
+}
+
+```
+
 
 ###3.3 Registration Service
 
