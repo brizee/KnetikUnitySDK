@@ -26,6 +26,11 @@ namespace Knetik
             set;
         }
 
+		public string slug {
+			get;
+			set;
+		}
+
 		public string url {
 			get;
 			set;
@@ -50,5 +55,24 @@ namespace Knetik
 			itemId = json ["item_id"].AsInt;
 
         }
+
+		public void setSlug (KnetikJSONNode behaviors)
+		{
+			if (behaviors != null) {
+				foreach (KnetikJSONNode node in behaviors.Children) {
+					if(node["assets"] != null)
+					{
+						foreach (KnetikJSONNode asset in node["assets"].Children) {
+							if(asset["asset_id"].AsInt ==ID)
+							{
+								slug=asset["slug"].Value;
+							}
+
+						}
+					}
+
+				}
+			}
+		}
     }
 }
