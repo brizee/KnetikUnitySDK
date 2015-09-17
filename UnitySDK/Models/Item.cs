@@ -174,6 +174,10 @@ namespace Knetik
 				foreach (KnetikJSONNode node in json["assets"].Children) {
 					ItemAsset asset = new ItemAsset (Client);
 					asset.Deserialize (node);
+					if (json ["behaviors"] != null) {
+						asset.setSlug(json ["behaviors"]);
+					}
+
 					Assets.Add (asset);
 				}
 			}
