@@ -248,7 +248,7 @@ namespace Knetik
 
 			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
 			if (catlog.Item != null) {
-				if(catlog.Item.TypeHint == "virtual_item" )
+				if(catlog.Item.TypeHint == "virtual_item" || catlog.CurrencyId != 0)
 				{
 					foreach(KnetikJSONNode element in currencies)
 					{
