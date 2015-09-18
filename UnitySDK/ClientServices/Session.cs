@@ -32,7 +32,6 @@ namespace Knetik
 
 
 		public KnetikApiResponse refreshSession(
-			string old_token,
 			Action<KnetikApiResponse> cb = null
 			) {
 			int timestamp = GetTimestamp ();
@@ -42,7 +41,7 @@ namespace Knetik
 			StringBuilder bodyBuilder = new StringBuilder();
 			bodyBuilder.AppendFormat(
 				"grant_type=refresh_token&refresh_token={0}&client_id={1}&client_secret={2}",
-				System.Uri.EscapeDataString(old_token),
+				System.Uri.EscapeDataString(KnetikClient.Instance.RefreshToken),
 				System.Uri.EscapeDataString(ClientID),
 				System.Uri.EscapeDataString(ClientSecret)
 				);

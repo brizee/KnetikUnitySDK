@@ -35,6 +35,11 @@ namespace Knetik
             set;
         }
 
+		public string RefreshToken {
+			get;
+			set;
+		}
+
         public int UserID {
             get;
             set;

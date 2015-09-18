@@ -20,6 +20,7 @@ namespace Knetik
 			}
 
 			KnetikJSONNode result = Body ["access_token"];
+			KnetikJSONNode refreshToken = Body ["refresh_token"];
 			if (result == null || result.Value == "null") {
 				Debug.LogError("Knetik Labs SDK - ERROR 304: Existing User could not be successfully logged in, server has no response!");
 				Debug.LogError("Knetik Labs SDK: JSON Request: " + req);
@@ -29,7 +30,8 @@ namespace Knetik
 
 			Debug.Log ("Existing User successfully logged in.");
 			Client.AccessToken = result.Value;
-
+			if (refreshToken != null)
+				Client.RefreshToken = refreshToken.Value;
 //            if (result["user_id"] == null || result["user_id"].Value == "null") {
 //				Debug.Log ("Guest Session has been established.");
 //			} else {
