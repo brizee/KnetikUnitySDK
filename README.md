@@ -130,7 +130,14 @@ int errorCode= res.body["error"][“code”]
 if( errorCode == 5 )
 {
 
-	KnetikClient.Instance.Login (loginView.data.login, loginView.data.password);
+		KnetikClient.Instance.refreshSession((res) => {
+			if (res.IsSuccess) {
+				// prase response
+			} else { 
+				// prase response
+
+			}
+		});
 	
 }
 
