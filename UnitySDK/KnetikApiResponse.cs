@@ -104,9 +104,25 @@ namespace Knetik
 			}
 			
 			if (req.response.status < 200 || req.response.status >= 300) {
-				LogError("Knetik Labs SDK - ERROR 2: Response returned a status of " + req.response.status);
-								Status = StatusType.Failure;
-								ErrorMessage = "Connection Error - Server problem";
+				try {
+				Body = KnetikJSON.Parse(req.response.Text);
+
+				if (Body["error"] != null && ((Body["error"]["success"] == null) || (Body["error"]["success"].AsBool == false))) {
+					LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
+					Status = StatusType.Error;
+					ErrorMessage = Body["message"];
+
+					}else{
+						
+						Status = StatusType.Failure;
+						ErrorMessage = "Connection Error - Server problem";
+					}
+				} catch(Exception e) {
+						LogException(e);
+						Status = StatusType.Failure;
+						ErrorMessage = "Connection error - Unknown exception";
+						return;
+				}
 				return;
 			}
 			
@@ -125,13 +141,7 @@ namespace Knetik
 				ErrorMessage = "Connection error - Unknown exception";
 				return;
 			}
-			
-            if (Body["error"] != null && ((Body["error"]["success"] == null) || (Body["error"]["success"].AsBool == false))) {
-				LogError("Knetik Labs SDK - ERROR 5: Response JSON does NOT report success!");
-				Status = StatusType.Error;
-				ErrorMessage = Body["message"];
-				return;
-			}
+	     
 		}
 
 		private void CompleteCallback(KnetikRequest req)
