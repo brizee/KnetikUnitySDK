@@ -30,6 +30,38 @@ namespace Knetik
 			return res;
 		}
 
+		/*
+			Login With custome Grant Type 
+			@param string username
+			@param string password 
+			@param string grantType
+		 */
+
+		public KnetikApiResponse Login(
+			string username,
+			string password,string grantType,
+			Action<KnetikApiResponse> cb = null
+			) {
+			int timestamp = GetTimestamp ();
+			string body;
+			string serviceBundle = null;
+			
+			StringBuilder bodyBuilder = new StringBuilder();
+			bodyBuilder.AppendFormat(
+				"grant_type={0}&username={1}&password={2}&client_id={3}&client_secret={4}",
+				System.Uri.EscapeDataString(grantType),
+				System.Uri.EscapeDataString(username),
+				System.Uri.EscapeDataString(password),
+				System.Uri.EscapeDataString(ClientID),
+				System.Uri.EscapeDataString(ClientSecret)
+				);
+			body = bodyBuilder.ToString();
+			
+			KnetikRequest req = CreateRequest(SessionEndpoint, body, "post", timestamp, serviceBundle, true);
+			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
+			return res;
+		}
+
 
 		public KnetikApiResponse refreshSession(
 			Action<KnetikApiResponse> cb = null
@@ -51,6 +83,8 @@ namespace Knetik
 			KnetikApiResponse res = new KnetikLoginResponse(this, req, cb);
 			return res;
 		}
+
+
 		public KnetikApiResponse GuestLogin(
 			Action<KnetikApiResponse> cb = null
 		) {
@@ -62,5 +96,7 @@ namespace Knetik
             return res;
 		}
 	}
+
+
 }
 
