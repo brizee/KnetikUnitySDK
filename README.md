@@ -84,7 +84,24 @@ else
 }
 ```
 
-####3.2.2 Login as Guest
+####3.2.2 Login With Custome Grant Type 
+
+```
+KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, grantType, (res) => {
+  if (res.IsSuccess) {
+   // Save off the created user session information
+   UserSessionUtils.setUserSession(KnetikClient.Instance.UserID,  
+   KnetikClient.Instance.Username,KnetikClient.Instance.ClientID);
+  // Launch the Level Scene (main game)
+  Application.LoadLevel(2);
+  } else { 
+    loginView.error = true;
+    loginView.errorMessage = response.ErrorMessage;
+  }
+});
+```
+
+####3.2.3 Login as Guest
 
 Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away. this can be done by register a guest account then login.
 
@@ -98,7 +115,7 @@ if (response.Status == KnetikApiResponse.StatusType.Success)
 }
 ```
 
-####3.2.3 Persisting session 
+####3.2.4 Persisting session 
 
 To keep a session between launches of your game -- for example, to keep an authenticated guest session -- use the SaveSession methods:
 
@@ -118,7 +135,7 @@ KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, (res) => {
 When the user logs out, their saved session will be deleted as well.
 
 
-####3.2.4 Session Expired  
+####3.2.5 Session Expired  
 
 If your session has been expired and you received an Error with message "Your session has expired; Please refresh." and you got an error code equal "5" you will need to call login method again to refresh your session .
 
