@@ -89,9 +89,14 @@ else
 ```
 KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, grantType, (res) => {
   if (res.IsSuccess) {
-   //
+   // Save off the created user session information
+   UserSessionUtils.setUserSession(KnetikClient.Instance.UserID,  
+   KnetikClient.Instance.Username,KnetikClient.Instance.ClientID);
+  // Launch the Level Scene (main game)
+  Application.LoadLevel(2);
   } else { 
-   // 
+    loginView.error = true;
+    loginView.errorMessage = response.ErrorMessage;
   }
 });
 ```
