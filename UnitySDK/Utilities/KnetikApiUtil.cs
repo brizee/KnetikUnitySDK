@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 #if !UNITY_WEBPLAYER
 using System.Net.NetworkInformation;
@@ -247,5 +249,32 @@ namespace Knetik
 			byte[] hash = hashmac.ComputeHash(inputBytes);
 			return Convert.ToBase64String(hash);
 		}
+
+		/*
+			build string request from Dictionary 
+			
+		 */
+		public static string buildStringRequestFromDictionary(Dictionary<string,string> parameters)
+		{
+			StringBuilder builder = new StringBuilder ();
+			List<string> keysList = new List<string>(parameters.Keys);
+
+			for (int i=0; i<keysList.Count; i++) {
+				string key=keysList[i];
+				string value=parameters[key];
+				if(value != null)
+				{
+					builder.Append(key);
+					builder.Append("=");
+					builder.Append(value);
+					if(i<keysList.Count-1){
+					builder.Append("&");
+					}
+				}
+
+			}
+			return builder.ToString ();
+		}
+
 	}
 }
