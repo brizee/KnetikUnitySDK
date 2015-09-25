@@ -84,7 +84,7 @@ else
 }
 ```
 
-####3.2.2 Login With Custome paramters 
+####3.2.2 Login With Custom parameters 
 
 ```
 
