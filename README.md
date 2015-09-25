@@ -84,7 +84,7 @@ else
 }
 ```
 
-####3.2.2 Login With Custome Grant Type 
+####3.2.2 Login With Custome paramters 
 
 ```
 
