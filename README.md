@@ -89,12 +89,9 @@ else
 ```
 KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, grantType, (res) => {
   if (res.IsSuccess) {
-    // Store the user's session for retrieving later.
-    KnetikClient.Instance.SaveSession();
-    Menu.SetScreen("profile");
+   //
   } else { 
-    ErrorMessageText.text = res.ErrorMessage;
-    ErrorMessageText.gameObject.SetActive(true);
+   // 
   }
 });
 ```
