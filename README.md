@@ -84,10 +84,23 @@ else
 }
 ```
 
-####3.2.2 Login With Custome Grant Type 
+####3.2.2 Login With Custom parameters 
 
 ```
-KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, grantType, (res) => {
+
+Dictionary<string,string> paramters = new Dictionary<string,string > ();
+
+paramters.Add ("grant_type","grant_type_value");
+
+paramters.Add ("username","username_value");
+
+paramters.Add ("password","password_value");
+
+paramters.Add ("client_id","client_id_value");
+
+paramters.Add ("client_secret","client_secret_value");
+
+KnetikClient.Instance.Login(paramters , (res) => {
   if (res.IsSuccess) {
    // Save off the created user session information
    UserSessionUtils.setUserSession(KnetikClient.Instance.UserID,  
