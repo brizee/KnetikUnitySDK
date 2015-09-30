@@ -176,11 +176,13 @@ if( errorCode == 5 )
 
 ###3.3 Registration Service
 
-Registration requires four fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
+Registration requires four fields: username, password, email, and fullname ,firstName.lastName.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
+
 
 EXAMPLE:
 
 ```
+
 // Check if passwords match, and if not display the appropriate error message
 if (registrationView.data.password != registrationView.data.passwordConfirm) 
 {
@@ -189,21 +191,34 @@ if (registrationView.data.password != registrationView.data.passwordConfirm)
   return;
 }
 
-var response = KnetikClient.Instance.Register(
-  registrationView.data.username,
-  registrationView.data.password,
-  registrationView.data.email,
-  registrationView.data.fullname
-);
 
-if (response.Status != KnetikApiResponse.StatusType.Success) {
-  registrationView.error = true;
-  registrationView.errorMessage = response.ErrorMessage;
-  return;
-}
+Dictionary<string,string> paramters = new Dictionary<string,string > ();
 
-// Load the StartMenu again, the registered user must now login
-Application.LoadLevel(1);
+	paramters.Add ("username", Username.text);
+	paramters.Add ("password", Password.text);
+	paramters.Add ("firstName",firstName.text);
+	paramters.Add ("lastName", lastName.text);
+	paramters.Add ("fullname", Fullname.text);
+	paramters.Add ("email",    Email.text);
+
+         KnetikClient.Instance.teamRockRegister(paramters,
+                (res) => {
+                    if (res.IsSuccess) {
+                        Username.text = "";
+                        Email.text = "";
+                        Fullname.text = "";
+                        Password.text = "";
+                        lastName.text = "";
+                        firstName.text = "";
+                        PasswordConfirmation.text = "";
+                        Menu.SetScreen("profile");
+                    } else {
+                        ErrorMessageText.text = res.ErrorMessage;
+                        ErrorMessageText.gameObject.SetActive(true);
+                    }
+                }
+            );
+
 ```
 
 #### Register as Guest
