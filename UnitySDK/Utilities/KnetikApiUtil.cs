@@ -276,5 +276,30 @@ namespace Knetik
 			return builder.ToString ();
 		}
 
+		/*
+			build string request from Dictionary 
+			
+		 */
+		public static JSONObject buildJSONObjectFromDictionary(Dictionary<string,string> parameters)
+		{
+			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
+			List<string> keysList = new List<string>(parameters.Keys);
+			
+			for (int i=0; i<keysList.Count; i++) {
+				string key=keysList[i];
+				string value=parameters[key];
+
+				if(value != null)
+				{
+					j.AddField (key, value);
+
+				}
+				
+			}
+			return j;
+		}
+
+
+
 	}
 }

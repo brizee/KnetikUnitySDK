@@ -167,6 +167,7 @@ namespace Knetik
         private static string CreateGameOptionEndpoint = "services/latest/user/addgameoption";
         private static string UpdateGameOptionEndpoint = "services/latest/user/updategameoption";
         private static string RegisterEndpoint = "services/latest/registration";
+		private static string TeamRockRegisterEndpoint = "teamrock/register";
 		private static string GuestRegisterEndpoint = "services/latest/registration/guests";
         private static string UpgradeFromRegisteredGuestEndpoint = "services/latest/registration/guestupgrade";
         private static string FireEventEndpoint = "services/latest/bre/fireevent";

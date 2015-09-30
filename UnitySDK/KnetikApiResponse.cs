@@ -129,7 +129,12 @@ namespace Knetik
 			try {
 				Body = KnetikJSON.Parse(req.response.Text);
 				
-				if (Body == null) {
+				if ((Body == null && req.response.status >= 201 && req.response.status <= 208 ))
+				{
+					Status = StatusType.Success;
+					ErrorMessage = "Empty Response";
+				}else
+				{
 					LogError("Knetik Labs SDK - ERROR 3: Failed to Properly Parse JSON response");
 										Status = StatusType.Failure;
 										ErrorMessage = "Connection error - Invalid format";

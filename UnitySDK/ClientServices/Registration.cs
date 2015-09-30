@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Text;
+using System.Collections.Generic;
 
 namespace Knetik
 {
@@ -12,15 +14,6 @@ namespace Knetik
 			string fullname,
 			Action<KnetikApiResponse> cb = null
 		) {
-			// Login as a guest  Register new user doen't require to create a guest account first
-//			KnetikApiResponse loginResponse = GuestLogin ();
-//			
-//			if (loginResponse.Status != KnetikApiResponse.StatusType.Success) {
-//				Debug.LogError("Guest login failed");
-//				return loginResponse;
-//			}
-//			Debug.Log ("Guest login successful");
-			
 			// Then register the new user
 			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
 			j.AddField ("username", username);
@@ -36,17 +29,26 @@ namespace Knetik
 			return  registerResponse;
 		}
 
+
+		public KnetikApiResponse teamRockRegister(Dictionary<string,string> parameters,
+			Action<KnetikApiResponse> cb = null
+			) {
+
+			JSONObject j = KnetikApiUtil.buildJSONObjectFromDictionary (parameters);
+			
+			String body = j.Print ();
+			
+			KnetikRequest req = CreateRequest(TeamRockRegisterEndpoint, body);
+			
+			KnetikApiResponse registerResponse = new KnetikApiResponse(this, req, cb);
+			return  registerResponse;
+		}
+
+
         public KnetikApiResponse GuestRegister(
             Action<KnetikApiResponse> cb = null
             ) {
-            // Login as a guest
-            //KnetikApiResponse loginResponse = GuestLogin ();
-            
-//            if (loginResponse.Status != KnetikApiResponse.StatusType.Success) {
-//                Debug.LogError("Guest login failed");
-//                return loginResponse;
-//            }
-//            Debug.Log ("Guest login successful");
+           
             
             // Then register the new user
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
