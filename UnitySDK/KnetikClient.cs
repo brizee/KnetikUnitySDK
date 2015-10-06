@@ -190,10 +190,11 @@ namespace Knetik
 		private static string CartCountriesEndpoint = "services/latest/carts/{0}/countries"; //{0}Cart Number 
         private static string UseItemEndpoint = "services/latest/game/gamestart";
         private static string UserGetRelationshipsEndpoint = "services/latest/user/getrelationships";
-		private static string GetInvoiceEndpoint = "/services/latest/invoice";
-		private static string GetReceiptEndpoint = "/services/latest/payment/provider/apple/receipt";
-		private static string GetCurrenciesEndpoint = "/services/latest/currencies";
-		private static string EntitlementEndpoint = "/services/latest/entitlement/entitlementcheck";
+		private static string GetInvoiceEndpoint = "services/latest/invoice";
+		private static string GetReceiptEndpoint = "services/latest/payment/provider/apple/receipt";
+		private static string GetCurrenciesEndpoint = "services/latest/currencies";
+		private static string EntitlementEndpoint = "services/latest/entitlement/entitlementcheck";
+		private static string GooglePaymentEndpoint = "services/latest/payment/provider/google/payments";
 
         private void Log(String msg)
         {
