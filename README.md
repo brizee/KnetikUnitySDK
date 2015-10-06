@@ -1324,9 +1324,9 @@ KnetikClient.Instance.entitlementCheck("itemId","SkuId",(ress)=>{
 }
 ```
 
-###5.5 Mark an invoice payed with Google
+###5.5 Google transaction
 
-Verifies signature from Google and treats the developer Payload field inside the json payload as the id of the invoice to pay.
+Mark an invoice paid with Google .
 
 ######Requirements 
 
