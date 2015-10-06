@@ -1324,6 +1324,52 @@ KnetikClient.Instance.entitlementCheck("itemId","SkuId",(ress)=>{
 }
 ```
 
-##5.5 Android Compatibility
+###5.5 Mark an invoice payed with Google
+
+Verifies signature from Google and treats the developer Payload field inside the json payload as the id of the invoice to pay.
+
+######Requirements 
+
+ 1- payload  
+ 2- signature 
+
+##### How to call handleGooglePayment EndPoint ?
+
+```
+KnetikClient.Instance.handleGooglePayment(payload ,signature ,(res) => 
+		                                     {
+		if (res.IsSuccess) {
+			
+			//parse response
+			Console.WriteLine("handle Google Payment PASS");
+		}else{
+		
+			Console.WriteLine("handle Google Payment Failed");
+			return;
+		}
+		});
+
+```
+####Response 
+
+Returns the transaction Id if successful.
+
+```
+{
+    "error": {
+        "code": 0,
+        "success": true
+    },
+    "result": 1113,
+    "cached": false,
+    "message": "",
+    "parameters": [],
+    "requestId": "1444164104603-1006"
+}
+
+
+```
+
+##5.6 Android Compatibility
 
 On Android, the ACCESS_WIFI_STATE permission must be set in the AndroidManifest.xml file in your project’s Assets->Plugins->Android folder.  An example AndroidManifest.xml has been included in this project, called “AndroidManifest.example.xml”.
