@@ -100,42 +100,37 @@ namespace Knetik
             {
                 res = new KnetikApiResponse(this, req, (resp) =>
                 {
-                    Debug.Log(resp.Body);
-                    if (resp.Status == KnetikApiResponse.StatusType.Success)
-                    {
-                        if (OnRegistered != null)
-                        {
-                            OnRegistered();
-                        }
-                    }
-                    else
-                    {
-                        if (OnRegisterFailed != null)
-                        {
-                            OnRegisterFailed(resp.Body["error"]["message"]);
-                        }
-                    }
+					Debug.Log(resp.Body);
+					if(resp.Status == KnetikApiResponse.StatusType.Success)
+					{
+						Login(username, password, cb);
+					}
+					else
+					{
+						if (OnRegisterFailed != null)
+						{
+							OnRegisterFailed(resp.ErrorMessage);
+						}
+					}
                     cb(resp);
                 });
             }
             else
             {
-                res = new KnetikApiResponse(this, req, null);
-                Debug.Log(res.Body);
-                if (res.Status == KnetikApiResponse.StatusType.Success)
-                {
-                    if (OnRegistered != null)
-                    {
-                        OnRegistered();
-                    }
-                }
-                else
-                {
-                    if (OnRegisterFailed != null)
-                    {
-                        OnRegisterFailed(res.Body["error"]["message"]);
-                    }
-                }
+				res = new KnetikApiResponse(this, req, null);
+				Debug.Log(res.Body);
+				if(res.Status == KnetikApiResponse.StatusType.Success)
+				{
+					Debug.Log(res.Body);
+					res = Login(username, password, null);
+				}
+				else
+				{
+					if (OnRegisterFailed != null)
+					{
+						OnRegisterFailed(res.ErrorMessage);
+					}
+				}
             }
             return  res;
         }

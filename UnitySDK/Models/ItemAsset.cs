@@ -51,9 +51,13 @@ namespace Knetik
             Description = json ["description"].Value;
             Type = json ["type"].Value;
             Path = json ["path"].Value;
-
+            if(json["slug"] != null && json["slug"].Value != null)
+            {
+                slug = json["slug"].Value;
+            }
 			url = json ["url"].Value;
-			itemId = json ["item_id"].AsInt;
+            if(!string.IsNullOrEmpty(json["item_id"].Value))
+			    itemId = json ["item_id"].AsInt;
 
         }
 

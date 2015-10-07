@@ -37,6 +37,25 @@ namespace Knetik
             set;
         }
 
+		public DateTime ExpirationDate { get; set; }
+
+		public event KnetikEventSuccessDelegate OnRefreshTokenUpdated;
+		private string m_refreshToken = null;
+		public string RefreshToken {
+			get { return m_refreshToken; }
+			set 
+			{
+				if(m_refreshToken != value)
+				{
+					m_refreshToken = value;
+					if(OnRefreshTokenUpdated != null)
+					{
+						OnRefreshTokenUpdated();
+					}
+				}
+			}
+		}
+
         public int UserID {
             get;
             set;
@@ -119,6 +138,14 @@ namespace Knetik
         {
             if (OnUserInfoLoaded != null)
                 OnUserInfoLoaded();
+			else
+				Debug.Log("No Event set");
+        }
+
+        public void CallLoginFailed(string message)
+        {
+            if (OnLoginFailed != null)
+                OnLoginFailed(message);
         }
         public bool SaveSession()
         {

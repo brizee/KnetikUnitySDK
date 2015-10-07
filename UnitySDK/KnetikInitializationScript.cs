@@ -29,7 +29,7 @@ public class KnetikInitializationScript : MonoBehaviour, IKnetikInitialiser {
 
 	public void Update()
 	{
-		while( Requests.Count > 0 )
+		while(Requests != null && Requests.Count > 0 )
 		{
 			KnetikRequest request = (KnetikRequest)Requests.Dequeue();
 			request.completedCallback( request );

@@ -12,7 +12,6 @@ namespace Knetik
         public event KnetikEventSuccessDelegate OnLoggedIn;
         public event KnetikEventSuccessDelegate OnGuestLogIn;
         public event KnetikEventSuccessDelegate OnRegistered;
-        public event KnetikEventSuccessDelegate OnUserDataFetched;
 
         public event KnetikEventFailDelegate OnLoginFailed;
 		public KnetikApiResponse Login(
@@ -49,7 +48,16 @@ namespace Knetik
                     {
                         if(OnLoginFailed != null)
                         {
-                            OnLoginFailed(resp.ErrorMessage);
+                            if (resp.Request.response != null && !string.IsNullOrEmpty(resp.Request.response.Text))
+                            {
+                                JSONObject j = new JSONObject(resp.Request.response.Text);
+			                    string error = j["error_description"].str;
+                                OnLoginFailed(error);
+                            }
+                            else
+                            {
+                                OnLoginFailed(resp.ErrorMessage);
+                            }
                         }
                     }
                     cb(resp);
@@ -68,7 +76,14 @@ namespace Knetik
                 {
                     if (OnLoginFailed != null)
                     {
-                        OnLoginFailed(res.ErrorMessage);
+                        if (res.Body != null && !string.IsNullOrEmpty(res.Body["error"]["message"]))
+                        {
+                            OnLoginFailed(res.Body["error"]["message"]);
+                        }
+                        else
+                        {
+                            OnLoginFailed(res.ErrorMessage);
+                        }
                     }
                 }
             }
