@@ -49,7 +49,6 @@ namespace Knetik
 				Client.ExpirationDate = expirationDate;
 				Client.RefreshToken = refreshToken.Value;
 			}
-
 //            if (result["user_id"] == null || result["user_id"].Value == "null") {
 //				Debug.Log ("Guest Session has been established.");
 //			} else {

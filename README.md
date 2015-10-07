@@ -84,7 +84,37 @@ else
 }
 ```
 
-####3.2.2 Login as Guest
+####3.2.2 Login With Custom parameters 
+
+```
+
+Dictionary<string,string> paramters = new Dictionary<string,string > ();
+
+paramters.Add ("grant_type","grant_type_value");
+
+paramters.Add ("username","username_value");
+
+paramters.Add ("password","password_value");
+
+paramters.Add ("client_id","client_id_value");
+
+paramters.Add ("client_secret","client_secret_value");
+
+KnetikClient.Instance.Login(paramters , (res) => {
+  if (res.IsSuccess) {
+   // Save off the created user session information
+   UserSessionUtils.setUserSession(KnetikClient.Instance.UserID,  
+   KnetikClient.Instance.Username,KnetikClient.Instance.ClientID);
+  // Launch the Level Scene (main game)
+  Application.LoadLevel(2);
+  } else { 
+    loginView.error = true;
+    loginView.errorMessage = response.ErrorMessage;
+  }
+});
+```
+
+####3.2.3 Login as Guest
 
 Instead of presenting the user with a login form to start the game, you can start a guest session to let the user start playing right away. this can be done by register a guest account then login.
 
@@ -98,7 +128,7 @@ if (response.Status == KnetikApiResponse.StatusType.Success)
 }
 ```
 
-####3.2.3 Persisting session 
+####3.2.4 Persisting session 
 
 To keep a session between launches of your game -- for example, to keep an authenticated guest session -- use the SaveSession methods:
 
@@ -118,7 +148,7 @@ KnetikClient.Instance.Login(UsernameInput.text, PasswordInput.text, (res) => {
 When the user logs out, their saved session will be deleted as well.
 
 
-####3.2.4 Session Expired  
+####3.2.5 Session Expired  
 
 If your session has been expired and you received an Error with message "Your session has expired; Please refresh." and you got an error code equal "5" you will need to call login method again to refresh your session .
 
@@ -130,7 +160,14 @@ int errorCode= res.body["error"][“code”]
 if( errorCode == 5 )
 {
 
-	KnetikClient.Instance.Login (loginView.data.login, loginView.data.password);
+		KnetikClient.Instance.refreshSession((res) => {
+			if (res.IsSuccess) {
+				// prase response
+			} else { 
+				// prase response
+
+			}
+		});
 	
 }
 
@@ -139,11 +176,13 @@ if( errorCode == 5 )
 
 ###3.3 Registration Service
 
-Registration requires four fields: username, password, email, and fullname.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
+Registration requires four fields: username, password, email, and fullname ,firstName.lastName.  When a user is registered they are not automatically logged in, so if you want to log them in transparently after registration, call the Login service after successful registration.
+
 
 EXAMPLE:
 
 ```
+
 // Check if passwords match, and if not display the appropriate error message
 if (registrationView.data.password != registrationView.data.passwordConfirm) 
 {
@@ -152,21 +191,34 @@ if (registrationView.data.password != registrationView.data.passwordConfirm)
   return;
 }
 
-var response = KnetikClient.Instance.Register(
-  registrationView.data.username,
-  registrationView.data.password,
-  registrationView.data.email,
-  registrationView.data.fullname
-);
 
-if (response.Status != KnetikApiResponse.StatusType.Success) {
-  registrationView.error = true;
-  registrationView.errorMessage = response.ErrorMessage;
-  return;
-}
+Dictionary<string,string> paramters = new Dictionary<string,string > ();
 
-// Load the StartMenu again, the registered user must now login
-Application.LoadLevel(1);
+	paramters.Add ("username", Username.text);
+	paramters.Add ("password", Password.text);
+	paramters.Add ("firstName",firstName.text);
+	paramters.Add ("lastName", lastName.text);
+	paramters.Add ("fullname", Fullname.text);
+	paramters.Add ("email",    Email.text);
+
+         KnetikClient.Instance.teamRockRegister(paramters,
+                (res) => {
+                    if (res.IsSuccess) {
+                        Username.text = "";
+                        Email.text = "";
+                        Fullname.text = "";
+                        Password.text = "";
+                        lastName.text = "";
+                        firstName.text = "";
+                        PasswordConfirmation.text = "";
+                        Menu.SetScreen("profile");
+                    } else {
+                        ErrorMessageText.text = res.ErrorMessage;
+                        ErrorMessageText.gameObject.SetActive(true);
+                    }
+                }
+            );
+
 ```
 
 #### Register as Guest
@@ -1272,6 +1324,52 @@ KnetikClient.Instance.entitlementCheck("itemId","SkuId",(ress)=>{
 }
 ```
 
-##5.5 Android Compatibility
+###5.5 Google transaction
+
+Mark an invoice paid with Google .
+
+######Requirements 
+
+ 1- payload  
+ 2- signature 
+
+##### How to call handleGooglePayment EndPoint ?
+
+```
+KnetikClient.Instance.handleGooglePayment(payload ,signature ,(res) => 
+		                                     {
+		if (res.IsSuccess) {
+			
+			//parse response
+			Console.WriteLine("handle Google Payment PASS");
+		}else{
+		
+			Console.WriteLine("handle Google Payment Failed");
+			return;
+		}
+		});
+
+```
+####Response 
+
+Returns the transaction Id if successful.
+
+```
+{
+    "error": {
+        "code": 0,
+        "success": true
+    },
+    "result": 1113,
+    "cached": false,
+    "message": "",
+    "parameters": [],
+    "requestId": "1444164104603-1006"
+}
+
+
+```
+
+##5.6 Android Compatibility
 
 On Android, the ACCESS_WIFI_STATE permission must be set in the AndroidManifest.xml file in your project’s Assets->Plugins->Android folder.  An example AndroidManifest.xml has been included in this project, called “AndroidManifest.example.xml”.

@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using System.Text;
+using System.Collections.Generic;
 
 namespace Knetik
 {
@@ -14,7 +16,6 @@ namespace Knetik
 			string fullname,
 			Action<KnetikApiResponse> cb = null
 		) {
-
 			JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
 			j.AddField ("username", username);
 			j.AddField ("password", password);
@@ -65,10 +66,26 @@ namespace Knetik
 			return  res;
 		}
 
+
+		public KnetikApiResponse teamRockRegister(Dictionary<string,string> parameters,
+			Action<KnetikApiResponse> cb = null
+			) {
+
+			JSONObject j = KnetikApiUtil.buildJSONObjectFromDictionary (parameters);
+			
+			String body = j.Print ();
+			
+			KnetikRequest req = CreateRequest(TeamRockRegisterEndpoint, body);
+			
+			KnetikApiResponse registerResponse = new KnetikApiResponse(this, req, cb);
+			return  registerResponse;
+		}
+
+
         public KnetikApiResponse GuestRegister(
             Action<KnetikApiResponse> cb = null
             ) {
-
+           
             JSONObject j = new JSONObject (JSONObject.Type.OBJECT);
             String body = j.Print ();
             
